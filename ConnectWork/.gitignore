@@ -1,0 +1,8 @@
+/target/
+/.nb-conf/
+/nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.netbeans_registration

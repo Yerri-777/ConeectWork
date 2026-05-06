@@ -1,0 +1,174 @@
+package dao;
+
+import config.ConexionBD;
+import modelo.Propuesta;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PropuestaDAO {
+
+    public int enviar(Propuesta p) throws SQLException {
+        String sql = """
+            INSERT INTO propuesta (proyecto_id, freelancer_id, monto_ofertado, plazo_dias, carta_presentacion)
+            VALUES (?,?,?,?,?)
+            """;
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, p.getProyectoId());
+            ps.setInt(2, p.getFreelancerId());
+            ps.setBigDecimal(3, p.getMontoOfertado());
+            ps.setInt(4, p.getPlazoDias());
+            ps.setString(5, p.getCartaPresentacion());
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                return rs.next() ? rs.getInt(1) : -1;
+            }
+        }
+    }
+
+    public boolean cambiarEstado(int id, String estado) throws SQLException {
+        String sql = "UPDATE propuesta SET estado=? WHERE id=?";
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Retirar: solo si propuesta es PENDIENTE y proyecto ABIERTO
+     */
+    public boolean retirar(int propuestaId, int freelancerId) throws SQLException {
+        String sql = """
+            UPDATE propuesta SET estado='RETIRADA'
+             WHERE id=? AND freelancer_id=? AND estado='PENDIENTE'
+               AND EXISTS (SELECT 1 FROM proyecto pr WHERE pr.id=propuesta.proyecto_id AND pr.estado='ABIERTO')
+            """;
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, propuestaId);
+            ps.setInt(2, freelancerId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public Propuesta buscarPorId(int id) throws SQLException {
+        String sql = """
+            SELECT pr.*, u.nombre_completo AS nombre_freelancer,
+                   pf.calificacion_promedio, p.titulo AS titulo_proyecto
+              FROM propuesta pr
+              JOIN usuario u ON u.id = pr.freelancer_id
+              JOIN perfil_freelancer pf ON pf.usuario_id = pr.freelancer_id
+              JOIN proyecto p ON p.id = pr.proyecto_id
+             WHERE pr.id = ?
+            """;
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapear(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Propuestas recibidas por un proyecto
+     */
+    public List<Propuesta> listarPorProyecto(int proyectoId) throws SQLException {
+        String sql = """
+            SELECT pr.*, u.nombre_completo AS nombre_freelancer,
+                   pf.calificacion_promedio, p.titulo AS titulo_proyecto
+              FROM propuesta pr
+              JOIN usuario u ON u.id = pr.freelancer_id
+              JOIN perfil_freelancer pf ON pf.usuario_id = pr.freelancer_id
+              JOIN proyecto p ON p.id = pr.proyecto_id
+             WHERE pr.proyecto_id = ?
+             ORDER BY pr.created_at DESC
+            """;
+        return ejecutarLista(sql, proyectoId);
+    }
+
+    /**
+     * Propuestas enviadas por un freelancer
+     */
+    public List<Propuesta> listarPorFreelancer(int freelancerId) throws SQLException {
+        String sql = """
+            SELECT pr.*, u.nombre_completo AS nombre_freelancer,
+                   pf.calificacion_promedio, p.titulo AS titulo_proyecto
+              FROM propuesta pr
+              JOIN usuario u ON u.id = pr.freelancer_id
+              JOIN perfil_freelancer pf ON pf.usuario_id = pr.freelancer_id
+              JOIN proyecto p ON p.id = pr.proyecto_id
+             WHERE pr.freelancer_id = ?
+             ORDER BY pr.created_at DESC
+            """;
+        return ejecutarLista(sql, freelancerId);
+    }
+
+    /**
+     * Rechazar todas las demás propuestas pendientes de un proyecto
+     */
+    public void rechazarOtras(int proyectoId, int propuestaAceptadaId) throws SQLException {
+        String sql = """
+            UPDATE propuesta SET estado='RECHAZADA'
+             WHERE proyecto_id=? AND id!=? AND estado='PENDIENTE'
+            """;
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, proyectoId);
+            ps.setInt(2, propuestaAceptadaId);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Verificar que el freelancer cumpla al menos una habilidad del proyecto
+     */
+    public boolean freelancerCumpleHabilidades(int freelancerId, int proyectoId) throws SQLException {
+        String sql = """
+            SELECT 1
+              FROM freelancer_habilidad fh
+              JOIN perfil_freelancer pf ON pf.id = fh.freelancer_id
+              JOIN proyecto_habilidad ph ON ph.habilidad_id = fh.habilidad_id
+             WHERE pf.usuario_id = ? AND ph.proyecto_id = ?
+             LIMIT 1
+            """;
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, freelancerId);
+            ps.setInt(2, proyectoId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private List<Propuesta> ejecutarLista(String sql, int param) throws SQLException {
+        List<Propuesta> lista = new ArrayList<>();
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, param);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapear(rs));
+                }
+            }
+        }
+        return lista;
+    }
+
+    private Propuesta mapear(ResultSet rs) throws SQLException {
+        Propuesta p = new Propuesta();
+        p.setId(rs.getInt("id"));
+        p.setProyectoId(rs.getInt("proyecto_id"));
+        p.setTituloProyecto(rs.getString("titulo_proyecto"));
+        p.setFreelancerId(rs.getInt("freelancer_id"));
+        p.setNombreFreelancer(rs.getString("nombre_freelancer"));
+        p.setCalificacionFreelancer(rs.getBigDecimal("calificacion_promedio"));
+        p.setMontoOfertado(rs.getBigDecimal("monto_ofertado"));
+        p.setPlazoDias(rs.getInt("plazo_dias"));
+        p.setCartaPresentacion(rs.getString("carta_presentacion"));
+        p.setEstado(rs.getString("estado"));
+        p.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        return p;
+    }
+}
