@@ -1,0 +1,101 @@
+.categorias-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.categorias-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.categorias-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.btn-nueva {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-nueva:hover {
+  background: #5568d3;
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f8f9fa;
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.table td {
+  padding: 15px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.estado {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.estado.activo {
+  background: #d4edda;
+  color: #155724;
+}
+
+.estado.inactivo {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.acciones {
+  display: flex;
+  gap: 5px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.btn-sm:hover {
+  background: #2980b9;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #95a5a6;
+}

@@ -1,0 +1,61 @@
+<div class="comision-container">
+  <h1>Configurar Comisión</h1>
+
+  <div class="comision-card">
+    <h2>Comisión Actual</h2>
+    <div class="comision-display">
+      <div class="comision-value">{{ comisionActual }}%</div>
+      <p>Última actualización: {{ ultimaActualizacion | date:'short' }}</p>
+    </div>
+
+    <div class="comision-form">
+      <h3>Cambiar Porcentaje de Comisión</h3>
+      <div class="form-group">
+        <label>Nuevo Porcentaje (%)</label>
+        <input
+          type="number"
+          [(ngModel)]="nuevosPorcentaje"
+          min="0"
+          max="50"
+          placeholder="0-50">
+        <small>El porcentaje debe estar entre 0% y 50%</small>
+      </div>
+
+      <div class="warning" *ngIf="nuevosPorcentaje !== comisionActual && nuevosPorcentaje !== null">
+        <p><strong> Advertencia:</strong> Este cambio afectará a todos los contratos futuros.</p>
+      </div>
+
+      <button
+        class="btn-guardar"
+        [disabled]="nuevosPorcentaje === comisionActual || nuevosPorcentaje < 0 || nuevosPorcentaje > 50"
+        (click)="cambiarComision()">
+        Guardar Cambios
+      </button>
+    </div>
+  </div>
+
+  <div class="historial-card">
+    <h2>Historial de Cambios</h2>
+    <div class="table-container">
+      <table class="table" *ngIf="historial.length > 0">
+        <thead>
+          <tr>
+            <th>Porcentaje</th>
+            <th>Fecha de Inicio</th>
+            <th>Administrador (ID)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cambio of historial">
+            <td><strong>{{ cambio.porcentaje }}%</strong></td>
+            <td>{{ cambio.fechaInicio | date:'medium' }}</td>
+            <td>{{ cambio.adminId }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="historial.length === 0" class="empty-state">
+        <p>No hay registros en el historial</p>
+      </div>
+    </div>
+  </div>
+</div>

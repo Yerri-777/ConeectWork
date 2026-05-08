@@ -1,1 +1,64 @@
-/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --primary: #667eea;
+  --primary-dark: #5568d3;
+  --secondary: #764ba2;
+  --dark: #2c3e50;
+  --gray: #7f8c8d;
+  --light: #ecf0f1;
+  --lighter: #f8f9fa;
+  --white: #ffffff;
+  --success: #27ae60;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --spacing-md: 16px;
+  --font-size-base: 16px;
+  --radius-md: 6px;
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --transition-normal: 300ms ease;
+}
+
+/* RESET UNIVERSAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--lighter);
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+/* ESTILOS DE FORMULARIOS */
+input, select, textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--light);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* BOTONES GLOBALES */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-normal);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}

@@ -1,0 +1,33 @@
+<div class="entrega-container">
+  <div class="entrega-header">
+    <h1>📋 Historial de Entregas</h1>
+    <p>Seguimiento de tus trabajos enviados</p>
+  </div>
+
+  <table class="table-entregas" *ngIf="entregas.length > 0">
+    <thead>
+      <tr>
+        <th>Proyecto</th>
+        <th>Fecha</th>
+        <th>Archivos</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let e of entregas">
+        <td>{{ e.proyectoTitulo }}</td>
+        <td>{{ e.fechaCreacion | date:'short' }}</td>
+        <td>{{ e.totalArchivos }} archivos</td>
+        <td>
+          <span class="estado-entrega" [ngClass]="e.estado.toLowerCase()">
+            {{ e.estado }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="entregas.length === 0" style="text-align: center; padding: 50px; color: #95a5a6;">
+    No has realizado entregas todavía.
+  </div>
+</div>

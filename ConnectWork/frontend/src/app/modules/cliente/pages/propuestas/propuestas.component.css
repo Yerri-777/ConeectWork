@@ -1,0 +1,102 @@
+.propuestas-container {
+  padding: 25px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.propuestas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.propuesta-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border-top: 4px solid #667eea;
+  transition: transform 0.2s;
+}
+
+.propuesta-card:hover {
+  transform: translateY(-5px);
+}
+
+.freelancer-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.avatar-placeholder {
+  width: 50px;
+  height: 50px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #7f8c8d;
+}
+
+.oferta-economica {
+  background: #f0f4ff;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.oferta-economica .monto {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.acciones-flex {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-aceptar {
+  flex: 1;
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-rechazar {
+  flex: 1;
+  background: #fdf0f0;
+  color: #e74c3c;
+  border: 1px solid #fab1a0;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Detalle Propuesta */
+.detalle-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.carta-presentacion {
+  background: #fff;
+  padding: 15px;
+  border-left: 3px solid #667eea;
+  font-style: italic;
+  color: #555;
+  line-height: 1.6;
+}

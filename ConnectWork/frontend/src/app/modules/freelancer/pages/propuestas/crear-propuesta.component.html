@@ -1,0 +1,39 @@
+<div class="crear-container">
+  <div class="crear-header">
+    <h1>Enviar Propuesta</h1>
+  </div>
+
+  <form [formGroup]="propuestaForm" (ngSubmit)="enviarPropuesta()" class="crear-form">
+    <div class="form-section" *ngIf="proyecto">
+      <h2>Proyecto: {{ proyecto.titulo }}</h2>
+      <div class="proyecto-info">
+        <p>{{ proyecto.descripcion }}</p>
+        <span> Presupuesto: Q{{ proyecto.presupuestoMinimo }}-{{ proyecto.presupuestoMaximo }}</span>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-group">
+        <label>Tu Propuesta</label>
+        <textarea formControlName="contenido" rows="8" placeholder="Explica tu metodología..."></textarea>
+      </div>
+
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label>Monto (GTQ)</label>
+          <input type="number" formControlName="monto">
+        </div>
+        <div class="form-group">
+          <label>Plazo (días)</label>
+          <input type="number" formControlName="plazo">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions" style="text-align: center;">
+      <button type="submit" class="btn-guardar" [disabled]="propuestaForm.invalid || cargando">
+        {{ cargando ? 'Enviando...' : 'Enviar Propuesta' }}
+      </button>
+    </div>
+  </form>
+</div>

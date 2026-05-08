@@ -1,0 +1,63 @@
+<div class="solicitud-container">
+  <h1>Solicitar Nueva Habilidad</h1>
+
+  <form [formGroup]="solicitudForm" (ngSubmit)="enviarSolicitud()" class="solicitud-form">
+    <div class="form-group">
+      <label>Nombre de la Habilidad</label>
+      <input
+        type="text"
+        formControlName="nombre"
+        placeholder="Ej: React.js">
+      <span class="error" *ngIf="isFieldInvalid('nombre')">
+        Nombre requerido (máximo 100 caracteres)
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea
+        formControlName="descripcion"
+        placeholder="Describe por qué necesitas que se agregue esta habilidad"
+        rows="5"></textarea>
+      <span class="error" *ngIf="isFieldInvalid('descripcion')">
+        Descripción requerida
+      </span>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancelar" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn-enviar" [disabled]="!solicitudForm.valid || enviando">
+        {{ enviando ? 'Enviando...' : 'Enviar Solicitud' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="mis-solicitudes">
+    <h2>Mis Solicitudes</h2>
+    <table *ngIf="misSolicitudes.length > 0" class="table">
+      <thead>
+        <tr>
+          <th>Habilidad</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sol of misSolicitudes">
+          <td>{{ sol.nombre }}</td>
+          <td>
+            <span class="estado" [ngClass]="'estado-' + sol.estado.toLowerCase()">
+              {{ sol.estado }}
+            </span>
+          </td>
+          <td>{{ sol.fecha | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="misSolicitudes.length === 0" class="empty">
+      <p>No tienes solicitudes registradas</p>
+    </div>
+  </div>
+</div>

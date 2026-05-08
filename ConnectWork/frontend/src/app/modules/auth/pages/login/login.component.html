@@ -1,0 +1,131 @@
+<div class="login-container">
+  <div class="login-box">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="logo">
+        <span class="logo-icon"></span>
+        <span class="logo-text">ConnectWork</span>
+      </div>
+      <h2>Iniciar Sesión</h2>
+      <p>Accede a tu cuenta de freelancer o cliente</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Nombre de Usuario</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="usuario123"
+          class="form-input"
+          [class.is-invalid]="isFieldInvalid('username')">
+        <span class="error-message" *ngIf="isFieldInvalid('username')">
+          El nombre de usuario es requerido
+        </span>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="password-input-wrapper">
+          <input
+            id="password"
+            [type]="mostrarPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('password')">
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePassword()"
+            tabindex="-1">
+            {{ mostrarPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        <span class="error-message" *ngIf="isFieldInvalid('password')">
+          La contraseña es requerida
+        </span>
+      </div>
+
+      <!-- Recuérdame -->
+      <div class="form-group checkbox">
+        <input
+          id="remember"
+          type="checkbox"
+          formControlName="recuerdame"
+          class="checkbox-input">
+        <label for="remember">Recuérdame</label>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-login"
+        [disabled]="loginForm.invalid || cargando">
+        {{ cargando ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+      </button>
+    </form>
+
+    <!-- Demo Credentials -->
+    <div class="demo-section">
+      <p class="demo-title"> Credenciales de Prueba:</p>
+      <div class="demo-items">
+        <div class="demo-item">
+          <strong>Admin:</strong> admin / Admin123!
+        </div>
+        <div class="demo-item">
+          <strong>Cliente:</strong> cliente / Pass1234
+        </div>
+        <div class="demo-item">
+          <strong>Freelancer:</strong> freelancer / Pass1234
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn-demo"
+        (click)="usarCredencialDemo('admin', 'Admin123!')">
+        Probar como Admin
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>¿No tienes cuenta?
+        <a routerLink="/auth/registro">Regístrate aquí</a>
+      </p>
+      <p class="back-home">
+        <a routerLink="/">← Volver al inicio</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Lado derecho: Información -->
+  <div class="login-info">
+    <div class="info-content">
+      <h3>Bienvenido a ConnectWork</h3>
+      <p>La plataforma donde clientes y freelancers se conectan para crear proyectos increíbles.</p>
+
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon"></span>
+          <h4>Para Clientes</h4>
+          <p>Publica tus proyectos y encuentra los mejores freelancers</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon"></span>
+          <h4>Para Freelancers</h4>
+          <p>Explora proyectos y construye tu carrera profesional</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon"></span>
+          <h4>Seguro</h4>
+          <p>Tus datos están protegidos con encriptación de última generación</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

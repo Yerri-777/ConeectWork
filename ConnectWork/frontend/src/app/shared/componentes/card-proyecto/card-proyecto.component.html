@@ -1,0 +1,66 @@
+<div class="card-proyecto">
+  <!-- Header -->
+  <div class="card-header">
+    <h3 class="card-title">{{ proyecto.titulo }}</h3>
+    <span class="badge" [ngClass]="'badge-' + proyecto.estado?.toLowerCase()">
+      {{ proyecto.estado }}
+    </span>
+  </div>
+
+  <!-- Descripción -->
+  <p class="card-description" [title]="proyecto.descripcion">
+    {{ proyecto.descripcion | slice:0:100 }}{{ proyecto.descripcion.length > 100 ? '...' : '' }}
+  </p>
+
+  <!-- Detalles -->
+  <div class="card-details">
+    <div class="detail-item">
+      <span class="detail-label">Categoría:</span>
+      <span class="detail-value">{{ proyecto.nombreCategoria }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Presupuesto:</span>
+      <span class="detail-value">Q{{ proyecto.presupuestoMax | number:'1.2-2' }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Límite:</span>
+      <span class="detail-value">{{ proyecto.fechaLimite | date:'short' }}</span>
+    </div>
+  </div>
+
+  <!-- Habilidades -->
+  <div class="card-habilidades" *ngIf="proyecto.habilidadesIds && proyecto.habilidadesIds.length > 0">
+    <small class="label">Habilidades requeridas:</small>
+    <div class="habilidades-list">
+      <span class="badge-skill" *ngFor="let id of proyecto.habilidadesIds">
+        Skill #{{ id }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="card-actions">
+    <button class="btn btn-primary" (click)="onVerDetalles()">
+      Ver Detalles
+    </button>
+    <ng-container *ngIf="mostrarAcciones">
+      <button class="btn btn-secondary" (click)="onEditar()" *ngIf="puedeEditar">
+        Editar
+      </button>
+      <button class="btn btn-danger" (click)="onEliminar()" *ngIf="puedeEliminar">
+        Cancelar
+      </button>
+    </ng-container>
+    <button class="btn btn-success" (click)="onEnviarPropuesta()" *ngIf="puedeEnviarPropuesta">
+      Enviar Propuesta
+    </button>
+  </div>
+
+  <!-- Meta info -->
+  <div class="card-meta">
+    <small>Publicado: {{ proyecto.createdAt | date:'short' }}</small>
+    <small *ngIf="proyecto.propuestasCount !== undefined" class="propuestas-count">
+      {{ proyecto.propuestasCount }} propuesta(s)
+    </small>
+  </div>
+</div>

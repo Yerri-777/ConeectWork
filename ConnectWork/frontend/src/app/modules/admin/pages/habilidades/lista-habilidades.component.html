@@ -1,0 +1,60 @@
+<div class="habilidades-container">
+  <div class="habilidades-header">
+    <h1>🛠️ Gestionar Habilidades</h1>
+    <button class="btn-nueva" (click)="abrirFormulario()">+ Nueva Habilidad</button>
+  </div>
+
+  <!-- Formulario Modal -->
+  <app-formulario-habilidad
+    *ngIf="mostrarFormulario"
+    [habilidad]="habilidadEditando"
+    (guardado)="onHabilidadGuardada()"
+    (cancelado)="cerrarFormulario()">
+  </app-formulario-habilidad>
+
+  <div class="table-container">
+    <table class="table" *ngIf="habilidades.length > 0">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let hab of habilidades">
+          <td>{{ hab.nombre }}</td>
+          <td>
+            <span class="categoria-badge">{{ hab.nombreCategoria }}</span>
+          </td>
+          <td>{{ hab.descripcion || '-' }}</td>
+          <td>
+            <span class="estado" [ngClass]="hab.activo ? 'activo' : 'inactivo'">
+              {{ hab.activo ? '✓ Activo' : '✕ Inactivo' }}
+            </span>
+          </td>
+          <td class="acciones">
+            <button class="btn-sm" (click)="editarHabilidad(hab)">Editar</button>
+            <button class="btn-sm" (click)="abrirModalEliminar(hab)">
+              {{ hab.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="habilidades.length === 0" class="empty-state">
+      <p>No hay habilidades registradas</p>
+    </div>
+  </div>
+
+  <app-modal-confirmar
+    [visible]="modalEliminarAbierto"
+    titulo="Confirmar acción"
+    [mensaje]="'¿Estás seguro de ' + (habilidadSeleccionada?.activo ? 'desactivar' : 'activar') + ' esta habilidad?'"
+    [tipo]="habilidadSeleccionada?.activo ? 'peligro' : 'normal'"
+    (confirm)="confirmarAccion()"
+    (cancel)="cerrarModalEliminar()">
+  </app-modal-confirmar>
+</div>

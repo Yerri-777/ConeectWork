@@ -1,0 +1,74 @@
+/* Contenedor General */
+.proyectos-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.proyectos-header {
+  margin-bottom: 30px;
+}
+
+.proyectos-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+}
+
+/* Grid y Tarjetas */
+.proyectos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.proyecto-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.proyecto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Elementos de la Tarjeta */
+.presupuesto {
+  background: #d4edda;
+  color: #155724;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.descripcion {
+  color: #555;
+  font-size: 13px;
+  margin: 0 0 15px 0;
+  flex-grow: 1;
+}
+
+/* Filtros */
+.filtros {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filtros input, .filtros select {
+  padding: 10px 15px;
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 13px;
+  flex: 1;
+  min-width: 200px;
+}

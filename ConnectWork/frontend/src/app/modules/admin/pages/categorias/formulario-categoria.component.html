@@ -1,0 +1,25 @@
+<div class="modal-overlay" (click)="cancelar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>{{ categoria ? 'Editar' : 'Nueva' }} Categoría</h2>
+
+    <div class="form-group">
+      <label>Nombre</label>
+      <input
+        [(ngModel)]="categoriaTemp.nombre"
+        type="text"
+        placeholder="Nombre de la categoría">
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea
+        [(ngModel)]="categoriaTemp.descripcion"
+        placeholder="Descripción"></textarea>
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+      <button class="btn-guardar" (click)="guardar()">Guardar</button>
+    </div>
+  </div>
+</div>

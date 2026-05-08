@@ -1,0 +1,18 @@
+<div class="entregas-container">
+  <div class="form-card" style="max-width: 600px; margin: auto; background: white; padding: 30px;">
+    <h2>❌ Solicitar Correcciones</h2>
+    <p>Explica detalladamente qué cambios se necesitan.</p>
+
+    <div class="revision-form">
+      <label>Motivo del rechazo / Cambios solicitados:</label>
+      <textarea [(ngModel)]="motivo" rows="6" placeholder="Faltan las siguientes funcionalidades..."></textarea>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button class="btn-rechazar-trigger" (click)="enviarRechazo()" [disabled]="!motivo">
+          Enviar Feedback al Freelancer
+        </button>
+        <button class="btn-outline" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

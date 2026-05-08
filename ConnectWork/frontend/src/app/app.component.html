@@ -1,0 +1,13 @@
+<app-loader></app-loader>
+
+<div class="app-wrapper">
+  <app-navbar *ngIf="!isPublicRoute && authService.isLoggedIn()"></app-navbar>
+
+  <div class="main-layout" [class.full-width]="isPublicRoute">
+    <app-sidebar *ngIf="!isPublicRoute && authService.isLoggedIn()"></app-sidebar>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="contratos-container">
+  <div class="contratos-header">
+    <h1>Mis Contratos</h1>
+    <p>Gestiona tus acuerdos de trabajo actuales y finalizados</p>
+  </div>
+
+  <div *ngIf="cargando" class="loading">Cargando contratos...</div>
+
+  <div class="contratos-lista" *ngIf="!cargando">
+    <div *ngFor="let contrato of contratos" class="contrato-card">
+      <div class="info-principal">
+        <h3>{{ contrato.proyecto.titulo }}</h3>
+        <span class="cliente-nombre">👤 Cliente: {{ contrato.cliente.nombreCompleto }}</span>
+        <span class="badge-estado" [ngClass]="getClaseEstado(contrato.estado)">
+          {{ contrato.estado }}
+        </span>
+      </div>
+
+      <div class="info-economica">
+        <div class="monto-contrato">Q{{ contrato.monto | number:'1.2-2' }}</div>
+        <p class="fecha">Inicio: {{ contrato.fechaInicio | date:'dd/MM/yyyy' }}</p>
+        <button class="btn-detalle" [routerLink]="['/freelancer/contratos', contrato.id]">
+          Ver Gestión
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="contratos.length === 0" class="empty-state">
+      No tienes contratos registrados actualmente.
+    </div>
+  </div>
+</div>

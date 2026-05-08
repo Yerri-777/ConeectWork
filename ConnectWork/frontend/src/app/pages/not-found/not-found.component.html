@@ -1,0 +1,38 @@
+<div class="error-container" [@fadeIn]>
+  <div class="error-content">
+    <div class="error-code" [@slideIn]>404</div>
+
+    <h1>Página No Encontrada</h1>
+    <p class="error-description">
+      Parece que la página que buscas no existe o ha sido movida.
+    </p>
+
+    <div class="error-icon">😕</div>
+
+    <p class="error-details">
+      Verifica la URL o regresa a la página principal para continuar navegando.
+    </p>
+
+    <div class="error-actions">
+      <a routerLink="/" class="btn btn-primary">
+        ← Volver al Inicio
+      </a>
+      <a routerLink="/auth/login" class="btn btn-secondary">
+        Iniciar Sesión
+      </a>
+    </div>
+
+    <div class="suggestions">
+      <h3>¿Qué puedes hacer?</h3>
+      <ul>
+        <li><a routerLink="/">Ir a la página principal</a></li>
+        <li><a routerLink="/auth/login">Iniciar sesión</a></li>
+        <li><a routerLink="/auth/registro">Crear una cuenta</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="error-illustration">
+    <div class="illustration-element">🔍</div>
+  </div>
+</div>

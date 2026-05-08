@@ -1,0 +1,82 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Mi Dashboard</h1>
+    <p>Resumen de tu actividad profesional</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card stat-blue" [@fadeInUp]>
+      <span class="icon"></span>
+      <h3>Propuestas Enviadas</h3>
+      <div class="value">{{ stats.propuestasEnviadas }}</div>
+    </div>
+
+    <div class="stat-card stat-green" [@fadeInUp]>
+      <span class="icon"></span>
+      <h3>Contratos Activos</h3>
+      <div class="value">{{ stats.contratosActivos }}</div>
+    </div>
+
+    <div class="stat-card stat-orange" [@fadeInUp]>
+      <span class="icon"></span>
+      <h3>Calificación</h3>
+      <div class="value">{{ stats.calificacion | number:'1.1-1' }}</div>
+    </div>
+
+    <div class="stat-card stat-purple" [@fadeInUp]>
+      <span class="icon"></span>
+      <h3>Saldo Disponible</h3>
+      <div class="value">Q{{ stats.saldoDisponible | number:'1.2-2' }}</div>
+    </div>
+  </div>
+
+  <div class="dashboard-sections">
+    <div class="section-card">
+      <h2> Estadísticas</h2>
+      <div class="stats-list">
+        <div class="stat-item">
+          <span class="label">Proyectos Completados:</span>
+          <span class="value">{{ stats.proyectosCompletados }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Tasa de Aceptación:</span>
+          <span class="value">{{ stats.tasaAceptacion | number:'1.1-1' }}%</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Ingresos Este Mes:</span>
+          <span class="value">Q{{ stats.ingresosEsteMes | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h2> Accesos Rápidos</h2>
+      <div class="quick-actions">
+        <a href="/freelancer/explorar" class="action-btn">
+          <span></span>
+          <span>Explorar Proyectos</span>
+        </a>
+        <a href="/freelancer/propuestas" class="action-btn">
+          <span></span>
+          <span>Mis Propuestas</span>
+        </a>
+        <a href="/freelancer/contratos" class="action-btn">
+          <span></span>
+          <span>Contratos</span>
+        </a>
+        <a href="/freelancer/entregas" class="action-btn">
+          <span></span>
+          <span>Entregas</span>
+        </a>
+        <a href="/freelancer/saldo" class="action-btn">
+          <span></span>
+          <span>Saldo</span>
+        </a>
+        <a href="/freelancer/reportes" class="action-btn">
+          <span></span>
+          <span>Reportes</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

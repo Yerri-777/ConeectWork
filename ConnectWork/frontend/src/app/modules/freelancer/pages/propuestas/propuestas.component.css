@@ -1,0 +1,51 @@
+.propuestas-container, .crear-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.propuestas-header, .crear-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+/* Tarjetas de Propuesta */
+.propuesta-item, .form-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado-pendiente { background: #fff3cd; color: #856404; }
+.estado-aceptada { background: #d4edda; color: #155724; }
+.estado-rechazada { background: #f8d7da; color: #721c24; }
+
+/* Formularios */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; }
+.form-group input, .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ecf0f1;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.proyecto-info {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #667eea;
+}

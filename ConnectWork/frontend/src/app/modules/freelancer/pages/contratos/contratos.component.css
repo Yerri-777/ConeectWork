@@ -1,0 +1,73 @@
+.contratos-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.contratos-header {
+  margin-bottom: 30px;
+}
+
+.contratos-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* Tarjetas de Contrato */
+.contrato-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 5px solid #667eea;
+  transition: transform 0.2s;
+}
+
+.contrato-card:hover {
+  transform: scale(1.01);
+}
+
+.info-principal h3 {
+  margin: 0 0 5px 0;
+  color: #2c3e50;
+}
+
+.cliente-nombre {
+  color: #7f8c8d;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Badges de Estado */
+.badge-estado {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.activo { background: #e3f2fd; color: #1976d2; }
+.completado { background: #e8f5e9; color: #2e7d32; }
+.cancelado { background: #ffebee; color: #c62828; }
+
+.monto-contrato {
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.btn-detalle {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}

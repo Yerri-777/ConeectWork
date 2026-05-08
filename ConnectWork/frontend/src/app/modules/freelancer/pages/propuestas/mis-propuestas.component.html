@@ -1,0 +1,52 @@
+<div class="propuestas-container">
+  <div class="propuestas-header">
+    <h1> Mis Propuestas</h1>
+    <a routerLink="/freelancer/explorar" class="btn-nueva">+ Nueva Propuesta</a>
+  </div>
+
+  <div class="filtros">
+    <select [(ngModel)]="filtroEstado" (change)="filtrar()">
+      <option value="">-- Todos los estados --</option>
+      <option value="PENDIENTE">Pendientes</option>
+      <option value="ACEPTADA">Aceptadas</option>
+      <option value="RECHAZADA">Rechazadas</option>
+    </select>
+  </div>
+
+  <div class="propuestas-list">
+    <div *ngFor="let propuesta of propuestasFiltradas" class="propuesta-item">
+      <div class="propuesta-header">
+        <div class="propuesta-info">
+          <h3>{{ propuesta.proyecto.titulo }}</h3>
+          <p class="cliente">👤 {{ propuesta.proyecto.cliente.nombreCompleto }}</p>
+        </div>
+        <span class="estado-badge" [ngClass]="'estado-' + propuesta.estado.toLowerCase()">
+          {{ propuesta.estado }}
+        </span>
+      </div>
+
+      <p class="propuesta-contenido">{{ propuesta.contenido | slice:0:200 }}...</p>
+
+      <div class="propuesta-meta">
+        <span> Q{{ propuesta.monto | number:'1.2-2' }}</span>
+        <span>{{ propuesta.plazo }} días</span>
+      </div>
+
+      <div class="propuesta-actions">
+        <button *ngIf="propuesta.estado === 'PENDIENTE'" class="btn-editar"
+                [routerLink]="['/freelancer/propuestas/editar', propuesta.id]">✏️ Editar</button>
+        <button *ngIf="propuesta.estado === 'PENDIENTE'" class="btn-retirar"
+                (click)="retirarPropuesta(propuesta)">🗑️ Retirar</button>
+      </div>
+    </div>
+  </div>
+
+  <app-modal-confirmar
+    [visible]="modalAbierto"
+    titulo="Retirar Propuesta"
+    mensaje="¿Estás seguro de que deseas retirar esta propuesta?"
+    tipo="peligro"
+    (confirm)="confirmarRetiro()"
+    (cancel)="cerrarModal()">
+  </app-modal-confirmar>
+</div>

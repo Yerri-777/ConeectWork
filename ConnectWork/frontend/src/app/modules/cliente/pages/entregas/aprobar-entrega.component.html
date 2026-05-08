@@ -1,0 +1,38 @@
+<div class="entregas-container">
+  <div class="form-card" style="max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+    <div class="header-revisar">
+      <h2 style="color: #27ae60;">Revisión Final de Entrega</h2>
+      <p style="color: #7f8c8d;">Estás a punto de liberar el pago por este proyecto.</p>
+    </div>
+
+    <div class="detalle-entrega-resumen" *ngIf="entrega" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <p><strong>Proyecto:</strong> {{ entrega.proyectoTitulo }}</p>
+      <p><strong>Freelancer:</strong> {{ entrega.freelancerNombre }}</p>
+      <p><strong>Monto a liberar:</strong> <span style="color: #27ae60; font-weight: bold; font-size: 1.2rem;">{{ entrega.monto | currency:'GTQ' }}</span></p>
+    </div>
+
+    <div class="alerta-pago" style="border: 1px solid #ffeaa7; background: #fff9e6; padding: 15px; border-radius: 6px; margin-bottom: 25px;">
+      <p style="margin: 0; font-size: 0.9rem; color: #d6a01d;">
+       <strong>Nota:</strong> Una vez aprobada la entrega, los fondos se transferirán de forma irreversible al freelancer. Asegúrate de que el trabajo recibido cumple con todos los requisitos pactados.
+      </p>
+    </div>
+
+    <div class="acciones-finales" style="display: flex; gap: 15px;">
+      <button
+        class="btn-aprobar"
+        (click)="procesarAprobacion()"
+        [disabled]="cargando"
+        style="flex: 2; padding: 15px; font-size: 16px;">
+        {{ cargando ? 'Procesando Pago...' : 'Confirmar y Proceder a Calificar' }}
+      </button>
+
+      <button
+        class="btn-outline"
+        (click)="volver()"
+        [disabled]="cargando"
+        style="flex: 1;">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

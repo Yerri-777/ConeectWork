@@ -1,0 +1,30 @@
+<div class="modal-overlay" *ngIf="visible" [@fadeInOut] (click)="onCancel()">
+  <div class="modal-content" [@slideIn] (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">{{ titulo }}</h3>
+      <button class="modal-close" (click)="onCancel()">×</button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <p>{{ mensaje }}</p>
+      <div *ngIf="contenidoAdicional" class="modal-extra">
+        <ng-content></ng-content>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onCancel()">
+        {{ textoCancelar }}
+      </button>
+      <button class="btn btn-danger" (click)="onConfirm()" *ngIf="tipo === 'peligro'">
+        {{ textoConfirmar }}
+      </button>
+      <button class="btn btn-success" (click)="onConfirm()" *ngIf="tipo !== 'peligro'">
+        {{ textoConfirmar }}
+      </button>
+    </div>
+  </div>
+</div>

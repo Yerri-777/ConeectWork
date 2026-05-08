@@ -1,0 +1,44 @@
+
+<div class="proyectos-container">
+  <div class="proyectos-header">
+    <h1>Explorar Proyectos</h1>
+    <p>Encuentra proyectos que se adapten a tus habilidades</p>
+  </div>
+
+  <app-filtros-busqueda
+    [categorias]="categorias"
+    (cambioFiltros)="aplicarFiltros($event)">
+  </app-filtros-busqueda>
+
+  <div class="proyectos-grid">
+    <div *ngFor="let proyecto of proyectosFiltrados"
+      class="proyecto-card"
+      [routerLink]="['/freelancer/explorar', proyecto.id]">
+
+      <div class="proyecto-header">
+        <h3>{{ proyecto.titulo }}</h3>
+        <span class="presupuesto">{{ getPresupuestoTexto(proyecto) }}</span>
+      </div>
+
+      <p class="descripcion">{{ proyecto.descripcion | slice:0:150 }}...</p>
+
+      <div class="proyecto-meta">
+        <span class="meta-item">Categoria: {{ getCategoriaNombre(proyecto) }}</span>
+        <span class="meta-item">Propuestas: {{ getPropuestasCount(proyecto) }}</span>
+        <span class="meta-item">Plazo: {{ getPlazo(proyecto) }} dias</span>
+      </div>
+
+      <div class="proyecto-footer">
+        <div class="cliente-info">
+          <span>Cliente: {{ getClienteNombre(proyecto) }}</span>
+          <span class="calificacion">Calificacion: {{ getClienteCalificacion(proyecto) | number:'1.1-1' }}</span>
+        </div>
+        <button class="btn-ver">Ver Detalles</button>
+      </div>
+    </div>
+
+    <div *ngIf="proyectosFiltrados.length === 0" class="empty-state">
+      <p>No hay proyectos que coincidan con tus criterios</p>
+    </div>
+  </div>
+</div>

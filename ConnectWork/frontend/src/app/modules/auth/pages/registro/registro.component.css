@@ -1,0 +1,272 @@
+.registro-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.registro-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  background: white;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.registro-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.logo-icon {
+  font-size: 28px;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.registro-header h2 {
+  font-size: 24px;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.registro-header p {
+  color: #95a5a6;
+  margin: 0;
+  font-size: 13px;
+}
+
+.registro-form {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 13px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ecf0f1;
+  border-radius: 4px;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input.is-invalid {
+  border-color: #e74c3c;
+  background-color: #fadbd8;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 3px;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.password-hint {
+  display: block;
+  color: #95a5a6;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.checkbox-input {
+  margin-top: 3px;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.checkbox label {
+  margin: 0;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.link {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn-registro {
+  width: 100%;
+  padding: 11px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-registro:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-registro:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.registro-footer {
+  text-align: center;
+  font-size: 12px;
+}
+
+.registro-footer p {
+  margin: 0;
+  color: #95a5a6;
+}
+
+.registro-footer a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.registro-footer a:hover {
+  text-decoration: underline;
+}
+
+.registro-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: white;
+}
+
+.info-content h3 {
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.benefits {
+  display: grid;
+  gap: 20px;
+}
+
+.benefit {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 18px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.benefit-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.benefit h4 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+}
+
+.benefit p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+@media (max-width: 1024px) {
+  .registro-container {
+    flex-direction: column;
+  }
+
+  .registro-info {
+    display: none;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .registro-box {
+    padding: 20px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .form-input {
+    font-size: 14px;
+    padding: 12px;
+  }
+}

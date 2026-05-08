@@ -1,0 +1,33 @@
+<div class="entregas-container">
+  <h1>📥 Entregas Pendientes de Revisión</h1>
+
+  <div *ngFor="let entrega of entregas" class="entrega-card">
+    <div class="entrega-header">
+      <div>
+        <h3>Proyecto: {{ entrega.proyectoTitulo }}</h3>
+        <p>Enviado por: <strong>{{ entrega.freelancerNombre }}</strong></p>
+      </div>
+      <span class="badge badge-proceso">Pendiente de Aprobación</span>
+    </div>
+
+    <div class="contenido-entrega">
+      <p><strong>Mensaje del freelancer:</strong></p>
+      <blockquote style="font-style: italic; color: #666;">"{{ entrega.mensaje }}"</blockquote>
+
+      <div class="archivo-box">
+        <span>📁</span>
+        <a [href]="entrega.archivoUrl" target="_blank">{{ entrega.nombreArchivo }}</a>
+        <small>(Haga clic para descargar y revisar)</small>
+      </div>
+    </div>
+
+    <div class="acciones-flex" style="display: flex; gap: 15px; margin-top: 20px;">
+      <button class="btn-aprobar" (click)="abrirAprobar(entrega)">Aprobar y Finalizar</button>
+      <button class="btn-rechazar-trigger" (click)="abrirRechazar(entrega)">Solicitar Cambios</button>
+    </div>
+  </div>
+
+  <div *ngIf="entregas.length === 0" style="text-align: center; padding: 50px;">
+    <p>No tienes entregas pendientes de revisión.</p>
+  </div>
+</div>

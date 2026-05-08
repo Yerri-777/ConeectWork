@@ -1,0 +1,49 @@
+<div class="solicitudes-container">
+  <div class="solicitud-card">
+    <div class="solicitud-header">
+      <div style="font-size: 40px; margin-bottom: 10px;">💡</div>
+      <h2>Sugerir Nueva Categoría</h2>
+      <p>¿No encuentras la categoría ideal para tu proyecto? Envíanos tu sugerencia y la revisaremos en breve.</p>
+    </div>
+
+    <form [formGroup]="categoriaForm" (ngSubmit)="enviarSolicitud()">
+      <div class="form-group">
+        <label>Nombre de la Categoría Sugerida</label>
+        <input
+          type="text"
+          formControlName="nombre"
+          class="form-control"
+          placeholder="Ej: Inteligencia Artificial, Bioingeniería...">
+        <small class="error-text" *ngIf="isFieldInvalid('nombre')">
+          El nombre es obligatorio (mínimo 3 caracteres).
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label>Justificación o Descripción</label>
+        <textarea
+          formControlName="descripcion"
+          class="form-control"
+          rows="5"
+          placeholder="Explica por qué esta categoría es necesaria para tus proyectos..."></textarea>
+        <small class="error-text" *ngIf="isFieldInvalid('descripcion')">
+          Por favor, proporciona una breve descripción.
+        </small>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-enviar"
+        [disabled]="categoriaForm.invalid || enviando">
+        {{ enviando ? 'Enviando solicitud...' : 'Enviar Sugerencia' }}
+      </button>
+
+      <button
+        type="button"
+        (click)="cancelar()"
+        style="width: 100%; background: none; border: none; color: #95a5a6; margin-top: 15px; cursor: pointer; font-size: 14px;">
+        Volver al Dashboard
+      </button>
+    </form>
+  </div>
+</div>

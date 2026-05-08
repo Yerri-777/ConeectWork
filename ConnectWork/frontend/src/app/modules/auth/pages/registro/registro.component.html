@@ -1,0 +1,244 @@
+<div class="registro-container">
+  <div class="registro-box">
+    <!-- Header -->
+    <div class="registro-header">
+      <div class="logo">
+        <span class="logo-icon"></span>
+        <span class="logo-text">ConnectWork</span>
+      </div>
+      <h2>Crear Cuenta</h2>
+      <p>Únete a la comunidad de freelancers y clientes</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="registroForm" (ngSubmit)="onRegistro()" class="registro-form">
+      <!-- Row 1: Nombre y Rol -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombreCompleto">Nombre Completo</label>
+          <input
+            id="nombreCompleto"
+            type="text"
+            formControlName="nombreCompleto"
+            placeholder="Juan Pérez García"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('nombreCompleto')">
+          <span class="error-message" *ngIf="isFieldInvalid('nombreCompleto')">
+            El nombre es requerido
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="rol">Tipo de Cuenta</label>
+          <select
+            id="rol"
+            formControlName="rol"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('rol')">
+            <option value="">-- Selecciona un rol --</option>
+            <option value="CLIENTE">Cliente</option>
+            <option value="FREELANCER">Freelancer</option>
+          </select>
+          <span class="error-message" *ngIf="isFieldInvalid('rol')">
+            Debes seleccionar un rol
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 2: Username y Correo -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="username">Nombre de Usuario</label>
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            placeholder="usuario123"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('username')">
+          <span class="error-message" *ngIf="isFieldInvalid('username')">
+            {{ getErrorMessageUsername() }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="correo">Correo Electrónico</label>
+          <input
+            id="correo"
+            type="email"
+            formControlName="correo"
+            placeholder="tu@correo.com"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('correo')">
+          <span class="error-message" *ngIf="isFieldInvalid('correo')">
+            Correo inválido
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 3: Contraseña -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="password-input-wrapper">
+            <input
+              id="password"
+              [type]="mostrarPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              class="form-input"
+              [class.is-invalid]="isFieldInvalid('password')">
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePassword()"
+              tabindex="-1">
+              {{ mostrarPassword ? '👁️' : '👁️‍🗨️' }}
+            </button>
+          </div>
+          <span class="error-message" *ngIf="isFieldInvalid('password')">
+            {{ getErrorMessagePassword() }}
+          </span>
+          <small class="password-hint">Mín. 8 caracteres, una mayúscula, un número</small>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar Contraseña</label>
+          <input
+            id="confirmPassword"
+            [type]="mostrarPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            placeholder="••••••••"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('confirmPassword')">
+          <span class="error-message" *ngIf="isFieldInvalid('confirmPassword')">
+            Las contraseñas no coinciden
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 4: Teléfono y CUI -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input
+            id="telefono"
+            type="text"
+            formControlName="telefono"
+            placeholder="+502 7777-7777"
+            appPermiteSoloNumero
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('telefono')">
+          <span class="error-message" *ngIf="isFieldInvalid('telefono')">
+            Teléfono requerido (7-15 dígitos)
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="cui">CUI</label>
+          <input
+            id="cui"
+            type="text"
+            formControlName="cui"
+            placeholder="1234567890101"
+            appPermiteSoloNumero
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('cui')">
+          <span class="error-message" *ngIf="isFieldInvalid('cui')">
+            CUI inválido (13 dígitos)
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 5: Dirección y Fecha Nacimiento -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="direccion">Dirección</label>
+          <input
+            id="direccion"
+            type="text"
+            formControlName="direccion"
+            placeholder="Calle 1, Zona 1, Ciudad"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('direccion')">
+          <span class="error-message" *ngIf="isFieldInvalid('direccion')">
+            Dirección requerida
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="fechaNacimiento">Fecha de Nacimiento</label>
+          <input
+            id="fechaNacimiento"
+            type="date"
+            formControlName="fechaNacimiento"
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('fechaNacimiento')">
+          <span class="error-message" *ngIf="isFieldInvalid('fechaNacimiento')">
+            Fecha requerida
+          </span>
+        </div>
+      </div>
+
+      <!-- Términos -->
+      <div class="form-group checkbox">
+        <input
+          id="terminos"
+          type="checkbox"
+          formControlName="terminos"
+          class="checkbox-input">
+        <label for="terminos">
+          Acepto los <a href="#" class="link">términos y condiciones</a>
+        </label>
+        <span class="error-message" *ngIf="isFieldInvalid('terminos')">
+          Debes aceptar los términos
+        </span>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-registro"
+        [disabled]="registroForm.invalid || cargando">
+        {{ cargando ? 'Creando cuenta...' : 'Crear Cuenta' }}
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="registro-footer">
+      <p>¿Ya tienes cuenta?
+        <a routerLink="/auth/login">Inicia sesión aquí</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Lado derecho: Beneficios -->
+  <div class="registro-info">
+    <div class="info-content">
+      <h3>¿Por qué unirse?</h3>
+
+      <div class="benefits">
+        <div class="benefit">
+          <span class="benefit-icon"></span>
+          <h4>Oportunidades</h4>
+          <p>Acceso a cientos de proyectos y clientes</p>
+        </div>
+        <div class="benefit">
+          <span class="benefit-icon"></span>
+          <h4>Ingresos</h4>
+          <p>Construye tu carrera y gana dinero</p>
+        </div>
+        <div class="benefit">
+          <span class="benefit-icon"></span>
+          <h4>Comunidad</h4>
+          <p>Conecta con profesionales de tu área</p>
+        </div>
+        <div class="benefit">
+          <span class="benefit-icon"></span>
+          <h4>Seguro</h4>
+          <p>Transacciones seguras y protegidas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

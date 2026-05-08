@@ -1,0 +1,90 @@
+.forbidden-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 30px;
+  background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+  color: white;
+  text-align: center;
+}
+
+.forbidden-content {
+  max-width: 600px;
+  width: 100%;
+}
+
+.lock-icon {
+  font-size: 100px;
+  margin-bottom: 20px;
+}
+
+.error-code {
+  font-size: 80px;
+  font-weight: bold;
+  color: #e74c3c;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.forbidden-message {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 30px;
+}
+
+.info-box {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.info-box ul {
+  margin: 10px 0 0 20px;
+  padding: 0;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+.forbidden-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 25px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-home {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-home:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+.btn-login {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-login:hover {
+  background: white;
+  color: #2c3e50;
+}

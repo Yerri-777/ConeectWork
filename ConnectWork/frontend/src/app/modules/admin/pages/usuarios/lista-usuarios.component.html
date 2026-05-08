@@ -1,0 +1,84 @@
+<div class="usuarios-container">
+  <div class="usuarios-header">
+    <h1>👥 Gestionar Usuarios</h1>
+    <div class="header-controls">
+      <input
+        type="text"
+        placeholder="Buscar por nombre o usuario..."
+        class="search-input"
+        [(ngModel)]="busqueda"
+        (change)="filtrarUsuarios()">
+      <select
+        class="filter-select"
+        [(ngModel)]="filtroRol"
+        (change)="filtrarUsuarios()">
+        <option value="">-- Todos los roles --</option>
+        <option value="ADMIN">Admin</option>
+        <option value="CLIENTE">Cliente</option>
+        <option value="FREELANCER">Freelancer</option>
+      </select>
+    </div>
+  </div>
+
+  <app-modal-confirmar
+    [visible]="modalAbierto"
+    [titulo]="usuarioSeleccionado?.activo ? 'Desactivar Usuario' : 'Activar Usuario'"
+    [mensaje]="'¿Estás seguro de ' + (usuarioSeleccionado?.activo ? 'desactivar' : 'activar') + ' a ' + usuarioSeleccionado?.nombreCompleto + '?'"
+    [tipo]="usuarioSeleccionado?.activo ? 'peligro' : 'normal'"
+    textoCancelar="Cancelar"
+    [textoConfirmar]="usuarioSeleccionado?.activo ? 'Desactivar' : 'Activar'"
+    (confirm)="confirmarActualizarEstado()"
+    (cancel)="cerrarModal()">
+  </app-modal-confirmar>
+
+  <div class="table-container">
+    <div *ngIf="usuariosFiltrados.length === 0" class="empty-state">
+      <p>No hay usuarios que mostrar</p>
+    </div>
+
+    <table *ngIf="usuariosFiltrados.length > 0" class="table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Usuario</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuariosFiltrados" [ngClass]="!usuario.activo ? 'fila-inactiva' : ''">
+          <td>{{ usuario.nombreCompleto }}</td>
+          <td><span class="username-badge">{{ '@' + usuario.username }}</span></td>
+          <td><a [href]="'mailto:' + usuario.correo">{{ usuario.correo }}</a></td>
+          <td>
+            <span class="rol-badge" [ngClass]="'rol-' + usuario.rol.toLowerCase()">
+              {{ usuario.rol }}
+            </span>
+          </td>
+          <td>{{ usuario.telefono || '-' }}</td>
+          <td>
+            <span class="estado-badge" [ngClass]="usuario.activo ? 'activo' : 'inactivo'">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <button
+              class="btn-accion"
+              [ngClass]="usuario.activo ? 'btn-desactivar' : 'btn-activar'"
+              (click)="abrirModal(usuario)">
+              {{ usuario.activo ? '❌ Desactivar' : '✓ Activar' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="usuarios-footer">
+    <p>Total de usuarios: <strong>{{ usuarios.length }}</strong></p>
+    <p>Usuarios filtrados: <strong>{{ usuariosFiltrados.length }}</strong></p>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <!-- Logo -->
+    <div class="navbar-brand">
+      <a routerLink="/" class="logo">
+        <span class="logo-icon"></span>
+        <span class="logo-text">ConnectWork</span>
+      </a>
+    </div>
+
+    <!-- Menu Toggle (Mobile) -->
+    <button class="navbar-toggle" (click)="toggleMenu()" [attr.aria-expanded]="menuAbierto">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Menu Items -->
+    <ul class="navbar-menu" [class.active]="menuAbierto">
+      <!-- No logueado -->
+      <ng-container *ngIf="!usuarioActual">
+        <li><a routerLink="/auth/login" (click)="cerrarMenu()">Login</a></li>
+        <li><a routerLink="/auth/registro" (click)="cerrarMenu()">Registrarse</a></li>
+      </ng-container>
+
+      <!-- Logueado -->
+      <ng-container *ngIf="usuarioActual">
+        <!-- Admin -->
+        <ng-container *ngIf="usuarioActual.rol === 'ADMIN'">
+          <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">Admin</a>
+            <div class="dropdown-content">
+              <a routerLink="/admin/dashboard" (click)="cerrarMenu()">Dashboard</a>
+              <a routerLink="/admin/usuarios" (click)="cerrarMenu()">Usuarios</a>
+              <a routerLink="/admin/categorias" (click)="cerrarMenu()">Categorías</a>
+              <a routerLink="/admin/habilidades" (click)="cerrarMenu()">Habilidades</a>
+              <a routerLink="/admin/solicitudes" (click)="cerrarMenu()">Solicitudes</a>
+              <a routerLink="/admin/comision" (click)="cerrarMenu()">Comisión</a>
+              <a routerLink="/admin/saldo" (click)="cerrarMenu()">Saldo</a>
+              <a routerLink="/admin/reportes" (click)="cerrarMenu()">Reportes</a>
+            </div>
+          </li>
+        </ng-container>
+
+        <!-- Cliente -->
+        <ng-container *ngIf="usuarioActual.rol === 'CLIENTE'">
+          <li><a routerLink="/cliente/dashboard" (click)="cerrarMenu()">Dashboard</a></li>
+          <li><a routerLink="/cliente/proyectos" (click)="cerrarMenu()">Proyectos</a></li>
+          <li><a routerLink="/cliente/propuestas" (click)="cerrarMenu()">Propuestas</a></li>
+          <li><a routerLink="/cliente/contratos" (click)="cerrarMenu()">Contratos</a></li>
+          <li><a routerLink="/cliente/reportes" (click)="cerrarMenu()">Reportes</a></li>
+        </ng-container>
+
+        <!-- Freelancer -->
+        <ng-container *ngIf="usuarioActual.rol === 'FREELANCER'">
+          <li><a routerLink="/freelancer/dashboard" (click)="cerrarMenu()">Dashboard</a></li>
+          <li><a routerLink="/freelancer/explorar" (click)="cerrarMenu()">Explorar</a></li>
+          <li><a routerLink="/freelancer/propuestas" (click)="cerrarMenu()">Mis Propuestas</a></li>
+          <li><a routerLink="/freelancer/contratos" (click)="cerrarMenu()">Contratos</a></li>
+          <li><a routerLink="/freelancer/reportes" (click)="cerrarMenu()">Reportes</a></li>
+        </ng-container>
+
+        <!-- Usuario actual -->
+        <li class="navbar-user dropdown">
+          <a href="javascript:void(0)" class="dropbtn">
+            <span class="user-avatar">{{ usuarioActual.nombreCompleto.charAt(0).toUpperCase() }}</span>
+            <span class="user-name">{{ usuarioActual.nombreCompleto }}</span>
+          </a>
+          <div class="dropdown-content dropdown-right">
+            <div class="dropdown-header">
+              <p class="user-email">{{ usuarioActual.correo }}</p>
+              <small>{{ usuarioActual.rol }}</small>
+            </div>
+            <hr>
+            <a routerLink="/perfil" (click)="cerrarMenu()">Mi Perfil</a>
+            <a routerLink="/cliente/saldo" *ngIf="usuarioActual.rol === 'CLIENTE'" (click)="cerrarMenu()">
+              Saldo: Q{{ usuarioActual.saldo }}
+            </a>
+            <a routerLink="/freelancer/saldo" *ngIf="usuarioActual.rol === 'FREELANCER'" (click)="cerrarMenu()">
+              Saldo: Q{{ usuarioActual.saldo }}
+            </a>
+            <hr>
+            <a (click)="logout()" class="logout-btn">Cerrar Sesión</a>
+          </div>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,30 @@
+<div class="proyectos-container" *ngIf="proyecto">
+  <div class="proyectos-header">
+    <button routerLink="/freelancer/explorar" class="btn-ver">← Volver al listado</button>
+    <h1>{{ proyecto.titulo }}</h1>
+  </div>
+
+  <div class="proyecto-card" style="cursor: default;">
+    <div class="proyecto-header">
+      <span class="presupuesto">Q{{ proyecto.presupuestoMinimo }} - Q{{ proyecto.presupuestoMaximo }}</span>
+      <span class="meta-item">Plazo: {{ proyecto.plazo }} días</span>
+    </div>
+
+    <div class="descripcion-completa" style="margin: 20px 0;">
+      <h3>Descripción del Proyecto</h3>
+      <p style="white-space: pre-wrap; line-height: 1.6;">{{ proyecto.descripcion }}</p>
+    </div>
+
+    <div class="cliente-seccion" style="padding-top: 20px; border-top: 1px solid #eee;">
+      <h3>Sobre el Cliente</h3>
+      <p><strong>{{ proyecto.cliente.nombreCompleto }}</strong></p>
+      <p class="calificacion">Puntuación: ⭐ {{ proyecto.cliente.calificacion | number:'1.1-1' }}</p>
+    </div>
+
+    <div class="acciones" style="margin-top: 30px; text-align: center;">
+      <button class="btn-nueva" [routerLink]="['/freelancer/propuestas/crear', proyecto.id]" style="padding: 15px 40px; font-size: 16px;">
+        Enviar Propuesta Ahora
+      </button>
+    </div>
+  </div>
+</div>

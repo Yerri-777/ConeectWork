@@ -1,0 +1,132 @@
+.comision-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.comision-card,
+.historial-card {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.comision-display {
+  text-align: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.comision-value {
+  font-size: 48px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.comision-display p {
+  margin: 10px 0 0 0;
+  opacity: 0.9;
+}
+
+.comision-form {
+  border-top: 1px solid #ecf0f1;
+  padding-top: 20px;
+}
+
+.comision-form h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-group input {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  border: 1px solid #ecf0f1;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  color: #95a5a6;
+  font-size: 12px;
+}
+
+.warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 20px 0;
+  color: #856404;
+  font-size: 14px;
+}
+
+.btn-guardar {
+  padding: 12px 30px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background: #229954;
+}
+
+.btn-guardar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #ecf0f1;
+  color: #555;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #95a5a6;
+}

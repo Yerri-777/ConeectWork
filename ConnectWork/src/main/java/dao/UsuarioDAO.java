@@ -35,22 +35,32 @@ public class UsuarioDAO {
         }
     }
 
-    // ─── Login ───────────────────────────────────────────────────────────────
-    public Usuario login(String username, String password) throws SQLException {
-        String sql = "SELECT * FROM usuario WHERE username = ?";
-        try (Connection cn = ConexionBD.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, username);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Usuario u = mapear(rs);
-                    if (!u.isActivo()) return null;
-                    if (PasswordUtil.verificar(password, u.getPasswordHash())) return u;
+   public Usuario login(String username, String password) throws SQLException {
+    String sql = "SELECT * FROM usuario WHERE username = ?";
+    try (Connection cn = ConexionBD.getConnection();
+         PreparedStatement ps = cn.prepareStatement(sql)) {
+        ps.setString(1, username);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                Usuario u = mapear(rs);
+                if (!u.isActivo()) {
+                    System.out.println("DEBUG: Usuario inactivo: " + username);
+                    return null;
                 }
+                if (PasswordUtil.verificar(password, u.getPasswordHash())) {
+                    System.out.println("DEBUG: Contraseña verificada para: " + username);
+                    return u;
+                } else {
+                    System.out.println("DEBUG: Contraseña incorrecta para: " + username);
+                    return null;
+                }
+            } else {
+                System.out.println("DEBUG: Usuario no encontrado en BD: " + username);
             }
         }
-        return null;
     }
+    return null;
+}
 
     // ─── Buscar por ID ───────────────────────────────────────────────────────
     public Usuario buscarPorId(int id) throws SQLException {

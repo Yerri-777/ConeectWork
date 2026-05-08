@@ -1,0 +1,48 @@
+<div class="solicitudes-container">
+  <h1> Solicitudes de Categorías</h1>
+
+  <div class="table-container" *ngIf="solicitudes.length > 0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Freelancer</th>
+          <th>Categoría Sugerida</th>
+          <th>Motivo/Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sol of solicitudes">
+          <td>{{ sol.nombreCliente || '-' }}</td>
+          <td>{{ sol.nombre }}</td>
+          <td>{{ sol.descripcion || '-' }}</td>
+          <td>
+            <span class="badge"
+              [ngClass]="'badge-' + (sol.estado === 'PENDIENTE' ? 'warning' : (sol.estado || '').toLowerCase())">
+              {{ sol.estado }}
+            </span>
+          </td>
+          <td class="acciones">
+            <button
+              *ngIf="sol.estado === 'PENDIENTE'"
+              class="btn-aceptar"
+              (click)="aceptarSolicitud(sol)">
+              ✓ Aceptar
+            </button>
+            <button
+              *ngIf="sol.estado === 'PENDIENTE'"
+              class="btn-rechazar"
+              (click)="rechazarSolicitud(sol)">
+              ✕ Rechazar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="solicitudes.length === 0" class="empty-state">
+    <p>No hay solicitudes de categorías pendientes</p>
+  </div>
+</div>

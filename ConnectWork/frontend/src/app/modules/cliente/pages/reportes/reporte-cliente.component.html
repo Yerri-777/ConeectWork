@@ -1,0 +1,41 @@
+<div class="reportes-container">
+  <h1>📊 Reportes y Estadísticas</h1>
+
+  <div class="filtros-card">
+    <div class="form-group">
+      <label>Rango de Fechas</label>
+      <select class="form-control" [(ngModel)]="periodo" (change)="cargarDatos()">
+        <option value="mes">Último Mes</option>
+        <option value="trimestre">Último Trimestre</option>
+        <option value="año">Este Año</option>
+      </select>
+    </div>
+    <button class="btn-export" (click)="exportarPDF()">
+      <span>📄</span> Exportar PDF
+    </button>
+  </div>
+
+  <div class="reporte-grid">
+    <div class="chart-placeholder">
+      <h3>Inversión por Categoría</h3>
+      <div class="grafico-mock">[Gráfico de Pastel]</div>
+      <table class="data-table">
+        <tr *ngFor="let item of statsCategorias">
+          <td>{{ item.nombre }}</td>
+          <td class="text-right"><strong>{{ item.total | currency:'GTQ' }}</strong></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="chart-placeholder">
+      <h3>Estado de Proyectos</h3>
+      <div class="grafico-mock">[Gráfico de Barras]</div>
+      <table class="data-table">
+        <tr *ngFor="let item of statsEstados">
+          <td>{{ item.estado }}</td>
+          <td class="text-right"><strong>{{ item.cantidad }} proyectos</strong></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="proyectos-container" *ngIf="proyecto">
+  <div class="header-flex">
+    <button class="btn-outline" routerLink="/cliente/proyectos">← Volver</button>
+    <div class="actions">
+      <button class="btn-primary" [routerLink]="['/cliente/proyectos/editar', proyecto.id]">Editar</button>
+    </div>
+  </div>
+
+  <div class="grid-form" style="grid-template-columns: 2fr 1fr;">
+    <div class="table-card">
+      <h1>{{ proyecto.titulo }}</h1>
+      <p class="estado">Estado: <span class="badge badge-abierto">{{ proyecto.estado }}</span></p>
+      <hr>
+      <h3>Descripción</h3>
+      <p>{{ proyecto.descripcion }}</p>
+    </div>
+
+    <div class="table-card">
+      <h3>Resumen</h3>
+      <p><strong>Presupuesto:</strong> {{ proyecto.presupuesto | currency:'GTQ' }}</p>
+      <p><strong>Fecha Pub:</strong> {{ proyecto.fechaCreacion | date }}</p>
+      <p><strong>Propuestas:</strong> {{ proyecto.totalPropuestas }}</p>
+    </div>
+  </div>
+</div>

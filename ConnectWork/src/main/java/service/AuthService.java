@@ -1,39 +1,49 @@
 package service;
-
+ 
 import dao.UsuarioDAO;
 import modelo.Usuario;
 import util.JwtUtil;
-
+import util.PasswordUtil;
+ 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+ 
 /**
  * Lógica de negocio para autenticación.
  * El AuthServlet delega aquí; este servicio orquesta UsuarioDAO + JwtUtil.
  */
 public class AuthService {
-
+ 
     private final UsuarioDAO usuarioDAO;
-
+ 
     public AuthService() {
         this.usuarioDAO = new UsuarioDAO();
     }
-
+ 
     // ─── Login ────────────────────────────────────────────────────────────────
     /**
      * @return Map con token y datos del usuario, o null si credenciales inválidas
      */
     public Map<String, Object> login(String username, String password) throws SQLException {
+        System.out.println("DEBUG: Intentando login con usuario: " + username);
+        
         if (username == null || username.isBlank() || password == null || password.isBlank()) {
             throw new IllegalArgumentException("username y password son requeridos");
         }
+        
         Usuario u = usuarioDAO.login(username, password);
-        if (u == null) return null;   // credenciales incorrectas o cuenta inactiva
-
+        
+        if (u == null) {
+            System.out.println("DEBUG: Usuario no encontrado o credenciales incorrectas: " + username);
+            return null;   // credenciales incorrectas o cuenta inactiva
+        }
+ 
+        System.out.println("DEBUG: Usuario encontrado y autenticado: " + u.getUsername());
+        
         String token = JwtUtil.generarToken(u.getId(), u.getUsername(), u.getRol());
-
+        
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("token",          token);
         data.put("id",             u.getId());
@@ -43,9 +53,11 @@ public class AuthService {
         data.put("rol",            u.getRol());
         data.put("saldo",          u.getSaldo());
         data.put("perfilCompleto", u.isPerfilCompleto());
+        
+        System.out.println("DEBUG: Login exitoso, token generado");
         return data;
     }
-
+ 
     // ─── Registro ─────────────────────────────────────────────────────────────
     /**
      * @return id del nuevo usuario
@@ -56,7 +68,7 @@ public class AuthService {
         if (!"CLIENTE".equals(rol) && !"FREELANCER".equals(rol)) {
             throw new IllegalArgumentException("rol debe ser CLIENTE o FREELANCER");
         }
-
+ 
         String[] obligatorios = {"nombreCompleto","username","password","correo",
                                   "telefono","direccion","cui","fechaNacimiento"};
         for (String campo : obligatorios) {
@@ -65,14 +77,14 @@ public class AuthService {
                 throw new IllegalArgumentException("Campo requerido: " + campo);
             }
         }
-
+ 
         if (usuarioDAO.existeUsername((String) datos.get("username"))) {
             throw new IllegalStateException("USERNAME_DUPLICADO");
         }
         if (usuarioDAO.existeCorreo((String) datos.get("correo"))) {
             throw new IllegalStateException("CORREO_DUPLICADO");
         }
-
+ 
         Usuario u = new Usuario();
         u.setNombreCompleto((String) datos.get("nombreCompleto"));
         u.setUsername((String) datos.get("username"));
@@ -83,7 +95,8 @@ public class AuthService {
         u.setCui((String) datos.get("cui"));
         u.setFechaNacimiento(LocalDate.parse((String) datos.get("fechaNacimiento")));
         u.setRol(rol);
-
+        u.setActivo(true); // AGREGAR ESTA LÍNEA - Usuario nuevo activo por defecto
+ 
         int id = usuarioDAO.registrar(u);
         if (id < 0) throw new RuntimeException("Error al insertar usuario en BD");
         return id;

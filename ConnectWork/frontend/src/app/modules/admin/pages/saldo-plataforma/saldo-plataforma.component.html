@@ -1,0 +1,87 @@
+<div class="saldo-container" *ngIf="!cargando">
+  <h1>Saldo de la Plataforma</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon"></div>
+      <div class="stat-info">
+        <h3>Saldo Total Acumulado</h3>
+      <p class="amount">{{ saldoData!.totalAcumulado | currency:'GTQ':'symbol':'1.2-2' }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card pending">
+      <div class="stat-icon"></div>
+      <div class="stat-info">
+        <h3>Comisiones Pendientes</h3>
+      <p class="amount">{{ saldoData!.comisionesPendientes | currency:'GTQ':'symbol':'1.2-2' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="transacciones-card">
+    <div class="card-header">
+      <h2>Últimos Movimientos</h2>
+      <div class="header-actions">
+        <button class="btn-refrescar" (click)="cargarSaldo()">Actualizar</button>
+        <button class="btn-descargar" (click)="descargarReporte()">Descargar PDF</button>
+      </div>
+    </div>
+
+    <div class="comision-control">
+      <label>Comisión Actual: {{ comisionActual }}%</label>
+      <input type="range" min="0" max="100" [value]="comisionActual"
+             #rangeInput
+             (change)="actualizarComision(+rangeInput.value)">
+    </div>
+
+    <div class="table-container" *ngIf="transacciones.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Monto Bruto</th>
+            <th>Comisión ({{ comisionActual }}%)</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let trans of transacciones">
+            <td>{{ trans.fecha | date:'short' }}</td>
+            <td>
+              <div class="concepto-info">
+                <strong>{{ trans.tipo }}</strong>
+                <span>ID Proyecto: {{ trans.proyectoId }}</span>
+              </div>
+            </td>
+           <td>{{ trans.montoBruto | currency:'GTQ':'symbol':'1.2-2' }}</td>
+           <td class="comision-text">+{{ trans.montoComision | currency:'GTQ':'symbol':'1.2-2' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="trans.estado.toLowerCase()">
+                {{ trans.estado }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="2">TOTAL</td>
+            <td>{{ getTotalBruto() | currency:'GTQ':'symbol':'1.2-2' }}</td>
+           <td>{{ getTotalComisiones() | currency:'GTQ':'symbol':'1.2-2' }}</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div *ngIf="transacciones.length === 0" class="empty-state">
+      <p>No se registran transacciones recientes</p>
+    </div>
+  </div>
+</div>
+
+<div class="cargando" *ngIf="cargando">
+  <div class="spinner"></div>
+  <p>Cargando datos...</p>
+</div>

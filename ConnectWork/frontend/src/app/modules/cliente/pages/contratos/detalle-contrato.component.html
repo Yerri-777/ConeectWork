@@ -1,0 +1,37 @@
+<div class="contratos-container" *ngIf="contrato">
+  <div class="header">
+    <button class="btn-outline" routerLink="/cliente/contratos">← Volver al listado</button>
+    <h2>Contrato: {{ contrato.proyectoTitulo }}</h2>
+  </div>
+
+  <div class="detalle-grid">
+    <div class="contratos-card">
+      <h3>Información del Acuerdo</h3>
+      <div class="info-box">
+        <p><strong>Freelancer:</strong> {{ contrato.freelancerNombre }}</p>
+        <p><strong>Fecha de Inicio:</strong> {{ contrato.fechaInicio | date:'longDate' }}</p>
+        <p><strong>Monto en Depósito (Garantía):</strong> {{ contrato.montoAcordado | currency:'GTQ' }}</p>
+      </div>
+
+      <h3 style="margin-top: 25px;">Descripción del Trabajo</h3>
+      <p style="color: #555; line-height: 1.6;">{{ contrato.descripcionAcuerdo }}</p>
+    </div>
+
+    <div class="contratos-card">
+      <h3>Estado Actual</h3>
+      <span class="badge" [ngClass]="'badge-' + contrato.estado.toLowerCase()" style="font-size: 16px;">
+        {{ contrato.estado }}
+      </span>
+
+      <div class="info-box" style="margin-top: 20px;">
+        <h4>Acciones Disponibles</h4>
+        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">
+          Solo puedes cancelar si el trabajo no ha sido entregado.
+        </p>
+        <button class="btn-cancelar" *ngIf="contrato.estado === 'ACTIVO'" (click)="cancelarContrato()">
+          Solicitar Cancelación
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

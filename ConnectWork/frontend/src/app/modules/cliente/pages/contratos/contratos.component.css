@@ -1,0 +1,87 @@
+.contratos-container {
+  padding: 25px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 30px;
+}
+
+/* Tabla de Contratos */
+.contratos-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding: 15px;
+  background: #fcfcfd;
+  color: #7f8c8d;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid #f1f4f8;
+  font-size: 14px;
+}
+
+/* Badges */
+.badge {
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-activo { background: #e3f2fd; color: #1976d2; }
+.badge-completado { background: #e8f5e9; color: #2e7d32; }
+.badge-cancelado { background: #ffebee; color: #c62828; }
+
+/* Detalle de Contrato */
+.detalle-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.info-box {
+  background: #fcfcfd;
+  border: 1px solid #edf2f7;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.btn-detalle {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-cancelar {
+  background: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}

@@ -1,0 +1,39 @@
+<div class="contratos-container" *ngIf="contrato">
+  <div class="contratos-header">
+    <button routerLink="/freelancer/contratos" class="btn-detalle">← Volver</button>
+    <h1>Gestión de Contrato</h1>
+  </div>
+
+  <div class="contrato-card" style="display: block; cursor: default;">
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+      <div>
+        <h2>{{ contrato.proyecto.titulo }}</h2>
+        <span class="badge-estado" [ngClass]="contrato.estado.toLowerCase()">{{ contrato.estado }}</span>
+      </div>
+      <div class="monto-contrato" style="font-size: 24px;">
+        Q{{ contrato.monto | number:'1.2-2' }}
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+      <div class="detalles-tecnicos">
+        <h4>Especificaciones</h4>
+        <p><strong>Fecha de Inicio:</strong> {{ contrato.fechaInicio | date:'longDate' }}</p>
+        <p><strong>Plazo Acordado:</strong> {{ contrato.plazo }} días</p>
+        <p><strong>Cliente:</strong> {{ contrato.cliente.nombreCompleto }}</p>
+      </div>
+
+      <div class="acciones-contrato" style="text-align: right;">
+        <h4>Gestión de Entregas</h4>
+        <p>Para recibir el pago, debes subir los archivos finales aquí.</p>
+        <button
+          *ngIf="contrato.estado === 'ACTIVO'"
+          class="btn-detalle"
+          [routerLink]="['/freelancer/entregas/subir', contrato.id]"
+          style="background: #27ae60; padding: 12px 25px;">
+          📤 Subir Archivos de Entrega
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

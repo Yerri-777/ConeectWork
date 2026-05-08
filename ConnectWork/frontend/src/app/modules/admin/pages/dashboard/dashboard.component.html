@@ -1,0 +1,66 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1> Dashboard Administrativo</h1>
+    <p>Bienvenido al panel de control</p>
+  </div>
+
+  <div class="stats-grid">
+    <div
+      *ngFor="let stat of estadisticas"
+      class="stat-card"
+      [ngClass]="'stat-' + stat.color"
+      [@fadeInUp]>
+      <div class="stat-header">
+        <span class="stat-icon">{{ stat.icono }}</span>
+        <h3>{{ stat.titulo }}</h3>
+      </div>
+      <div class="stat-value">{{ stat.valor }}</div>
+    </div>
+  </div>
+
+  <div class="dashboard-sections">
+    <div class="section-card">
+      <h2> Top Freelancers</h2>
+      <table class="table" *ngIf="topFreelancers.length > 0">
+        <tr *ngFor="let f of topFreelancers">
+          <td>{{ f.nombre }}</td>
+          <td>{{ f.calificacion | number:'1.1-1' }} ⭐</td>
+          <td>Q{{ f.ingresos | number:'1.2-2' }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section-card">
+      <h2>Top Categorías</h2>
+      <table class="table" *ngIf="topCategorias.length > 0">
+        <tr *ngFor="let c of topCategorias">
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.totalProyectos }} proyectos</td>
+          <td>Q{{ c.volumenTotal | number:'1.2-2' }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section-card full-width">
+      <h2> Resumen Ingresos</h2>
+      <div class="ingreso-summary" *ngIf="ingresos">
+        <div class="ingreso-item">
+          <span>Total Ingresos:</span>
+          <strong>Q{{ ingresos.totalIngresos | number:'1.2-2' }}</strong>
+        </div>
+        <div class="ingreso-item">
+          <span>Comisiones:</span>
+          <strong>Q{{ ingresos.totalComisiones | number:'1.2-2' }}</strong>
+        </div>
+        <div class="ingreso-item">
+          <span>% Comisión:</span>
+          <strong>{{ ingresos.comisionActual }}%</strong>
+        </div>
+        <div class="ingreso-item">
+          <span>Contratos:</span>
+          <strong>{{ ingresos.totalContratos }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

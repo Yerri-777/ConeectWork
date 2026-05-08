@@ -1,0 +1,29 @@
+<div class="reportes-container">
+  <h1>📊 Mis Reportes Profesionales</h1>
+
+  <div class="reportes-grid">
+    <div class="card-reporte">
+      <h2>📈 Rendimiento General</h2>
+      <div class="stats-list">
+        <div class="stat-item">
+          <span class="label">Proyectos Completados:</span>
+          <span class="value">{{ stats.proyectosCompletados }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Tasa de Aceptación:</span>
+          <span class="value">{{ stats.tasaAceptacion | number:'1.1-1' }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-reporte">
+      <h2>💰 Ingresos</h2>
+      <div class="stats-list">
+        <div class="stat-item">
+          <span class="label">Ingresos Este Mes:</span>
+          <span class="value">Q{{ stats.ingresosEsteMes | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+.entregas-container {
+  padding: 25px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Tarjeta de Entrega */
+.entrega-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-left: 5px solid #667eea;
+}
+
+.entrega-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.archivo-box {
+  background: #f1f4f8;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+/* Formularios de Revisión */
+.revision-form {
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.btn-aprobar {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-rechazar-trigger {
+  background: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  padding: 12px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Sistema de Calificación (Stars) */
+.stars-container {
+  display: flex;
+  gap: 10px;
+  font-size: 30px;
+  margin: 15px 0;
+}
+
+.star {
+  cursor: pointer;
+  color: #dcdde1;
+  transition: color 0.2s;
+}
+
+.star.active {
+  color: #f1c40f;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+}

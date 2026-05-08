@@ -1,0 +1,49 @@
+<div class="entrega-container">
+  <div class="entrega-header">
+    <h1>📦 Subir Entrega</h1>
+    <p>Entrega tu trabajo para que el cliente lo revise</p>
+  </div>
+
+  <form [formGroup]="entregaForm" (ngSubmit)="subirEntrega()" class="entrega-form">
+    <div class="form-section">
+      <h2>Descripción de la Entrega</h2>
+      <div class="form-group">
+        <label>Descripción del Trabajo Entregado</label>
+        <textarea
+          formControlName="descripcion"
+          placeholder="Describe qué estás entregando, cambios realizados, etc."
+          rows="6"></textarea>
+        <span class="error" *ngIf="isFieldInvalid('descripcion')">
+          Descripción requerida
+        </span>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Archivos</h2>
+      <div class="file-input-wrapper">
+        <input type="file" multiple (change)="onFileSelected($event)" #fileInput style="display: none;">
+        <button type="button" class="btn-file" (click)="fileInput.click()">
+          📁 Seleccionar Archivos
+        </button>
+      </div>
+
+      <div class="archivos-list" *ngIf="archivos.length > 0">
+        <p><strong>Archivos seleccionados:</strong></p>
+        <ul>
+          <li *ngFor="let archivo of archivos">
+            {{ archivo.name }}
+            <button type="button" class="btn-eliminar-archivo" (click)="eliminarArchivo(archivo)">✕</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-actions" style="display: flex; gap: 15px; justify-content: center;">
+      <button type="button" class="btn-cancelar" routerLink="/freelancer/entregas">Cancelar</button>
+      <button type="submit" class="btn-enviar" [disabled]="!entregaForm.valid || archivos.length === 0 || cargando">
+        {{ cargando ? 'Subiendo...' : 'Subir Entrega' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,58 @@
+<div class="entregas-container">
+  <div class="form-card" style="max-width: 600px; margin: auto; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+
+    <div style="text-align: center; margin-bottom: 30px;">
+      <div style="font-size: 50px; margin-bottom: 10px;">🏆</div>
+      <h2 style="margin: 0; color: #2c3e50;">¡Proyecto Completado!</h2>
+      <p style="color: #7f8c8d;">Tu opinión es muy importante para la comunidad de ConnectWork.</p>
+    </div>
+
+    <div class="seccion-calificacion" style="text-align: center;">
+      <label style="display: block; margin-bottom: 15px; font-weight: 600; color: #34495e;">
+        ¿Cómo calificarías el desempeño del freelancer?
+      </label>
+
+      <!-- Sistema de Estrellas -->
+      <div class="stars-container" style="justify-content: center; display: flex; gap: 12px; margin-bottom: 30px;">
+        <span *ngFor="let s of [1,2,3,4,5]"
+              class="star"
+              [class.active]="puntuacion >= s"
+              (click)="setRating(s)"
+              style="font-size: 45px; cursor: pointer; transition: transform 0.2s;">
+          ★
+        </span>
+      </div>
+
+      <div class="form-group" style="text-align: left;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #34495e;">
+          Deja un comentario sobre tu experiencia:
+        </label>
+        <textarea
+          [(ngModel)]="comentario"
+          rows="5"
+          placeholder="Ej: Excelente comunicación y entrega puntual. Muy profesional..."
+          style="width: 100%; padding: 15px; border: 2px solid #edf2f7; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.3s;"
+          onfocus="this.style.borderColor='#667eea'">
+        </textarea>
+      </div>
+
+      <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
+        <button
+          class="btn-primary"
+          (click)="enviarCalificacion()"
+          [disabled]="puntuacion === 0 || guardando"
+          style="width: 100%; padding: 15px; font-size: 16px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
+          {{ guardando ? 'Guardando reseña...' : 'Publicar Calificación' }}
+        </button>
+
+        <button
+          class="btn-outline"
+          (click)="router.navigate(['/cliente/dashboard'])"
+          [disabled]="guardando"
+          style="border: none; color: #95a5a6; background: transparent;">
+          Omitir por ahora
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

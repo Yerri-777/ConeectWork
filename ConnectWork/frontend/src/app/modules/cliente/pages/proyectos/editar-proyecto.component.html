@@ -1,0 +1,59 @@
+<div class="proyectos-container">
+  <div class="form-card" *ngIf="!cargando; else loader">
+    <div class="header-flex">
+      <h2>Editar Proyecto</h2>
+      <span class="badge badge-proceso">ID: {{proyectoId}}</span>
+    </div>
+
+    <form [formGroup]="proyectoForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Título del Proyecto</label>
+        <input
+          type="text"
+          formControlName="titulo"
+          placeholder="Ej: Desarrollo App Móvil">
+        <span class="error" *ngIf="isFieldInvalid('titulo')">El título es requerido</span>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción Detallada</label>
+        <textarea
+          formControlName="descripcion"
+          rows="8"
+          placeholder="Describe los requerimientos..."></textarea>
+        <span class="error" *ngIf="isFieldInvalid('descripcion')">La descripción debe tener al menos 50 caracteres</span>
+      </div>
+
+      <div class="grid-form">
+        <div class="form-group">
+          <label>Presupuesto Estimado (GTQ)</label>
+          <input type="number" formControlName="presupuesto">
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select formControlName="categoria">
+            <option value="web">Desarrollo Web</option>
+            <option value="diseño">Diseño Gráfico</option>
+            <option value="mobile">Desarrollo Mobile</option>
+            <option value="marketing">Marketing Digital</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px; display: flex; gap: 15px;">
+        <button type="submit" class="btn-primary" [disabled]="proyectoForm.invalid || guardando">
+          {{ guardando ? 'Guardando cambios...' : 'Actualizar Proyecto' }}
+        </button>
+        <button type="button" class="btn-outline" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <ng-template #loader>
+    <div class="table-card" style="text-align: center; padding: 50px;">
+      <p>Cargando datos del proyecto...</p>
+    </div>
+  </ng-template>
+</div>

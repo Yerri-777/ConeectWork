@@ -1,0 +1,95 @@
+.entrega-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.entrega-header {
+  margin-bottom: 40px;
+}
+
+.entrega-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+}
+
+.entrega-form {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.form-section {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-input-wrapper {
+  margin-bottom: 15px;
+}
+
+.btn-file {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.archivos-list {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.archivos-list li {
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.btn-eliminar-archivo {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Historial Table */
+.table-entregas {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-collapse: collapse;
+}
+
+.table-entregas th, .table-entregas td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.estado-entrega {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pendiente { background: #fff3cd; color: #856404; }
+.aprobada { background: #d4edda; color: #155724; }
+.rechazada { background: #f8d7da; color: #721c24; }

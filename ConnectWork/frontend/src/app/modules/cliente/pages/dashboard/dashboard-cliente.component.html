@@ -1,0 +1,84 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>Dashboard Cliente</h1>
+      <p>Bienvenido de nuevo, aquí tienes un resumen de <strong>ConnectWork</strong></p>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <!-- Card: Proyectos -->
+    <div class="stat-card blue" [@fadeInUp]>
+      <div class="stat-icon"><i class="ph ph-folder"></i> </div>
+      <div class="stat-info">
+        <h3>Proyectos Activos</h3>
+        <span class="value">{{ stats.proyectosActivos }}</span>
+      </div>
+    </div>
+
+    <!-- Card: Propuestas -->
+    <div class="stat-card green" [@fadeInUp]>
+      <div class="stat-icon"><i class="ph ph-chat-circle"></i> </div>
+      <div class="stat-info">
+        <h3>Propuestas</h3>
+        <span class="value">{{ stats.propuestasRecibidas }}</span>
+      </div>
+    </div>
+
+    <!-- Card: Contratos -->
+    <div class="stat-card orange" [@fadeInUp]>
+      <div class="stat-icon"><i class="ph ph-file-text"></i> </div>
+      <div class="stat-info">
+        <h3>Contratos</h3>
+        <span class="value">{{ stats.contratosActivos }}</span>
+      </div>
+    </div>
+
+    <!-- Card: Saldo -->
+    <div class="stat-card purple" [@fadeInUp]>
+      <div class="stat-icon"><i class="ph ph-wallet"></i> </div>
+      <div class="stat-info">
+        <h3>Saldo Disponible</h3>
+        <span class="value">{{ stats.saldoDisponible | currency:'GTQ':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <!-- Actividad Reciente -->
+    <section class="section-card main-section">
+      <div class="section-header">
+        <h2> Actividad Reciente</h2>
+      </div>
+      <div class="empty-state">
+        <div class="empty-icon"></div>
+        <p>No hay actividad reciente para mostrar por ahora.</p>
+      </div>
+    </section>
+
+    <!-- Accesos Rápidos -->
+    <aside class="section-card side-section">
+      <div class="section-header">
+        <h2>Accesos Rápidos</h2>
+      </div>
+      <div class="quick-actions-grid">
+        <a routerLink="/cliente/proyectos/crear" class="action-item primary">
+          <span class="icon"></span>
+          <span>Crear Proyecto</span>
+        </a>
+        <a routerLink="/cliente/proyectos" class="action-item">
+          <span class="icon"></span>
+          <span>Ver Proyectos</span>
+        </a>
+        <a routerLink="/cliente/propuestas" class="action-item">
+          <span class="icon"></span>
+          <span>Propuestas</span>
+        </a>
+        <a routerLink="/cliente/contratos" class="action-item">
+          <span class="icon"></span>
+          <span>Contratos</span>
+        </a>
+      </div>
+    </aside>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="forbidden-container" [@fadeIn]>
+  <div class="forbidden-content">
+    <div class="lock-icon" [@bounceIn]>🔒</div>
+
+    <div class="error-code">403</div>
+    <h1>Acceso Restringido</h1>
+
+    <p class="forbidden-message">
+      Lo sentimos, no tienes los permisos necesarios para acceder a esta sección de la plataforma.
+    </p>
+
+    <div class="info-box">
+      <p>Esto puede deberse a que:</p>
+      <ul>
+        <li>Tu rol de usuario no coincide con el requerido.</li>
+        <li>Tu sesión ha expirado y necesitas re-autenticarte.</li>
+        <li>Estás intentando acceder a una zona administrativa.</li>
+      </ul>
+    </div>
+
+    <div class="forbidden-actions">
+      <a routerLink="/" class="btn btn-home">Ir al Inicio</a>
+      <a routerLink="/auth/login" class="btn btn-login">Cambiar de Cuenta</a>
+    </div>
+  </div>
+</div>

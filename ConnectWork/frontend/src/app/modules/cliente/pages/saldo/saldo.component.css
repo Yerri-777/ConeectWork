@@ -1,0 +1,85 @@
+.saldo-container {
+  padding: 25px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Tarjeta de Balance */
+.balance-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 20px rgba(118, 75, 162, 0.2);
+}
+
+.balance-info h2 {
+  margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.balance-amount {
+  font-size: 36px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Historial y Formularios */
+.saldo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 25px;
+}
+
+.card-white {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #f1f4f8;
+}
+
+.trans-desc {
+  display: flex;
+  flex-direction: column;
+}
+
+.trans-date {
+  font-size: 12px;
+  color: #95a5a6;
+}
+
+.monto-positivo { color: #27ae60; font-weight: bold; }
+.monto-negativo { color: #e74c3c; font-weight: bold; }
+
+/* Input de Recarga */
+.input-recarga {
+  width: 100%;
+  padding: 15px;
+  font-size: 20px;
+  text-align: center;
+  border: 2px solid #edf2f7;
+  border-radius: 8px;
+  margin: 20px 0;
+  outline: none;
+}
+
+.input-recarga:focus {
+  border-color: #667eea;
+}
+
+@media (max-width: 992px) {
+  .saldo-grid { grid-template-columns: 1fr; }
+}

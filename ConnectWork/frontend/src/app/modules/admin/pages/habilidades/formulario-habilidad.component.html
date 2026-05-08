@@ -1,0 +1,30 @@
+<div class="modal-overlay" (click)="cancelar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>{{ habilidad ? 'Editar' : 'Nueva' }} Habilidad</h2>
+
+    <div class="form-group">
+      <label>Nombre</label>
+      <input [(ngModel)]="habTemp.nombre" type="text" placeholder="Nombre de la habilidad">
+    </div>
+
+    <div class="form-group">
+      <label>Categoría</label>
+      <select [(ngModel)]="habTemp.idCategoria">
+        <option value="" disabled selected>Seleccione una categoría</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">
+          {{ cat.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea [(ngModel)]="habTemp.descripcion" placeholder="Descripción"></textarea>
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+      <button class="btn-guardar" (click)="guardar()">Guardar</button>
+    </div>
+  </div>
+</div>

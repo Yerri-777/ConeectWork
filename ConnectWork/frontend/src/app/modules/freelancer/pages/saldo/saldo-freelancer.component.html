@@ -1,0 +1,8 @@
+<div class="saldo-page">
+	<h2>Saldo Freelance</h2>
+	<div *ngIf="loading">Cargando saldo...</div>
+	<div *ngIf="!loading">
+		<p *ngIf="saldo !== null">Saldo disponible: {{ saldo | number:'1.0-2' }}</p>
+		<p *ngIf="saldo === null">Saldo no disponible.</p>
+	</div>
+</div>

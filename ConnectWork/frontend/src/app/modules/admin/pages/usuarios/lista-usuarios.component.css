@@ -1,0 +1,193 @@
+.usuarios-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.usuarios-header {
+  margin-bottom: 30px;
+}
+
+.usuarios-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+}
+
+.header-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.search-input,
+.filter-select {
+  padding: 10px 15px;
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 13px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.search-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #95a5a6;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.table th {
+  padding: 15px;
+  text-align: left;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.table td {
+  padding: 15px;
+  border-bottom: 1px solid #ecf0f1;
+  color: #555;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr.fila-inactiva {
+  opacity: 0.6;
+}
+
+.username-badge {
+  background-color: #e8f4f8;
+  color: #2c3e50;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.rol-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.rol-admin {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.rol-cliente {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.rol-freelancer {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.estado-badge.activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-badge.inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.btn-accion {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-activar {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.btn-activar:hover {
+  background-color: #c3e6cb;
+}
+
+.btn-desactivar {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.btn-desactivar:hover {
+  background-color: #f5c6cb;
+}
+
+.usuarios-footer {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #95a5a6;
+}
+
+.usuarios-footer strong {
+  color: #2c3e50;
+}
+
+@media (max-width: 1024px) {
+  .header-controls {
+    flex-direction: column;
+  }
+  .search-input, .filter-select {
+    max-width: 100%;
+  }
+  .table { font-size: 12px; }
+  .table th, .table td { padding: 10px; }
+}
+
+@media (max-width: 768px) {
+  .usuarios-container { padding: 15px; }
+  .usuarios-footer { flex-direction: column; gap: 10px; }
+}

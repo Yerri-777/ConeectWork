@@ -1,0 +1,132 @@
+<div class="perfil-container">
+  <div class="perfil-header">
+    <h1>👤 Completar Perfil</h1>
+    <p>Información necesaria para los freelancers</p>
+  </div>
+
+  <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="perfil-form">
+    <div class="form-section">
+      <h2>Información Empresarial</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre de Empresa</label>
+          <input
+            type="text"
+            formControlName="nombreEmpresa"
+            placeholder="Nombre de tu empresa o negocio">
+          <span class="error" *ngIf="isFieldInvalid('nombreEmpresa')">
+            Nombre de empresa requerido
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Sitio Web (Opcional)</label>
+          <input
+            type="url"
+            formControlName="sitioWeb"
+            placeholder="https://ejemplo.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción de Negocio</label>
+        <textarea
+          formControlName="descripcion"
+          placeholder="Cuéntanos sobre tu negocio, qué haces y qué necesitas"
+          rows="4"></textarea>
+        <span class="error" *ngIf="isFieldInvalid('descripcion')">
+          Descripción requerida (mínimo 20 caracteres)
+        </span>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Ubicación</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Departamento</label>
+          <input
+            type="text"
+            formControlName="departamento"
+            placeholder="Ej: Guatemala, Quetzaltenango">
+          <span class="error" *ngIf="isFieldInvalid('departamento')">
+            Departamento requerido
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Municipio</label>
+          <input
+            type="text"
+            formControlName="municipio"
+            placeholder="Ej: Guatemala, Xela">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dirección Completa</label>
+        <textarea
+          formControlName="direccion"
+          placeholder="Calle, avenida, número, zona"
+          rows="2"></textarea>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Contacto Profesional</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Teléfono de Contacto</label>
+          <input
+            type="text"
+            formControlName="telefonoContacto"
+            appPermiteSoloNumero
+            placeholder="+502 77777777">
+          <span class="error" *ngIf="isFieldInvalid('telefonoContacto')">
+            Teléfono válido requerido
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Correo de Contacto (Opcional)</label>
+          <input
+            type="email"
+            formControlName="correoContacto"
+            placeholder="contacto@empresa.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Información Financiera</h2>
+
+      <div class="form-group">
+        <label>Moneda Preferida</label>
+        <select formControlName="moneda">
+          <option value="GTQ">Quetzal (GTQ)</option>
+          <option value="USD">Dólar (USD)</option>
+          <option value="MXN">Peso Mexicano (MXN)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="aceptaTerminos">
+          Acepto los términos y condiciones
+        </label>
+        <span class="error" *ngIf="isFieldInvalid('aceptaTerminos')">
+          Debes aceptar los términos
+        </span>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-guardar" [disabled]="!perfilForm.valid || cargando">
+        {{ cargando ? 'Guardando...' : 'Guardar Perfil' }}
+      </button>
+    </div>
+  </form>
+</div>

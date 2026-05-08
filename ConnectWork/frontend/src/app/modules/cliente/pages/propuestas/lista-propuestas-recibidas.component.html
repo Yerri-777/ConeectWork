@@ -1,0 +1,36 @@
+<div class="propuestas-container">
+  <div class="header">
+    <h1>💬 Propuestas Recibidas</h1>
+    <p>Revisa los candidatos para tus proyectos activos</p>
+  </div>
+
+  <div class="propuestas-grid" *ngIf="propuestas.length > 0; else emptyState">
+  <div class="propuesta-card" *ngFor="let prop of propuestas">
+      <div class="freelancer-info">
+        <div class="avatar-placeholder">{{ prop.freelancerNombre | slice:0:1 }}</div>
+        <div>
+          <strong>{{ prop.freelancerNombre }}</strong>
+          <div class="rating">⭐ {{ prop.freelancerRating }}</div>
+        </div>
+      </div>
+
+      <p class="proyecto-ref">Proyecto: <strong>{{ prop.proyectoTitulo }}</strong></p>
+
+      <div class="oferta-economica">
+        <span class="label">Propuesta de pago</span>
+        <span class="monto">{{ prop.montoOferta | currency:'GTQ' }}</span>
+      </div>
+
+      <div class="acciones-flex">
+        <button class="btn-aceptar" (click)="verDetalle(prop.id)">Ver Detalle</button>
+        <button class="btn-rechazar" (click)="rechazar(prop.id)">Rechazar</button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyState>
+    <div style="text-align: center; padding: 50px;">
+      <p>Aún no has recibido propuestas para tus proyectos.</p>
+    </div>
+  </ng-template>
+</div>
