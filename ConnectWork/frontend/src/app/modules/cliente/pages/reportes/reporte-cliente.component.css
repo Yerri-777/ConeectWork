@@ -1,57 +1,314 @@
 .reportes-container {
-  padding: 25px;
-  background: #f8f9fa;
+  padding: 35px;
+  background: #f4f7fb;
+  min-height: 100vh;
 }
+
+/* =========================
+   HEADER
+========================= */
+
+.reportes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.reportes-header div {
+  flex: 1;
+  text-align: center;
+}
+
+.reportes-header h1 {
+  margin: 0;
+  font-size: 38px;
+  color: #2c3e50;
+  font-weight: 800;
+}
+
+.subtitulo {
+  margin-top: 12px;
+  color: #7f8c8d;
+  font-size: 16px;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* =========================
+   BOTÓN EXPORTAR
+========================= */
+
+.btn-export {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  min-width: 190px;
+}
+
+.btn-export:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(46, 204, 113, 0.25);
+}
+
+/* =========================
+   FILTROS
+========================= */
 
 .filtros-card {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 25px;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 30px;
   display: flex;
-  gap: 15px;
-  align-items: flex-end;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-.reporte-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.chart-placeholder {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  min-height: 300px;
+.form-group {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  border: 1px solid #edf2f7;
 }
+
+.form-group label {
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #34495e;
+  font-size: 15px;
+}
+
+.form-control {
+  min-width: 250px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #dfe6e9;
+  font-size: 15px;
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102,126,234,0.12);
+}
+
+.filtro-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-periodo {
+  background: #eef2ff;
+  color: #667eea;
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  margin-bottom: 35px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 18px;
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border-top: 5px solid #667eea;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-card.success {
+  border-top-color: #27ae60;
+}
+
+.stat-icon {
+  width: 70px;
+  height: 70px;
+  margin: auto;
+  border-radius: 50%;
+  background: #f1f4ff;
+  margin-bottom: 18px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 14px;
+  color: #95a5a6;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-info h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 34px;
+  font-weight: 800;
+}
+
+/* =========================
+   REPORTES
+========================= */
+
+.reporte-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 25px;
+}
+
+.chart-card {
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.chart-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.chart-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 24px;
+}
+
+.chart-header p {
+  margin-top: 10px;
+  color: #95a5a6;
+  line-height: 1.5;
+}
+
+/* =========================
+   MOCK CHARTS
+========================= */
+
+.grafico-mock {
+  height: 240px;
+  border-radius: 16px;
+  background: #f8f9fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.circle-chart {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.barras {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+}
+
+.bar {
+  width: 60px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+.bar-1 {
+  height: 90px;
+}
+
+.bar-2 {
+  height: 150px;
+}
+
+.bar-3 {
+  height: 210px;
+}
+
+/* =========================
+   TABLAS
+========================= */
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
 }
 
-.data-table th, .data-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+.data-table th {
+  background: #f8f9fc;
+  padding: 14px;
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 13px;
+  text-transform: uppercase;
 }
 
-.btn-export {
-  background: #27ae60;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.data-table td {
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #edf2f7;
+  color: #2c3e50;
+}
+
+.text-right {
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+  .reportes-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .filtros-card {
+    flex-direction: column;
+  }
+
+  .reporte-grid {
+    grid-template-columns: 1fr;
+  }
+
 }

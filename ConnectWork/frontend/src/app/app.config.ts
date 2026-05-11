@@ -9,18 +9,16 @@ import { LoaderInterceptor } from './core/interceptores/loader.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Configuración de Rutas con carga perezosa optimizada
-    provideRouter(
-      routes,
-      withPreloading(PreloadAllModules)
-    ),
-    // Cliente HTTP
+
+   provideRouter(routes),
+
+
     provideHttpClient(),
-    // Interceptores (clase-based) registrados como providers
+
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
-    // Habilitar animaciones de Angular
+
     provideAnimations()
   ]
 };

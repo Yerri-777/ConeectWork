@@ -1,6 +1,6 @@
 <div class="entrega-container">
   <div class="entrega-header">
-    <h1>📦 Subir Entrega</h1>
+    <h1> Subir Entrega</h1>
     <p>Entrega tu trabajo para que el cliente lo revise</p>
   </div>
 
@@ -24,7 +24,7 @@
       <div class="file-input-wrapper">
         <input type="file" multiple (change)="onFileSelected($event)" #fileInput style="display: none;">
         <button type="button" class="btn-file" (click)="fileInput.click()">
-          📁 Seleccionar Archivos
+          Seleccionar Archivos
         </button>
       </div>
 
@@ -39,11 +39,12 @@
       </div>
     </div>
 
-    <div class="form-actions" style="display: flex; gap: 15px; justify-content: center;">
-      <button type="button" class="btn-cancelar" routerLink="/freelancer/entregas">Cancelar</button>
-      <button type="submit" class="btn-enviar" [disabled]="!entregaForm.valid || archivos.length === 0 || cargando">
-        {{ cargando ? 'Subiendo...' : 'Subir Entrega' }}
-      </button>
-    </div>
-  </form>
-</div>
+    <<div class="form-actions" style="display: flex; gap: 15px; justify-content: center;">
+    <button type="button" class="btn-cancelar" routerLink="/freelancer/entregas/historial">
+      Cancelar
+    </button>
+
+    <button type="submit" class="btn-enviar" [disabled]="!entregaForm.valid || archivos.length === 0 || cargando">
+      {{ cargando ? 'Subiendo...' : 'Subir Entrega' }}
+    </button>
+  </div>

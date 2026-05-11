@@ -1,29 +1,305 @@
 <div class="reportes-container">
-  <h1>📊 Mis Reportes Profesionales</h1>
 
-  <div class="reportes-grid">
-    <div class="card-reporte">
-      <h2>📈 Rendimiento General</h2>
-      <div class="stats-list">
-        <div class="stat-item">
-          <span class="label">Proyectos Completados:</span>
-          <span class="value">{{ stats.proyectosCompletados }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="label">Tasa de Aceptación:</span>
-          <span class="value">{{ stats.tasaAceptacion | number:'1.1-1' }}%</span>
-        </div>
-      </div>
+  <!-- HEADER -->
+  <div class="reportes-header">
+
+    <div>
+      <h1> Mis Report</h1>
+
+      <p class="subtitulo">
+        dentro de ConnectWork.
+      </p>
     </div>
 
-    <div class="card-reporte">
-      <h2>💰 Ingresos</h2>
-      <div class="stats-list">
-        <div class="stat-item">
-          <span class="label">Ingresos Este Mes:</span>
-          <span class="value">Q{{ stats.ingresosEsteMes | number:'1.2-2' }}</span>
-        </div>
-      </div>
-    </div>
   </div>
+
+  <!-- LOADING -->
+  <div
+    class="loading-state"
+    *ngIf="cargando">
+
+    <div class="loader"></div>
+
+    <p>
+      Cargando estadísticas...
+    </p>
+
+  </div>
+
+  <!-- CONTENIDO -->
+  <div
+    class="contenido-reportes"
+    *ngIf="!cargando">
+
+    <!-- STATS PRINCIPALES -->
+    <div class="stats-grid">
+
+      <!-- PROYECTOS -->
+      <div class="stat-card">
+
+        <div class="stat-icon">
+
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Proyectos Completados
+          </span>
+
+          <h2>
+            {{ stats.proyectosCompletados || 0 }}
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- ACEPTACIÓN -->
+      <div class="stat-card">
+
+        <div class="stat-icon">
+
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Tasa de Aceptación
+          </span>
+
+          <h2>
+            {{ stats.tasaAceptacion || 0 | number:'1.1-1' }}%
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- CALIFICACIÓN -->
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          ⭐
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Calificación Promedio
+          </span>
+
+          <h2>
+            {{ stats.calificacionPromedio || 0 | number:'1.1-1' }}
+          </h2>
+
+          <small class="stars">
+            {{ generarEstrellas(stats.calificacionPromedio || 0) }}
+          </small>
+
+        </div>
+
+      </div>
+
+      <!-- INGRESOS -->
+      <div class="stat-card success">
+
+        <div class="stat-icon">
+
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Ingresos Totales
+          </span>
+
+          <h2>
+            {{ stats.ingresosEsteMes || 0 | currency:'GTQ':'symbol':'1.2-2' }}
+          </h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DETALLE -->
+    <div class="reporte-grid">
+
+      <!-- RENDIMIENTO -->
+      <div class="chart-card">
+
+        <div class="chart-header">
+
+          <div>
+
+            <h3>
+               Rendimiento Profesional
+            </h3>
+
+            <p>
+              Estadísticas generales de desempeño en la plataforma.
+            </p>
+
+          </div>
+
+        </div>
+
+        <table class="data-table">
+
+          <thead>
+
+            <tr>
+              <th>Métrica</th>
+              <th class="text-right">Valor</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr>
+
+              <td>
+                Proyectos completados
+              </td>
+
+              <td class="text-right">
+                <strong>
+                  {{ stats.proyectosCompletados || 0 }}
+                </strong>
+              </td>
+
+            </tr>
+
+            <tr>
+
+              <td>
+                Tasa de aceptación
+              </td>
+
+              <td class="text-right">
+                <strong>
+                  {{ stats.tasaAceptacion || 0 | number:'1.1-1' }}%
+                </strong>
+              </td>
+
+            </tr>
+
+            <tr>
+
+              <td>
+                Calificación promedio
+              </td>
+
+              <td class="text-right">
+
+                <strong>
+                  {{ stats.calificacionPromedio || 0 | number:'1.1-1' }}
+                </strong>
+
+                <div class="stars">
+                  {{ generarEstrellas(stats.calificacionPromedio || 0) }}
+                </div>
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- INGRESOS -->
+      <div class="chart-card">
+
+        <div class="chart-header">
+
+          <div>
+
+            <h3>
+              Historial Financiero
+            </h3>
+
+            <p>
+              Ingresos acumulados obtenidos por proyectos aprobados.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="ingreso-total">
+
+          <span>
+            Total generado
+          </span>
+
+          <h1>
+            {{ stats.ingresosEsteMes || 0 | currency:'GTQ':'symbol':'1.2-2' }}
+          </h1>
+
+        </div>
+
+        <div class="info-extra">
+
+          <div class="mini-card">
+
+            <span class="mini-label">
+              Estado actual
+            </span>
+
+            <strong class="mini-value success-text">
+              Freelancer activo
+            </strong>
+
+          </div>
+
+          <div class="mini-card">
+
+            <span class="mini-label">
+              Última actualización
+            </span>
+
+            <strong class="mini-value">
+              Tiempo real
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- EMPTY -->
+    <div
+      class="empty-state"
+      *ngIf="
+        stats.proyectosCompletados === 0 &&
+        stats.ingresosEsteMes === 0 &&
+        stats.calificacionPromedio === 0
+      ">
+
+      <div class="empty-icon">
+
+      </div>
+
+      <h3>
+        Aún no tienes estadísticas suficientes
+      </h3>
+
+      <p>
+        Completa proyectos y recibe pagos para visualizar
+        tus métricas profesionales.
+      </p>
+
+    </div>
+
+  </div>
+
 </div>

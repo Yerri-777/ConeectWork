@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PropuestaService } from '../../../../core/services/propuesta.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -9,14 +14,16 @@ import { NotificationService } from '../../../../core/services/notification.serv
   selector: 'app-editar-propuesta',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './crear-propuesta.component.html', // Reutiliza el HTML de crear
+  templateUrl: './crear-propuesta.component.html',
   styleUrls: ['./propuestas.component.css']
 })
 export class EditarPropuestaComponent implements OnInit {
+
   propuestaForm!: FormGroup;
   cargando = false;
-  propuestaId!: string;
-  proyecto: any = null; // compatibilizar con plantilla que usa `proyecto`
+
+  propuestaId!: number;
+  proyecto: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -27,38 +34,80 @@ export class EditarPropuestaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.propuestaId = this.route.snapshot.params['id'];
+
+    this.propuestaId = Number(this.route.snapshot.params['id']);
+
     this.propuestaForm = this.fb.group({
       contenido: ['', [Validators.required, Validators.minLength(100)]],
       monto: ['', [Validators.required, Validators.min(100)]],
       plazo: ['', [Validators.required, Validators.min(1)]]
     });
+
     this.cargarPropuesta();
   }
 
+
   cargarPropuesta(): void {
-    this.propuestaService.obtenerMias().subscribe((propuestas: any[]) => {
-      const encontrada = propuestas.find((p: any) => p.id === this.propuestaId);
-      if (encontrada) this.propuestaForm.patchValue(encontrada);
-      // Si la propuesta contiene información del proyecto, asignarla para la plantilla
-      if (encontrada && encontrada.tituloProyecto) {
-        this.proyecto = {
-          titulo: encontrada.tituloProyecto,
-          descripcion: encontrada.descripcion || '',
-          presupuestoMinimo: encontrada.presupuestoMin || 0,
-          presupuestoMaximo: encontrada.presupuestoMax || 0
+
+    const proyectos = JSON.parse(
+      localStorage.getItem('connectwork_proyectos') || '[]'
+    );
+
+    let encontrada: any = null;
+
+    for (const p of proyectos) {
+
+      const propuesta = (p.propuestas || []).find(
+        (x: any) => Number(x.id) === Number(this.propuestaId)
+      );
+
+      if (propuesta) {
+        encontrada = {
+          ...propuesta,
+          proyecto: p
         };
+        break;
       }
+    }
+
+    if (!encontrada) return;
+
+    this.propuestaForm.patchValue({
+      contenido: encontrada.contenido,
+      monto: encontrada.monto,
+      plazo: encontrada.plazo
     });
+
+    this.proyecto = encontrada.proyecto;
   }
 
   enviarPropuesta(): void {
+
+    if (this.propuestaForm.invalid || this.cargando) return;
+
     this.cargando = true;
-    this.propuestaService.actualizar(this.propuestaId, this.propuestaForm.value).subscribe({
-      next: () => {
-        this.notificationService.mostrarExito('Propuesta actualizada');
-        this.router.navigate(['/freelancer/propuestas']);
-      }
-    });
+
+    this.propuestaService
+      .actualizar(this.propuestaId, this.propuestaForm.value)
+      .subscribe({
+        next: () => {
+
+          this.cargando = false;
+
+          this.notificationService.mostrarExito(
+            'Propuesta actualizada correctamente'
+          );
+
+          this.router.navigate(['/freelancer/propuestas']);
+        },
+        error: () => {
+
+          this.cargando = false;
+
+          this.notificationService.mostrarError(
+            'Error al actualizar propuesta'
+          );
+        }
+      });
   }
 }

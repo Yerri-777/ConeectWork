@@ -1,33 +1,56 @@
 <div class="entregas-container">
-  <h1>📥 Entregas Pendientes de Revisión</h1>
+  <div class="header-seccion" style="margin-bottom: 25px;">
+    <h1>Entregas Pendientes de Revisión</h1>
+    <p style="color: #6b7280;">Revisa el trabajo enviado por los freelancers para liberar los pagos.</p>
+  </div>
 
-  <div *ngFor="let entrega of entregas" class="entrega-card">
-    <div class="entrega-header">
-      <div>
-        <h3>Proyecto: {{ entrega.proyectoTitulo }}</h3>
-        <p>Enviado por: <strong>{{ entrega.freelancerNombre }}</strong></p>
+  <div class="entregas-grid" *ngIf="entregas.length > 0; else emptyState">
+
+    <div *ngFor="let entrega of entregas; trackBy: trackByEntrega" class="entrega-card">
+
+      <div class="entrega-header">
+        <div class="info-principal">
+          <h3>Proyecto: {{ entrega.proyectoTitulo }}</h3>
+          <p class="freelancer">Enviado por: <strong>{{ entrega.freelancerNombre }}</strong></p>
+        </div>
+        <span class="badge-pendiente">Pendiente de Aprobación</span>
       </div>
-      <span class="badge badge-proceso">Pendiente de Aprobación</span>
-    </div>
 
-    <div class="contenido-entrega">
-      <p><strong>Mensaje del freelancer:</strong></p>
-      <blockquote style="font-style: italic; color: #666;">"{{ entrega.mensaje }}"</blockquote>
+      <div class="contenido-entrega">
+        <div class="mensaje-box">
+          <strong>Mensaje del freelancer:</strong>
+          <blockquote class="mensaje-texto">"{{ entrega.mensaje }}"</blockquote>
+        </div>
 
-      <div class="archivo-box">
-        <span>📁</span>
-        <a [href]="entrega.archivoUrl" target="_blank">{{ entrega.nombreArchivo }}</a>
-        <small>(Haga clic para descargar y revisar)</small>
+        <div class="archivo-adjunto">
+          <div class="archivo-info">
+            <span class="icon-file"></span>
+            <a [href]="entrega.archivoUrl" target="_blank" class="link-archivo">
+              {{ entrega.nombreArchivo || 'Ver entregable final' }}
+            </a>
+          </div>
+          <small class="hint">Haz clic para revisar el documento o link enviado.</small>
+        </div>
       </div>
-    </div>
 
-    <div class="acciones-flex" style="display: flex; gap: 15px; margin-top: 20px;">
-      <button class="btn-aprobar" (click)="abrirAprobar(entrega)">Aprobar y Finalizar</button>
-      <button class="btn-rechazar-trigger" (click)="abrirRechazar(entrega)">Solicitar Cambios</button>
+      <div class="acciones-footer">
+        <button class="btn-aprobar" (click)="abrirAprobar(entrega)">
+          Aprobar y Finalizar
+        </button>
+        <button class="btn-rechazar-trigger" (click)="abrirRechazar(entrega)">
+          Solicitar Cambios
+        </button>
+      </div>
+
     </div>
   </div>
 
-  <div *ngIf="entregas.length === 0" style="text-align: center; padding: 50px;">
-    <p>No tienes entregas pendientes de revisión.</p>
-  </div>
+  <ng-template #emptyState>
+    <div class="empty-card" style="text-align: center; padding: 60px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <div style="font-size: 50px; margin-bottom: 20px;"></div>
+      <h3 style="color: #1f2937;">¡Todo al día!</h3>
+      <p style="color: #6b7280;">No tienes entregas pendientes de revisión por el momento.</p>
+    </div>
+  </ng-template>
+
 </div>

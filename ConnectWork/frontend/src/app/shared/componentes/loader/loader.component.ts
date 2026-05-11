@@ -14,12 +14,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
   styleUrls: ['./loader.component.css'],
   animations: [
     trigger('fadeInOut', [
-      // Animación de entrada (aparición del spinner)
+
       transition(':enter', [
         style({ opacity: 0 }),
         animate('300ms ease-in', style({ opacity: 1 }))
       ]),
-      // Animación de salida (desaparición del spinner)
+
       transition(':leave', [
         animate('300ms ease-out', style({ opacity: 0 }))
       ])
@@ -32,7 +32,7 @@ export class LoaderComponent implements OnInit {
   isLoading$: Observable<boolean>;
 
   /**
-   * Constructor con inyección de LoaderService
+   *
    *
    * DEPENDENCIA:
    * @param loaderService - Servicio que maneja el estado de carga

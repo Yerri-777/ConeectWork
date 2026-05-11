@@ -26,7 +26,7 @@ export class ErrorComponent implements OnInit {
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    // Permite recibir un mensaje personalizado a través de los parámetros de la ruta
+
     this.route.queryParams.subscribe(params => {
       if (params['mensaje']) this.mensajeError = params['mensaje'];
       if (params['codigo']) this.codigoError = params['codigo'];

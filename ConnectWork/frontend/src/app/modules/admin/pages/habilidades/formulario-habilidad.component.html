@@ -1,16 +1,21 @@
 <div class="modal-overlay" (click)="cancelar()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>{{ habilidad ? 'Editar' : 'Nueva' }} Habilidad</h2>
+    <!-- El título cambia dinámicamente si hay un ID presente -->
+    <h2>{{ (habilidad && habilidad.id) ? 'Editar' : 'Nueva' }} Habilidad</h2>
 
     <div class="form-group">
       <label>Nombre</label>
-      <input [(ngModel)]="habTemp.nombre" type="text" placeholder="Nombre de la habilidad">
+      <input
+        [(ngModel)]="habTemp.nombre"
+        name="nombre"
+        type="text"
+        placeholder="Nombre de la habilidad">
     </div>
 
     <div class="form-group">
       <label>Categoría</label>
-      <select [(ngModel)]="habTemp.idCategoria">
-        <option value="" disabled selected>Seleccione una categoría</option>
+      <select [(ngModel)]="habTemp.categoriaId" name="categoriaId">
+        <option value="" disabled>Seleccione una categoría</option>
         <option *ngFor="let cat of categorias" [value]="cat.id">
           {{ cat.nombre }}
         </option>
@@ -19,12 +24,19 @@
 
     <div class="form-group">
       <label>Descripción</label>
-      <textarea [(ngModel)]="habTemp.descripcion" placeholder="Descripción"></textarea>
+      <textarea
+        [(ngModel)]="habTemp.descripcion"
+        name="descripcion"
+        placeholder="Descripción de la habilidad"></textarea>
     </div>
 
     <div class="form-buttons">
-      <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
-      <button class="btn-guardar" (click)="guardar()">Guardar</button>
+      <button class="btn-cancelar" (click)="cancelar()" [disabled]="cargando">
+        Cancelar
+      </button>
+      <button class="btn-guardar" (click)="guardar()" [disabled]="cargando">
+        {{ cargando ? 'Guardando...' : 'Guardar' }}
+      </button>
     </div>
   </div>
 </div>

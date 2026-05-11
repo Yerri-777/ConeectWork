@@ -1,3 +1,4 @@
+// lista-contratos-freelancer.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -22,15 +23,23 @@ export class ListaContratosFreelancerComponent implements OnInit {
 
   cargarContratos(): void {
     this.contratoService.listar().subscribe({
-      next: (data) => {
-        this.contratos = data;
+      next: (data: any[]) => {
+        this.contratos = (data || []).map(c => ({
+          ...c,
+          // Mapeamos para que el HTML encuentre los objetos proyecto y cliente
+          proyecto: { titulo: c.tituloProyecto || c.proyectoTitulo || 'Proyecto' },
+          cliente: { nombreCompleto: c.nombreCliente || c.clienteNombre || 'Cliente' },
+          monto: c.monto || 0
+        }));
         this.cargando = false;
       },
       error: () => this.cargando = false
     });
   }
 
-  getClaseEstado(estado: string): string {
+
+  getClaseEstado(estado: string | undefined): string {
+    if (!estado) return 'activo';
     return estado.toLowerCase();
   }
 }

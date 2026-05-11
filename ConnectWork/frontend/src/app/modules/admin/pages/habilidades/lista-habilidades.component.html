@@ -1,10 +1,12 @@
 <div class="habilidades-container">
   <div class="habilidades-header">
     <h1>🛠️ Gestionar Habilidades</h1>
-    <button class="btn-nueva" (click)="abrirFormulario()">+ Nueva Habilidad</button>
+    <button class="btn-nueva" (click)="abrirFormulario()" [disabled]="cargando">
+      + Nueva Habilidad
+    </button>
   </div>
 
-  <!-- Formulario Modal -->
+  <!-- Componente de Formulario (Modal) -->
   <app-formulario-habilidad
     *ngIf="mostrarFormulario"
     [habilidad]="habilidadEditando"
@@ -13,7 +15,12 @@
   </app-formulario-habilidad>
 
   <div class="table-container">
-    <table class="table" *ngIf="habilidades.length > 0">
+    <!-- Indicador de carga visual opcional -->
+    <div *ngIf="cargando && habilidades.length === 0" class="loading-state">
+      <p>Cargando información...</p>
+    </div>
+
+    <table class="table" *ngIf="!cargando && habilidades.length > 0">
       <thead>
         <tr>
           <th>Nombre</th>
@@ -25,34 +32,41 @@
       </thead>
       <tbody>
         <tr *ngFor="let hab of habilidades">
-          <td>{{ hab.nombre }}</td>
+          <td><strong>{{ hab.nombre }}</strong></td>
           <td>
-            <span class="categoria-badge">{{ hab.nombreCategoria }}</span>
+            <span class="categoria-badge">{{ hab.nombreCategoria || 'Sin categoría' }}</span>
           </td>
-          <td>{{ hab.descripcion || '-' }}</td>
+          <td class="text-muted">{{ hab.descripcion || '-' }}</td>
           <td>
             <span class="estado" [ngClass]="hab.activo ? 'activo' : 'inactivo'">
               {{ hab.activo ? '✓ Activo' : '✕ Inactivo' }}
             </span>
           </td>
           <td class="acciones">
-            <button class="btn-sm" (click)="editarHabilidad(hab)">Editar</button>
-            <button class="btn-sm" (click)="abrirModalEliminar(hab)">
+            <button class="btn-sm btn-edit" (click)="editarHabilidad(hab)">
+              Editar
+            </button>
+            <button
+              class="btn-sm"
+              [ngClass]="hab.activo ? 'btn-danger' : 'btn-success'"
+              (click)="abrirModalEliminar(hab)">
               {{ hab.activo ? 'Desactivar' : 'Activar' }}
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div *ngIf="habilidades.length === 0" class="empty-state">
-      <p>No hay habilidades registradas</p>
+
+    <div *ngIf="!cargando && habilidades.length === 0" class="empty-state">
+      <p>No se encontraron habilidades registradas.</p>
     </div>
   </div>
 
+  <!-- Modal de Confirmación para Activar/Desactivar -->
   <app-modal-confirmar
     [visible]="modalEliminarAbierto"
     titulo="Confirmar acción"
-    [mensaje]="'¿Estás seguro de ' + (habilidadSeleccionada?.activo ? 'desactivar' : 'activar') + ' esta habilidad?'"
+    [mensaje]="'¿Estás seguro de que deseas ' + (habilidadSeleccionada?.activo ? 'desactivar' : 'activar') + ' la habilidad: ' + habilidadSeleccionada?.nombre + '?'"
     [tipo]="habilidadSeleccionada?.activo ? 'peligro' : 'normal'"
     (confirm)="confirmarAccion()"
     (cancel)="cerrarModalEliminar()">

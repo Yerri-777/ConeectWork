@@ -1,9 +1,6 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
-/**
- * Directiva: Resalta elementos en hover
- * Uso: <div appHighlight="yellow">Contenido</div>
- */
+
 @Directive({
   selector: '[appHighlight]',
   standalone: true
@@ -29,7 +26,7 @@ export class HighlightDirective {
   }
 
   private highlight(color: string, opacity: number): void {
-    // Convertir nombre de color a hexadecimal
+
     const colorHex = this.getNombreColorAHex(color);
     const rgb = this.hexToRgb(colorHex);
 

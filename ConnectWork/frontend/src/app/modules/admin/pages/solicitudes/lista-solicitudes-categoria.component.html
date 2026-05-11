@@ -1,8 +1,15 @@
 <div class="solicitudes-container">
-  <h1> Solicitudes de Categorías</h1>
-
-  <div class="table-container" *ngIf="solicitudes.length > 0">
-    <table class="table">
+  <h1>Solicitudes de Categorías</h1>
+ 
+  <!-- Estado de Carga -->
+  <div class="loading-state" *ngIf="$any(this)['cargando']">
+    <div class="spinner"></div>
+    <p>Cargando solicitudes...</p>
+  </div>
+ 
+  <!-- Tabla de Solicitudes -->
+  <div class="table-container" *ngIf="!$any(this)['cargando'] && solicitudes && solicitudes.length > 0">
+    <table class="table-modern">
       <thead>
         <tr>
           <th>Freelancer</th>
@@ -13,36 +20,49 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let sol of solicitudes">
-          <td>{{ sol.nombreCliente || '-' }}</td>
-          <td>{{ sol.nombre }}</td>
-          <td>{{ sol.descripcion || '-' }}</td>
-          <td>
+        <tr *ngFor="let sol of solicitudes; trackBy: $any(this)['trackBySolicitud']">
+          <td class="col-cliente">{{ sol.nombreCliente || '-' }}</td>
+          <td class="col-categoria"><strong>{{ sol.nombre }}</strong></td>
+          <td class="col-descripcion">{{ sol.descripcion || '-' }}</td>
+          <td class="col-estado">
             <span class="badge"
-              [ngClass]="'badge-' + (sol.estado === 'PENDIENTE' ? 'warning' : (sol.estado || '').toLowerCase())">
+              [ngClass]="{
+                'badge-warning': sol.estado === 'PENDIENTE',
+                'badge-success': sol.estado === 'ACEPTADA',
+                'badge-danger': sol.estado === 'RECHAZADA'
+              }">
               {{ sol.estado }}
             </span>
           </td>
-          <td class="acciones">
-            <button
-              *ngIf="sol.estado === 'PENDIENTE'"
-              class="btn-aceptar"
-              (click)="aceptarSolicitud(sol)">
-              ✓ Aceptar
-            </button>
-            <button
-              *ngIf="sol.estado === 'PENDIENTE'"
-              class="btn-rechazar"
-              (click)="rechazarSolicitud(sol)">
-              ✕ Rechazar
-            </button>
+          <td class="col-acciones">
+            <div class="button-group" *ngIf="sol.estado === 'PENDIENTE'">
+              <button 
+                class="btn-aceptar" 
+                (click)="aceptarSolicitud(sol)" 
+                title="Aceptar esta solicitud"
+                type="button">
+                ✓ Aceptar
+              </button>
+              <button 
+                class="btn-rechazar" 
+                (click)="rechazarSolicitud(sol)" 
+                title="Rechazar esta solicitud"
+                type="button">
+                ✕ Rechazar
+              </button>
+            </div>
+            <span *ngIf="sol.estado !== 'PENDIENTE'" class="txt-muted">
+              Procesada
+            </span>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-
-  <div *ngIf="solicitudes.length === 0" class="empty-state">
+ 
+  <!-- Estado Vacío -->
+  <div class="empty-state" *ngIf="!$any(this)['cargando'] && (!solicitudes || solicitudes.length === 0)">
     <p>No hay solicitudes de categorías pendientes</p>
   </div>
 </div>
+ 

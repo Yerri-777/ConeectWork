@@ -1,56 +1,81 @@
 <div class="reportes-container">
   <div class="header">
-    <h1>📊 Reportes y Estadísticas</h1>
+    <h1>Reportes y Estadísticas</h1>
     <div class="filtros">
-      <input type="date" [(ngModel)]="fechaInicio">
-      <input type="date" [(ngModel)]="fechaFin">
-      <button class="btn-generar" (click)="generarReporte()">Generar PDF</button>
+      <div class="date-group">
+        <label>Desde:</label>
+        <input type="date" [(ngModel)]="fechaInicio" [disabled]="generandoPDF">
+      </div>
+      <div class="date-group">
+        <label>Hasta:</label>
+        <input type="date" [(ngModel)]="fechaFin" [disabled]="generandoPDF">
+      </div>
+      <button
+        class="btn-generar"
+        (click)="generarReporte()"
+        [disabled]="generandoPDF || cargando">
+        <span *ngIf="!generandoPDF">📄 Generar PDF</span>
+        <span *ngIf="generandoPDF">⏳ Generando...</span>
+      </button>
     </div>
   </div>
 
-  <div class="grid-reportes">
+  <!-- Estado de carga principal -->
+  <div *ngIf="cargando" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Cargando estadísticas del sistema...</p>
+  </div>
+
+  <div class="grid-reportes" *ngIf="!cargando">
     <!-- Top Habilidades -->
     <div class="card-reporte">
       <h3>Habilidades más demandadas</h3>
-      <table class="table-mini">
-        <thead>
-          <tr>
-            <th>Habilidad</th>
-            <th>Uso</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of topHabilidades">
-            <td>{{ item.nombre }}</td>
-            <td>{{ item.cantidad }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="table-mini" *ngIf="topHabilidades.length > 0; else noHabilidades">
+          <thead>
+            <tr>
+              <th>Habilidad</th>
+              <th>Uso</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of topHabilidades">
+              <td><strong>{{ item.nombre }}</strong></td>
+              <td>{{ item.cantidad }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noHabilidades><p class="empty-text">No hay datos de habilidades.</p></ng-template>
     </div>
 
     <!-- Usuarios Destacados -->
     <div class="card-reporte">
       <h3>Freelancers mejor calificados</h3>
-      <div class="user-list">
+      <div class="user-list" *ngIf="topFreelancers.length > 0; else noFreelancers">
         <div class="user-item" *ngFor="let user of topFreelancers">
           <span class="user-name">{{ user.nombre }}</span>
-          <span class="user-rating">⭐ {{ user.rating }}</span>
+          <span class="user-rating">⭐ {{ user.rating | number:'1.1-1' }}</span>
         </div>
       </div>
+      <ng-template #noFreelancers><p class="empty-text">No hay freelancers destacados.</p></ng-template>
     </div>
   </div>
 
-  <div class="full-card">
+  <!-- Gráfico de Estados (Barras) -->
+  <div class="full-card" *ngIf="!cargando">
     <h3>Proyectos por Estado</h3>
-    <div class="chart-placeholder">
-      <!-- Aquí podrías integrar Chart.js o similar -->
-      <div class="bar-container" *ngFor="let p of proyectosEstado">
-        <label>{{ p.estado }}</label>
+    <div class="chart-container" *ngIf="proyectosEstado.length > 0; else noEstados">
+      <div class="bar-item" *ngFor="let p of proyectosEstado">
+        <div class="bar-info">
+          <label>{{ p.estado }}</label>
+          <span>{{ p.cantidad }} ({{ p.porcentaje }}%)</span>
+        </div>
         <div class="bar-bg">
           <div class="bar-fill" [style.width.%]="p.porcentaje"></div>
         </div>
-        <span>{{ p.cantidad }}</span>
       </div>
     </div>
+    <ng-template #noEstados><p class="empty-text">No hay datos de proyectos para mostrar.</p></ng-template>
   </div>
 </div>

@@ -13,21 +13,21 @@ import { NotificationService } from '../../../../core/services/notification.serv
   styleUrls: ['./entregas.component.css']
 })
 export class SubirEntregaComponent implements OnInit {
-  entregaForm!: FormGroup; 
-  cargando = false; 
-  archivos: File[] = []; 
-  contratoId: string | null = null; 
+  entregaForm!: FormGroup;
+  cargando = false;
+  archivos: File[] = [];
+  contratoId: string | null = null;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private entregaService: EntregaService,
-    private route: ActivatedRoute, 
-    private router: Router, 
+    private route: ActivatedRoute,
+    private router: Router,
     private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
-    this.inicializarFormulario(); 
+    this.inicializarFormulario();
     this.route.params.subscribe(params => {
       this.contratoId = params['id'];
     });
@@ -35,47 +35,52 @@ export class SubirEntregaComponent implements OnInit {
 
   private inicializarFormulario(): void {
     this.entregaForm = this.fb.group({
-      descripcion: ['', Validators.required] 
+      descripcion: ['', Validators.required]
     });
   }
 
   onFileSelected(event: any): void {
-    const archivosNuevos = Array.from(event.target.files) as File[]; 
+    const archivosNuevos = Array.from(event.target.files) as File[];
     this.archivos.push(...archivosNuevos);
   }
 
   eliminarArchivo(archivo: File): void {
-    this.archivos = this.archivos.filter(a => a !== archivo); 
+    this.archivos = this.archivos.filter(a => a !== archivo);
   }
 
   subirEntrega(): void {
     if (this.entregaForm.invalid || this.archivos.length === 0 || !this.contratoId) {
-      return; 
+      this.notificationService.mostrarAdvertencia('Faltan datos o archivos');
+      return;
     }
 
     this.cargando = true;
-    const formData = new FormData(); 
-    formData.append('descripcion', this.entregaForm.get('descripcion')?.value);
-    formData.append('contratoId', this.contratoId); 
+    const formData = new FormData();
+
+    formData.append('mensaje', this.entregaForm.get('descripcion')?.value);
+    formData.append('contratoId', this.contratoId);
+
+    formData.append('nombreArchivo', this.archivos[0].name);
 
     this.archivos.forEach((archivo, index) => {
-      formData.append(`archivos[${index}]`, archivo); 
+      formData.append(`archivos[${index}]`, archivo);
     });
 
-    this.entregaService.subir(formData).subscribe({ 
+    this.entregaService.subir(formData).subscribe({
       next: () => {
-        this.notificationService.mostrarExito('Entrega subida correctamente');
-        this.router.navigate(['/freelancer/entregas']); 
+        this.notificationService.mostrarExito('Entrega enviada. Esperando revisión del cliente.');
+
+        this.router.navigate(['/freelancer/entregas/historial']);
       },
       error: () => {
-        this.cargando = false; 
+        this.cargando = false;
         this.notificationService.mostrarError('Error al subir entrega');
       }
     });
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.entregaForm.get(fieldName); 
-    return !!(field && field.invalid && (field.dirty || field.touched)); 
+    const field = this.entregaForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
   }
 }

@@ -1,6 +1,4 @@
-/**
- * ENTREGA - Modelo para entregas
- */
+
 export interface Entrega {
   id?: number;
   contratoId: number;
@@ -11,9 +9,7 @@ export interface Entrega {
   createdAt?: string;
 }
 
-/**
- * Datos adicionales para ver entrega
- */
+
 export interface EntregaDetalle extends Entrega {
   contratoDetalles?: any;
   freelancer?: any;
@@ -31,9 +27,7 @@ export interface FiltrosEntrega {
   hasta?: string;
 }
 
-/**
- * Payload para rechazar entrega
- */
+
 export interface RechazarEntregaPayload {
   motivo: string;
 }

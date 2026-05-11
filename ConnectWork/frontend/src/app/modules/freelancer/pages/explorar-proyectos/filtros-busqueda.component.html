@@ -1,22 +1,90 @@
-<div class="filtros">
-  <input
-    type="text"
-    [(ngModel)]="busqueda"
-    (input)="emitirFiltros()"
-    [cite_start]placeholder="Buscar por título o descripción...">
+<div class="filtros-container">
+  <div class="filtro-group buscador">
 
-  <select [(ngModel)]="filtroCategoria" (change)="emitirFiltros()">
-    <option value="">-- Todas las categorías --</option>
-    <option *ngFor="let cat of categorias" [value]="cat.id">
-      {{ cat.nombre }}
-    </option>
-  </select>
+    <label>
+      Buscar Proyecto
+    </label>
 
-  <select [(ngModel)]="filtroPresupuesto" (change)="emitirFiltros()">
-    <option value="">-- Todos los presupuestos --</option>
-    <option value="0-1000">0 - 1,000 GTQ</option>
-    <option value="1000-5000">1,000 - 5,000 GTQ</option>
-    <option value="5000-10000">5,000 - 10,000 GTQ</option>
-    <option value="10000+">10,000+ GTQ</option>
-  </select>
+    <input
+      type="text"
+      [(ngModel)]="busqueda"
+      (input)="emitirFiltros()"
+      placeholder="Buscar por título o descripción..." />
+
+  </div>
+
+  <div class="filtro-group">
+
+    <label>
+      Categoría
+    </label>
+
+    <select
+      [(ngModel)]="filtroCategoria"
+      (change)="emitirFiltros()">
+
+      <option value="">
+        Todas las categorías
+      </option>
+
+      <option
+        *ngFor="let cat of categorias"
+        [value]="cat.id">
+
+        {{ cat.nombre }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div class="filtro-group">
+
+    <label>
+      Presupuesto
+    </label>
+
+    <select
+      [(ngModel)]="filtroPresupuesto"
+      (change)="emitirFiltros()">
+
+      <option value="">
+        Todos los presupuestos
+      </option>
+
+      <option value="0-1000">
+        Q0 - Q1,000
+      </option>
+
+      <option value="1000-5000">
+        Q1,000 - Q5,000
+      </option>
+
+      <option value="5000-10000">
+        Q5,000 - Q10,000
+      </option>
+
+      <option value="10000+">
+        Q10,000+
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div class="filtro-btn">
+
+    <button
+      class="btn-limpiar"
+      (click)="limpiarFiltros()">
+
+      Limpiar
+
+    </button>
+
+  </div>
+
 </div>

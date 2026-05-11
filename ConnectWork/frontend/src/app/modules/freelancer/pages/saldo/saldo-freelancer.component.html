@@ -1,8 +1,274 @@
 <div class="saldo-page">
-	<h2>Saldo Freelance</h2>
-	<div *ngIf="loading">Cargando saldo...</div>
-	<div *ngIf="!loading">
-		<p *ngIf="saldo !== null">Saldo disponible: {{ saldo | number:'1.0-2' }}</p>
-		<p *ngIf="saldo === null">Saldo no disponible.</p>
-	</div>
+
+  <!-- ========================= -->
+  <!-- CARD PRINCIPAL -->
+  <!-- ========================= -->
+  <div class="balance-card">
+
+    <div class="balance-header">
+
+      <div>
+
+        <h2>
+          Mi Saldo Freelance
+        </h2>
+
+        <p class="balance-subtitle">
+          Visualiza todos los pagos recibidos por tus proyectos finalizados.
+        </p>
+
+      </div>
+
+      <!-- BOTÓN REFRESH -->
+      <button
+        type="button"
+        class="btn-refresh"
+        (click)="refrescar()"
+        [disabled]="loading">
+
+        <span *ngIf="!loading">
+          Actualizar
+        </span>
+
+        <span *ngIf="loading">
+          Actualizando...
+        </span>
+
+      </button>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- LOADING -->
+    <!-- ========================= -->
+    <div
+      *ngIf="loading"
+      class="loading-spinner">
+
+      <div class="spinner-circle"></div>
+
+      <p>
+        Cargando saldo...
+      </p>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- CONTENIDO -->
+    <!-- ========================= -->
+    <div *ngIf="!loading">
+
+      <!-- SALDO -->
+      <div
+        class="balance-amount"
+        *ngIf="saldo !== null">
+
+        GTQ
+        {{ saldo | number:'1.2-2' }}
+
+      </div>
+
+      <!-- TEXTO -->
+      <p class="balance-label">
+
+        Saldo disponible actualmente
+
+      </p>
+
+      <!-- ERROR -->
+      <div
+        *ngIf="saldo === null"
+        class="error-box">
+
+        <p class="error-text">
+          No fue posible cargar el saldo.
+        </p>
+
+      </div>
+
+      <!-- ========================= -->
+      <!-- STATS -->
+      <!-- ========================= -->
+      <div class="balance-stats">
+
+        <!-- INGRESOS -->
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Ingresos Totales
+          </span>
+
+          <strong class="stat-value positive">
+
+            + GTQ
+            {{ totalIngresos | number:'1.2-2' }}
+
+          </strong>
+
+        </div>
+
+        <!-- EGRESOS -->
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Egresos Totales
+          </span>
+
+          <strong class="stat-value negative">
+
+            - GTQ
+            {{ totalEgresos | number:'1.2-2' }}
+
+          </strong>
+
+        </div>
+
+        <!-- MOVIMIENTOS -->
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Movimientos
+          </span>
+
+          <strong class="stat-value neutral">
+
+            {{ historial.length }}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="movimientos-section"
+    *ngIf="!loading && historial.length > 0">
+
+    <div class="section-header">
+
+      <div>
+
+        <h3>
+          Historial de Cobros
+        </h3>
+
+        <p class="section-subtitle">
+          Registro de pagos recibidos y movimientos realizados.
+        </p>
+
+      </div>
+
+      <span class="badge-total">
+
+        {{ historial.length }}
+        movimientos
+
+      </span>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- ITEMS -->
+    <!-- ========================= -->
+    <div
+      class="transaction-item"
+
+      *ngFor="
+        let item of historial;
+        trackBy: trackByMovimiento
+      ">
+
+      <!-- INFO -->
+      <div class="trans-desc">
+
+        <strong>
+
+          {{ item.descripcion }}
+
+        </strong>
+
+        <span class="trans-date">
+
+          {{ item.fecha | date:'medium' }}
+
+        </span>
+
+      </div>
+
+
+      <div
+
+        *ngIf="
+          item.tipo === 'INGRESO'
+        "
+
+        class="monto-positivo">
+
+        +
+
+        GTQ
+
+        {{ item.monto | number:'1.2-2' }}
+
+      </div>
+
+      <!-- EGRESO -->
+      <div
+
+        *ngIf="
+          item.tipo === 'EGRESO'
+        "
+
+        class="monto-negativo">
+
+        -
+
+        GTQ
+
+        {{ item.monto | number:'1.2-2' }}
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+
+    *ngIf="
+      !loading &&
+      historial.length === 0
+    "
+
+    class="empty-state">
+
+    <div class="empty-icon">
+
+    </div>
+
+    <h3>
+      No hay movimientos todavía
+    </h3>
+
+    <p>
+      Los pagos recibidos por proyectos finalizados aparecerán aquí automáticamente.
+    </p>
+
+    <button
+      type="button"
+      class="btn-refresh"
+      (click)="refrescar()">
+
+      Volver a cargar
+
+    </button>
+
+  </div>
+
 </div>

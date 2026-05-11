@@ -1,6 +1,4 @@
-/**
- * PROPUESTA - Modelo para propuestas
- */
+
 export interface Propuesta {
   id?: number;
   proyectoId: number;
@@ -14,9 +12,7 @@ export interface Propuesta {
   createdAt?: string;
 }
 
-/**
- * Datos adicionales para listar propuestas
- */
+
 export interface PropuestaListado extends Propuesta {
   tituloProyecto?: string;
   presupuestoMax?: number;

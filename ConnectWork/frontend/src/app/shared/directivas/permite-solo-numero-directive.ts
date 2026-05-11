@@ -1,9 +1,6 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
-/**
- * Directiva: Permite solo números en inputs
- * Uso: <input appPermiteSoloNumero [decimales]="2">
- */
+
 @Directive({
   selector: '[appPermiteSoloNumero]',
   standalone: true
@@ -22,7 +19,7 @@ export class PermiteSoloNumeroDirective {
       return;
     }
 
-    // Permitir decimal si está habilitado
+
     if (this.decimales > 0 && key === '.' || key === ',') {
       const value = this.elementRef.nativeElement.value;
       if (!value.includes('.') && !value.includes(',')) {
@@ -35,7 +32,7 @@ export class PermiteSoloNumeroDirective {
       return;
     }
 
-    // Prevenir cualquier otro carácter
+
     event.preventDefault();
   }
 
@@ -43,7 +40,7 @@ export class PermiteSoloNumeroDirective {
   onPaste(event: ClipboardEvent): void {
     const paste = event.clipboardData?.getData('text') || '';
 
-    // Validar que el contenido pegado sea numérico
+
     const regex = this.decimales > 0 ? /^[0-9.]*$/ : /^[0-9]*$/;
 
     if (!regex.test(paste)) {

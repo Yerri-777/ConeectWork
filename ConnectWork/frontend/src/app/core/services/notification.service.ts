@@ -45,9 +45,7 @@ export class NotificationService {
     this.agregarNotificacion(mensaje, 'advertencia', duracion);
   }
 
-  /**
-   * Agregar notificación y auto-remover después de duracion
-   */
+
   private agregarNotificacion(mensaje: string, tipo: 'exito' | 'error' | 'info' | 'advertencia', duracion: number): void {
     const id = Date.now().toString();
     const notificacion: Notificacion = { id, mensaje, tipo, duracion };
@@ -55,7 +53,7 @@ export class NotificationService {
     const notificacionesActuales = this.notificacionesSubject.value;
     this.notificacionesSubject.next([...notificacionesActuales, notificacion]);
 
-    // Auto-remover después de la duración
+
     if (duracion > 0) {
       setTimeout(() => {
         this.removerNotificacion(id);
@@ -63,17 +61,12 @@ export class NotificationService {
     }
   }
 
-  /**
-   * Remover notificación
-   */
   removerNotificacion(id: string): void {
     const notificacionesActuales = this.notificacionesSubject.value;
     this.notificacionesSubject.next(notificacionesActuales.filter(n => n.id !== id));
   }
 
-  /**
-   * Limpiar todas las notificaciones
-   */
+
   limpiarTodas(): void {
     this.notificacionesSubject.next([]);
   }

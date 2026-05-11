@@ -1,8 +1,6 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { PropuestaService } from '../../../../core/services/propuesta.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
@@ -10,15 +8,17 @@ import { NotificationService } from '../../../../core/services/notification.serv
   standalone: true,
   imports: [CommonModule],
   templateUrl: './lista-propuestas-recibidas.component.html',
-  styleUrls: ['./propuestas.component.css']
+  styleUrls: ['./propuestas.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListaPropuestasRecibidasComponent implements OnInit {
   propuestas: any[] = [];
+  cargando = false;
 
   constructor(
-    private propuestaService: PropuestaService,
+    private router: Router,
     private notificationService: NotificationService,
-    private router: Router
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -26,19 +26,67 @@ export class ListaPropuestasRecibidasComponent implements OnInit {
   }
 
   cargarPropuestas(): void {
-    this.propuestaService.listarRecibidas().subscribe(data => this.propuestas = data);
+    this.cargando = true;
+    try {
+
+      const proyectosRaw = localStorage.getItem('connectwork_proyectos');
+      const proyectos = proyectosRaw ? JSON.parse(proyectosRaw) : [];
+
+
+      this.propuestas = proyectos.flatMap((p: any) =>
+        (p.propuestas || []).map((prop: any) => ({
+          ...prop,
+          proyectoId: p.id,
+          proyectoTitulo: p.titulo,
+
+          montoOferta: prop.monto,
+          tiempoEstimado: prop.plazo,
+          descripcion: prop.contenido,
+          freelancerNombre: prop.freelancer?.nombre || 'Freelancer Demo',
+          freelancerRating: 5.0
+        }))
+      );
+
+      console.log('Propuestas encontradas para el cliente:', this.propuestas);
+
+    } catch (error) {
+      console.error('[ListaPropuestas] Error:', error);
+      this.notificationService.mostrarError('Error al sincronizar propuestas');
+    } finally {
+      this.cargando = false;
+      this.cdr.markForCheck();
+    }
   }
 
-  verDetalle(id: string): void {
+  verDetalle(id: number): void {
     this.router.navigate(['/cliente/propuestas/detalle', id]);
   }
 
-  rechazar(id: string): void {
-    if (confirm('¿Estás seguro de rechazar esta propuesta?')) {
-      this.propuestaService.rechazar(id).subscribe(() => {
-        this.notificationService.mostrarExito('Propuesta rechazada');
-        this.cargarPropuestas();
+  rechazar(id: number): void {
+    if (!confirm('¿Deseas rechazar esta propuesta?')) return;
+
+    try {
+      const proyectosRaw = localStorage.getItem('connectwork_proyectos');
+      let proyectos = proyectosRaw ? JSON.parse(proyectosRaw) : [];
+
+      proyectos = proyectos.map((proj: any) => {
+        if (proj.propuestas) {
+          proj.propuestas = proj.propuestas.map((p: any) =>
+            p.id === id ? { ...p, estado: 'RECHAZADA' } : p
+          );
+        }
+        return proj;
       });
+
+      localStorage.setItem('connectwork_proyectos', JSON.stringify(proyectos));
+      this.notificationService.mostrarExito('Propuesta rechazada');
+      this.cargarPropuestas();
+    } catch (e) {
+      this.notificationService.mostrarError('No se pudo procesar el rechazo');
     }
+  }
+
+  trackByPropuesta(index: number, propuesta: any): number {
+    return propuesta.id || index;
   }
 }

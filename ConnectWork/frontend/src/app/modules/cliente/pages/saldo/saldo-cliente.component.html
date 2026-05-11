@@ -1,45 +1,189 @@
 <div class="saldo-container">
+
+  <!-- HEADER -->
   <div class="balance-card">
+
     <div class="balance-info">
-      <h2>Mi Saldo Disponible</h2>
-      <div class="balance-amount">{{ saldoActual | currency:'GTQ' }}</div>
+
+      <h2>
+        Mi Saldo Disponible
+      </h2>
+
+      <div class="balance-amount">
+        {{ saldoActual | currency:'GTQ' }}
+      </div>
+
     </div>
-    <button class="btn-recarga-header" routerLink="recargar"
-            style="background: white; color: #764ba2; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+
+    <button
+      class="btn-recarga-header"
+      (click)="irRecargar()">
+
       + Recargar Saldo
+
     </button>
+
   </div>
 
+  <!-- GRID -->
   <div class="saldo-grid">
-    <!-- Resumen de Movimientos -->
+
+    <!-- HISTORIAL -->
     <div class="card-white">
-      <h3>Historial de Movimientos</h3>
-      <div class="movimientos-list">
-        <div *ngFor="let m of movimientos" class="transaction-item">
-          <div class="trans-desc">
-            <strong>{{ m.descripcion }}</strong>
-            <span class="trans-date">{{ m.fecha | date:'medium' }}</span>
-          </div>
-          <div [class]="m.tipo === 'INGRESO' ? 'monto-positivo' : 'monto-negativo'">
-            {{ m.tipo === 'INGRESO' ? '+' : '-' }} {{ m.monto | currency:'GTQ' }}
-          </div>
-        </div>
-        <div *ngIf="movimientos.length === 0" style="text-align: center; padding: 20px; color: #bdc3c7;">
-          No hay movimientos registrados.
-        </div>
+
+      <div class="section-header">
+
+        <h3>
+          Historial de Movimientos
+        </h3>
+
       </div>
+
+      <div
+        class="movimientos-list"
+        *ngIf="movimientos.length > 0; else emptyMovimientos">
+
+        <div
+          class="transaction-item"
+          *ngFor="let movimiento of movimientos; trackBy: trackByMovimiento">
+
+          <div class="trans-desc">
+
+            <strong>
+
+              {{
+                movimiento.descripcion ||
+                movimiento.detalle ||
+                'Movimiento'
+              }}
+
+            </strong>
+
+            <span class="trans-date">
+
+              {{
+                movimiento.fecha | date:'medium'
+              }}
+
+            </span>
+
+          </div>
+
+          <div
+            [ngClass]="{
+              'monto-positivo':
+                movimiento.tipo === 'INGRESO' ||
+                movimiento.tipo === 'RECARGA',
+
+              'monto-negativo':
+                movimiento.tipo !== 'INGRESO' &&
+                movimiento.tipo !== 'RECARGA'
+            }">
+
+            {{
+
+              movimiento.tipo === 'INGRESO' ||
+              movimiento.tipo === 'RECARGA'
+
+                ? '+'
+
+                : '-'
+
+            }}
+
+            {{ movimiento.monto | currency:'GTQ' }}
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <ng-template #emptyMovimientos>
+
+        <div class="empty-state">
+
+          <p>
+            No hay movimientos registrados.
+          </p>
+
+        </div>
+
+      </ng-template>
+
     </div>
 
-    <!-- Información de Retención -->
+    <!-- RETENCIONES -->
     <div class="card-white">
-      <h3>Fondos en Garantía</h3>
-      <p style="color: #7f8c8d; font-size: 14px;">
-        Estos fondos corresponden a proyectos activos y están bloqueados hasta que apruebes las entregas.
-      </p>
-      <div class="transaction-item" *ngFor="let r of retenciones">
-        <span>Proyecto: {{ r.proyectoTitulo }}</span>
-        <span style="font-weight: 600;">{{ r.monto | currency:'GTQ' }}</span>
+
+      <div class="section-header">
+
+        <h3>
+          Fondos en Garantía
+        </h3>
+
       </div>
+
+      <p class="descripcion-retencion">
+
+        Estos fondos corresponden a proyectos activos
+        y permanecerán retenidos hasta que apruebes
+        las entregas del freelancer.
+
+      </p>
+
+      <div
+        *ngIf="retenciones.length > 0; else emptyRetenciones">
+
+        <div
+          class="transaction-item"
+          *ngFor="let retencion of retenciones; trackBy: trackByRetencion">
+
+          <div class="trans-desc">
+
+            <strong>
+
+              {{
+                retencion.proyectoTitulo ||
+                'Proyecto'
+              }}
+
+            </strong>
+
+            <span class="trans-date">
+
+              Garantía retenida
+
+            </span>
+
+          </div>
+
+          <div class="monto-retencion">
+
+            {{
+              retencion.monto | currency:'GTQ'
+            }}
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <ng-template #emptyRetenciones>
+
+        <div class="empty-state">
+
+          <p>
+            No tienes fondos retenidos actualmente.
+          </p>
+
+        </div>
+
+      </ng-template>
+
     </div>
+
   </div>
+
 </div>

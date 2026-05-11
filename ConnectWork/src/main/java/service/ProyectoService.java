@@ -16,18 +16,28 @@ import java.util.Map;
  */
 public class ProyectoService {
 
-    private final ProyectoDAO  proyectoDAO;
+    private final ProyectoDAO proyectoDAO;
     private final HabilidadDAO habilidadDAO;
 
     public ProyectoService() {
-        this.proyectoDAO  = new ProyectoDAO();
+        this.proyectoDAO = new ProyectoDAO();
         this.habilidadDAO = new HabilidadDAO();
     }
 
     // ─── Publicar ────────────────────────────────────────────────────────────
     public int publicar(int clienteId, Map<String, Object> datos) throws SQLException {
-        validarCamposProyecto(datos);
 
+        BigDecimal presupuesto = new BigDecimal(datos.get("presupuestoMax").toString());
+
+        if (presupuesto.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El presupuesto debe ser mayor a 0");
+        }
+        validarCamposProyecto(datos);
+        LocalDate fecha = LocalDate.parse((String) datos.get("fechaLimite"));
+
+        if (fecha.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("La fecha límite no puede estar en el pasado");
+        }
         Proyecto p = mapearDesdeBody(datos);
         p.setClienteId(clienteId);
         int id = proyectoDAO.crear(p);
@@ -43,14 +53,17 @@ public class ProyectoService {
         p.setId(proyectoId);
         p.setClienteId(clienteId);
         boolean ok = proyectoDAO.actualizar(p);
-        if (!ok) throw new IllegalStateException("No se puede editar: el proyecto no está ABIERTO o no te pertenece");
+        if (!ok)
+            throw new IllegalStateException("No se puede editar: el proyecto no está ABIERTO o no te pertenece");
     }
 
     // ─── Cancelar proyecto ABIERTO ───────────────────────────────────────────
     public void cancelar(int proyectoId, int clienteId) throws SQLException {
         Proyecto p = proyectoDAO.buscarPorId(proyectoId);
-        if (p == null) throw new IllegalArgumentException("Proyecto no encontrado");
-        if (p.getClienteId() != clienteId) throw new SecurityException("No autorizado");
+        if (p == null)
+            throw new IllegalArgumentException("Proyecto no encontrado");
+        if (p.getClienteId() != clienteId)
+            throw new SecurityException("No autorizado");
         if (!"ABIERTO".equals(p.getEstado()))
             throw new IllegalStateException("Solo se puede cancelar un proyecto en estado ABIERTO");
         proyectoDAO.cambiarEstado(proyectoId, "CANCELADO");
@@ -64,7 +77,7 @@ public class ProyectoService {
     }
 
     public List<Proyecto> listarAbiertos(Integer categoriaId, Integer habilidadId,
-                                          BigDecimal presMin, BigDecimal presMax) throws SQLException {
+            BigDecimal presMin, BigDecimal presMax) throws SQLException {
         List<Proyecto> lista = proyectoDAO.listarAbiertos(categoriaId, habilidadId, presMin, presMax);
         enriquecerHabilidades(lista);
         return lista;
@@ -72,14 +85,15 @@ public class ProyectoService {
 
     public Proyecto buscarConHabilidades(int id) throws SQLException {
         Proyecto p = proyectoDAO.buscarPorId(id);
-        if (p == null) throw new IllegalArgumentException("Proyecto no encontrado");
+        if (p == null)
+            throw new IllegalArgumentException("Proyecto no encontrado");
         p.setHabilidades(habilidadDAO.listarPorProyecto(id));
         return p;
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
     private void validarCamposProyecto(Map<String, Object> datos) {
-        String[] campos = {"titulo","descripcion","categoriaId","presupuestoMax","fechaLimite","habilidadesIds"};
+        String[] campos = { "titulo", "descripcion", "categoriaId", "presupuestoMax", "fechaLimite", "habilidadesIds" };
         for (String c : campos) {
             if (datos.get(c) == null)
                 throw new IllegalArgumentException("Campo requerido: " + c);
@@ -97,7 +111,8 @@ public class ProyectoService {
         p.setPresupuestoMax(new BigDecimal(datos.get("presupuestoMax").toString()));
         p.setFechaLimite(LocalDate.parse((String) datos.get("fechaLimite")));
         List<Integer> habs = new ArrayList<>();
-        for (Object h : (List<?>) datos.get("habilidadesIds")) habs.add(((Number) h).intValue());
+        for (Object h : (List<?>) datos.get("habilidadesIds"))
+            habs.add(((Number) h).intValue());
         p.setHabilidadesIds(habs);
         return p;
     }

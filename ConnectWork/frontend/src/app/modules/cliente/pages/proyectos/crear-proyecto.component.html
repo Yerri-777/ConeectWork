@@ -1,36 +1,185 @@
 <div class="proyectos-container">
+
   <div class="form-card">
-    <h2>Publicar Nuevo Proyecto</h2>
-    <form [formGroup]="proyectoForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-header">
+
+      <h2>
+        Publicar Nuevo Proyecto
+      </h2>
+
+      <p>
+        Completa la información para publicar tu proyecto y recibir propuestas.
+      </p>
+
+    </div>
+
+    <form
+      [formGroup]="proyectoForm"
+      (ngSubmit)="onSubmit()">
+
       <div class="form-group">
-        <label>Título del Proyecto</label>
-        <input type="text" formControlName="titulo" placeholder="Ej: Desarrollo App Móvil">
+
+        <label>
+          Título del Proyecto *
+        </label>
+
+        <input
+          type="text"
+          formControlName="titulo"
+          placeholder="Ej: Desarrollo de plataforma e-commerce">
+
+        <small
+          class="error-text"
+          *ngIf="campoInvalido('titulo')">
+
+          {{ obtenerError('titulo') }}
+
+        </small>
+
       </div>
 
       <div class="form-group">
-        <label>Descripción Detallada</label>
-        <textarea formControlName="descripcion" rows="5"></textarea>
+
+        <label>
+          Descripción *
+        </label>
+
+        <textarea
+          rows="6"
+          formControlName="descripcion"
+          placeholder="Describe detalladamente el proyecto">
+        </textarea>
+
+        <small
+          class="error-text"
+          *ngIf="campoInvalido('descripcion')">
+
+          {{ obtenerError('descripcion') }}
+
+        </small>
+
       </div>
 
       <div class="grid-form">
+
         <div class="form-group">
-          <label>Presupuesto (GTQ)</label>
-          <input type="number" formControlName="presupuesto">
+
+          <label>
+            Presupuesto Mínimo (GTQ)
+          </label>
+
+          <input
+            type="number"
+            formControlName="presupuestoMin">
+
         </div>
+
         <div class="form-group">
-          <label>Categoría</label>
-          <select formControlName="categoria">
-            <option value="web">Desarrollo Web</option>
-            <option value="diseño">Diseño Gráfico</option>
-            <option value="mobile">Mobile</option>
-          </select>
+
+          <label>
+            Presupuesto Máximo (GTQ)
+          </label>
+
+          <input
+            type="number"
+            formControlName="presupuestoMax">
+
         </div>
+
       </div>
 
-      <div style="margin-top: 20px; display: flex; gap: 10px;">
-        <button type="submit" class="btn-primary" [disabled]="proyectoForm.invalid">Publicar</button>
-        <button type="button" class="btn-outline" routerLink="..">Cancelar</button>
+      <div class="form-group">
+
+        <label>
+          Categoría *
+        </label>
+
+        <select formControlName="categoria">
+
+          <option value="">
+            Selecciona una categoría
+          </option>
+
+          <option
+            *ngFor="let categoria of categorias"
+            [value]="categoria">
+
+            {{ categoria }}
+
+          </option>
+
+        </select>
+
+        <small
+          class="error-text"
+          *ngIf="campoInvalido('categoria')">
+
+          {{ obtenerError('categoria') }}
+
+        </small>
+
       </div>
+
+      <div class="form-group">
+
+        <label>
+          Tiempo de Entrega (Días)
+        </label>
+
+        <input
+          type="number"
+          formControlName="plazoDias">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Habilidades Requeridas
+        </label>
+
+        <div class="habilidades-grid">
+
+          <button
+            type="button"
+            *ngFor="let habilidad of habilidadesDisponibles"
+            class="habilidad-chip"
+            [class.selected]="tieneHabilidad(habilidad)"
+            (click)="toggleHabilidad(habilidad)">
+
+            {{ habilidad }}
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="acciones-form">
+
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="proyectoForm.invalid || cargando">
+
+          {{ cargando ? 'Publicando...' : 'Publicar Proyecto' }}
+
+        </button>
+
+        <button
+          type="button"
+          class="btn-outline"
+          routerLink="/cliente/proyectos">
+
+          Cancelar
+
+        </button>
+
+      </div>
+
     </form>
+
   </div>
+
 </div>

@@ -12,7 +12,11 @@ public class ComisionDAO {
 
     /** Obtiene el porcentaje de comisión vigente */
     public ComisionConfig obtenerVigente() throws SQLException {
-        String sql = "SELECT * FROM comision_config WHERE fecha_fin IS NULL LIMIT 1";
+       String sql = """
+    SELECT *
+      FROM comision_config
+     ORDER BY fecha_inicio DESC
+    """;
         try (Connection cn = ConexionBD.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

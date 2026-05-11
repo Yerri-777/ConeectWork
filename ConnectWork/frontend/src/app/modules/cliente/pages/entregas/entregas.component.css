@@ -4,13 +4,17 @@
   min-height: 100vh;
 }
 
-/* Tarjeta de Entrega */
+.form-card,
 .entrega-card {
   background: white;
   border-radius: 12px;
   padding: 25px;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.08);
+}
+
+.entrega-card {
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   border-left: 5px solid #667eea;
 }
 
@@ -21,67 +25,107 @@
   margin-bottom: 20px;
 }
 
+.badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-proceso {
+  background: #fff3cd;
+  color: #856404;
+}
+
 .archivo-box {
   background: #f1f4f8;
   padding: 15px;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 15px 0;
+  margin-top: 15px;
 }
 
-/* Formularios de Revisión */
 .revision-form {
   background: #fff;
   padding: 20px;
-  border: 1px solid #e0e6ed;
+  border:
+    1px solid #e0e6ed;
   border-radius: 8px;
   margin-top: 20px;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border:
+    1px solid #ddd;
+  border-radius: 6px;
+  resize: vertical;
+  font-family: inherit;
 }
 
 .btn-aprobar {
   background: #27ae60;
   color: white;
   border: none;
-  padding: 12px 25px;
+  padding: 12px 24px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
 }
 
+.btn-aprobar:hover {
+  opacity: 0.9;
+}
+
 .btn-rechazar-trigger {
-  background: #fff;
+  background: white;
   color: #e74c3c;
-  border: 1px solid #e74c3c;
-  padding: 12px 25px;
+  border:
+    1px solid #e74c3c;
+  padding: 12px 24px;
   border-radius: 6px;
   cursor: pointer;
 }
 
-/* Sistema de Calificación (Stars) */
+.btn-outline {
+  background: transparent;
+  border:
+    1px solid #dcdde1;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.acciones-flex {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
 .stars-container {
   display: flex;
   gap: 10px;
-  font-size: 30px;
-  margin: 15px 0;
 }
 
 .star {
-  cursor: pointer;
+  font-size: 40px;
   color: #dcdde1;
-  transition: color 0.2s;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .star.active {
   color: #f1c40f;
 }
 
-textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-family: inherit;
-  resize: vertical;
+.star:hover {
+  transform: scale(1.1);
+}
+
+.alerta-pago {
+  border:
+    1px solid #ffeaa7;
+  background: #fff9e6;
+  padding: 15px;
+  border-radius: 8px;
 }

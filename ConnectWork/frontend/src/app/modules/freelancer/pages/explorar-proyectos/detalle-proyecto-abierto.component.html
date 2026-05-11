@@ -1,30 +1,118 @@
-<div class="proyectos-container" *ngIf="proyecto">
-  <div class="proyectos-header">
-    <button routerLink="/freelancer/explorar" class="btn-ver">← Volver al listado</button>
-    <h1>{{ proyecto.titulo }}</h1>
-  </div>
+<div class="detalle-container" *ngIf="proyecto">
 
-  <div class="proyecto-card" style="cursor: default;">
-    <div class="proyecto-header">
-      <span class="presupuesto">Q{{ proyecto.presupuestoMinimo }} - Q{{ proyecto.presupuestoMaximo }}</span>
-      <span class="meta-item">Plazo: {{ proyecto.plazo }} días</span>
-    </div>
-
-    <div class="descripcion-completa" style="margin: 20px 0;">
-      <h3>Descripción del Proyecto</h3>
-      <p style="white-space: pre-wrap; line-height: 1.6;">{{ proyecto.descripcion }}</p>
-    </div>
-
-    <div class="cliente-seccion" style="padding-top: 20px; border-top: 1px solid #eee;">
-      <h3>Sobre el Cliente</h3>
-      <p><strong>{{ proyecto.cliente.nombreCompleto }}</strong></p>
-      <p class="calificacion">Puntuación: ⭐ {{ proyecto.cliente.calificacion | number:'1.1-1' }}</p>
-    </div>
-
-    <div class="acciones" style="margin-top: 30px; text-align: center;">
-      <button class="btn-nueva" [routerLink]="['/freelancer/propuestas/crear', proyecto.id]" style="padding: 15px 40px; font-size: 16px;">
-        Enviar Propuesta Ahora
+  <section class="detalle-hero">
+    <div class="hero-top">
+      <button routerLink="/freelancer/explorar" class="btn-back">
+        ← Volver
       </button>
+      <span class="estado-badge">
+        Proyecto Disponible
+      </span>
     </div>
+
+    <h1>{{ proyecto.titulo }}</h1>
+
+    <p class="hero-description">
+      Revisa toda la información del proyecto y envía tu propuesta profesional.
+    </p>
+
+    <div class="hero-meta">
+      <div class="meta-card">
+        <span>Categoría</span>
+        <strong>{{ getCategoriaNombre(proyecto) }}</strong>
+      </div>
+
+      <div class="meta-card">
+        <span>Presupuesto</span>
+        <strong>{{ getPresupuestoTexto(proyecto) }}</strong>
+      </div>
+
+      <div class="meta-card">
+        <span>Propuestas</span>
+        <strong>{{ getPropuestasCount(proyecto) }}</strong>
+      </div>
+
+      <div class="meta-card">
+        <span>Plazo</span>
+        <strong>{{ getPlazo(proyecto) }} días</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="detalle-grid">
+
+    <div class="detalle-main">
+
+      <section class="detalle-card">
+        <div class="card-header">
+          <h2>Descripción del Proyecto</h2>
+        </div>
+        <div class="descripcion-content">
+          <p>{{ proyecto.descripcion }}</p>
+        </div>
+      </section>
+
+      <section class="detalle-card">
+        <div class="card-header">
+          <h2>Información General</h2>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span>Estado</span>
+            <strong>Activo</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Tipo</span>
+            <strong>Remoto</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Presupuesto Máximo</span>
+            <strong>
+              Q{{ proyecto.presupuestoMaximo || proyecto.presupuestoMax | number:'1.2-2' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span>Tiempo estimado</span>
+            <strong>{{ getPlazo(proyecto) }} días</strong>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="detalle-sidebar">
+
+      <section class="sidebar-card">
+        <h3>Sobre el Cliente</h3>
+        <div class="cliente-box">
+          <div class="cliente-avatar">
+            {{ getClienteNombre(proyecto).charAt(0) }}
+          </div>
+          <div>
+            <strong>{{ getClienteNombre(proyecto) }}</strong>
+            <span class="rating">
+              ★ {{ getClienteCalificacion(proyecto) | number:'1.1-1' }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="sidebar-card action-card">
+        <h3>¿Te interesa este proyecto?</h3>
+        <p>
+          Envía una propuesta profesional y comienza a trabajar con este cliente.
+        </p>
+
+        <button
+          class="btn-propuesta"
+          [routerLink]="['/freelancer/propuestas/crear', proyecto.id]">
+          Enviar Propuesta
+        </button>
+      </section>
+
+    </aside>
+
   </div>
 </div>

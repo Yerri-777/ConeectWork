@@ -1,104 +1,120 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
-import { Propuesta } from '../models/propuesta.model';
+import { Observable, of, throwError } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PropuestaService {
-  listarRecibidas(): Observable<Propuesta[]> {
-    return this.apiService.get<Propuesta[]>(`${this.endpoint}/recibidas`);
-  }
-  private endpoint = '/api/propuestas';
 
-  constructor(private apiService: ApiService) {}
+  private KEY = 'connectwork_proyectos';
 
-  /**
-   * Listar propuestas de un proyecto (cliente)
-   */
-  listarPorProyecto(proyectoId: number): Observable<Propuesta[]> {
-    return this.apiService.get<Propuesta[]>(this.endpoint, { proyectoId });
-  }
 
-  /**
-   * Listar mis propuestas (freelancer)
-   */
-  listarMias(): Observable<Propuesta[]> {
-    return this.apiService.get<Propuesta[]>(`${this.endpoint}/mias`);
+  private getProyectos(): any[] {
+    try {
+      return JSON.parse(localStorage.getItem(this.KEY) || '[]');
+    } catch (error) {
+      console.error('Error al leer LocalStorage', error);
+      return [];
+    }
   }
 
-  /**
-   * Obtener propuesta por ID
-   */
-  obtenerPorId(id: string | number): Observable<Propuesta> {
-    return this.apiService.get<Propuesta>(`${this.endpoint}/${id}`);
+  private saveProyectos(proyectos: any[]): void {
+    localStorage.setItem(this.KEY, JSON.stringify(proyectos));
   }
 
-  /**
-   * Enviar propuesta (freelancer)
-   */
-  enviar(propuesta: Propuesta): Observable<Propuesta> {
-    return this.apiService.post<Propuesta>(this.endpoint, propuesta);
+
+  enviar(propuesta: any, proyectoId: number): Observable<any> {
+    const proyectos = this.getProyectos();
+    const proyecto = proyectos.find(
+      (p: any) => p.id === Number(proyectoId)
+    );
+
+    if (!proyecto) {
+      return of(null);
+    }
+
+
+    const yaExiste = (proyecto.propuestas || []).some(
+      (p: any) => p.freelancer?.nombre === 'Freelancer Demo'
+    );
+
+    if (yaExiste) {
+
+      return throwError(() => new Error('Ya has enviado una propuesta a este proyecto.'));
+    }
+
+    const nueva = {
+      id: Date.now(),
+      contenido: propuesta.contenido,
+      monto: Number(propuesta.monto),
+      plazo: Number(propuesta.plazo),
+      estado: 'PENDIENTE',
+      freelancer: {
+        nombre: 'Freelancer Demo'
+      },
+      fecha: new Date()
+    };
+
+    if (!proyecto.propuestas) {
+      proyecto.propuestas = [];
+    }
+
+    proyecto.propuestas.push(nueva);
+    proyecto.totalPropuestas = proyecto.propuestas.length;
+
+    this.saveProyectos(proyectos);
+    return of(nueva);
   }
 
-  /**
-   * Aceptar propuesta y generar contrato (cliente)
-   */
-  aceptar(id: string | number): Observable<any> {
-    return this.apiService.put<any>(`${this.endpoint}/${id}/aceptar`, {});
+
+  listarMias(): Observable<any[]> {
+    const proyectos = this.getProyectos();
+
+    const propuestas = proyectos.flatMap((p: any) =>
+      (p.propuestas || []).map((pr: any) => ({
+        ...pr,
+        proyecto: {
+          id: p.id,
+          titulo: p.titulo,
+          cliente: p.cliente || {
+            nombreCompleto: p.clienteNombre || 'Cliente Demo'
+          }
+        }
+      }))
+    );
+
+    return of(propuestas);
   }
 
-  /**
-   * Rechazar propuesta (cliente)
-   */
-  rechazar(id: string | number): Observable<any> {
-    return this.apiService.put<any>(`${this.endpoint}/${id}/rechazar`, {});
+
+  actualizar(id: number, data: any): Observable<boolean> {
+    const proyectos = this.getProyectos();
+
+    proyectos.forEach((p: any) => {
+      const propuesta = (p.propuestas || []).find(
+        (x: any) => Number(x.id) === Number(id)
+      );
+
+      if (propuesta) {
+        propuesta.contenido = data.contenido;
+        propuesta.monto = Number(data.monto);
+        propuesta.plazo = Number(data.plazo);
+      }
+    });
+
+    this.saveProyectos(proyectos);
+    return of(true);
   }
 
-  /**
-   * Retirar propuesta (freelancer, solo si está PENDIENTE)
-   */
-  retirar(id: string | number): Observable<any> {
-    return this.apiService.put<any>(`${this.endpoint}/${id}/retirar`, {});
-  }
+  retirar(id: number): Observable<boolean> {
+    const proyectos = this.getProyectos();
 
-  /**
-   * Filtrar propuestas por estado
-   */
-  filtrarPorEstado(estado: string): Observable<Propuesta[]> {
-    return this.apiService.get<Propuesta[]>(this.endpoint, { estado });
-  }
+    proyectos.forEach((p: any) => {
+      p.propuestas = (p.propuestas || []).filter(
+        (x: any) => Number(x.id) !== Number(id)
+      );
+      p.totalPropuestas = p.propuestas.length;
+    });
 
-  /**
-   * Obtener propuestas de un freelancer en un proyecto
-   */
-  obtenerPorProyectoYFreelancer(proyectoId: number, freelancerId: number): Observable<Propuesta> {
-    return this.apiService.get<Propuesta>(`${this.endpoint}`, { proyectoId, freelancerId });
-  }
-
-  /**
-   * Contar propuestas para un proyecto
-   */
-  contarPorProyecto(proyectoId: number): Observable<{ total: number }> {
-    return this.apiService.get<{ total: number }>(`${this.endpoint}/count`, { proyectoId });
-  }
-
-  /**
-   * Obtener propuestas activas del freelancer
-   */
-  obtenerActivas(): Observable<Propuesta[]> {
-    return this.apiService.get<Propuesta[]>(`${this.endpoint}/activas`);
-  }
-
-  /**
-   * Compatibility aliases for older component names
-   */
-  obtenerMias(): Observable<Propuesta[]> {
-    return this.listarMias();
-  }
-
-  actualizar(id: string | number, body: any): Observable<any> {
-    return this.apiService.put<any>(`${this.endpoint}/${id}`, body);
+    this.saveProyectos(proyectos);
+    return of(true);
   }
 }

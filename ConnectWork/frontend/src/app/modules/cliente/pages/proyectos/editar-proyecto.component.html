@@ -1,59 +1,197 @@
 <div class="proyectos-container">
-  <div class="form-card" *ngIf="!cargando; else loader">
+
+  <div
+    class="form-card"
+    *ngIf="!cargando; else loader">
+
     <div class="header-flex">
-      <h2>Editar Proyecto</h2>
-      <span class="badge badge-proceso">ID: {{proyectoId}}</span>
+
+      <div>
+
+        <h2>
+          Editar Proyecto
+        </h2>
+
+        <p class="sub-title">
+          Actualiza la información del proyecto
+        </p>
+
+      </div>
+
+      <span class="badge badge-proceso">
+
+        ID: {{ proyectoId || 0 }}
+
+      </span>
+
     </div>
 
-    <form [formGroup]="proyectoForm" (ngSubmit)="onSubmit()">
+    <form
+      [formGroup]="proyectoForm"
+      (ngSubmit)="onSubmit()">
+
       <div class="form-group">
-        <label>Título del Proyecto</label>
+
+        <label>
+          Título del Proyecto
+        </label>
+
         <input
           type="text"
           formControlName="titulo"
-          placeholder="Ej: Desarrollo App Móvil">
-        <span class="error" *ngIf="isFieldInvalid('titulo')">El título es requerido</span>
+          placeholder="Ej: Sistema Web Administrativo">
+
+        <small
+          class="error-text"
+          *ngIf="campoInvalido('titulo')">
+
+          {{ obtenerError('titulo') }}
+
+        </small>
+
       </div>
 
       <div class="form-group">
-        <label>Descripción Detallada</label>
+
+        <label>
+          Descripción
+        </label>
+
         <textarea
+          rows="7"
           formControlName="descripcion"
-          rows="8"
-          placeholder="Describe los requerimientos..."></textarea>
-        <span class="error" *ngIf="isFieldInvalid('descripcion')">La descripción debe tener al menos 50 caracteres</span>
+          placeholder="Describe el proyecto">
+        </textarea>
+
+        <small
+          class="error-text"
+          *ngIf="campoInvalido('descripcion')">
+
+          {{ obtenerError('descripcion') }}
+
+        </small>
+
       </div>
 
       <div class="grid-form">
+
         <div class="form-group">
-          <label>Presupuesto Estimado (GTQ)</label>
-          <input type="number" formControlName="presupuesto">
+
+          <label>
+            Presupuesto Mínimo
+          </label>
+
+          <input
+            type="number"
+            formControlName="presupuestoMin">
+
         </div>
+
         <div class="form-group">
-          <label>Categoría</label>
-          <select formControlName="categoria">
-            <option value="web">Desarrollo Web</option>
-            <option value="diseño">Diseño Gráfico</option>
-            <option value="mobile">Desarrollo Mobile</option>
-            <option value="marketing">Marketing Digital</option>
-          </select>
+
+          <label>
+            Presupuesto Máximo
+          </label>
+
+          <input
+            type="number"
+            formControlName="presupuestoMax">
+
         </div>
+
       </div>
 
-      <div style="margin-top: 30px; display: flex; gap: 15px;">
-        <button type="submit" class="btn-primary" [disabled]="proyectoForm.invalid || guardando">
-          {{ guardando ? 'Guardando cambios...' : 'Actualizar Proyecto' }}
-        </button>
-        <button type="button" class="btn-outline" (click)="cancelar()">
-          Cancelar
-        </button>
+      <div class="form-group">
+
+        <label>
+          Categoría
+        </label>
+
+        <select formControlName="categoria">
+
+          <option
+            *ngFor="let categoria of categorias"
+            [value]="categoria">
+
+            {{ categoria }}
+
+          </option>
+
+        </select>
+
       </div>
+
+      <div class="form-group">
+
+        <label>
+          Tiempo de Entrega
+        </label>
+
+        <input
+          type="number"
+          formControlName="plazoDias">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Habilidades
+        </label>
+
+        <div class="habilidades-grid">
+
+          <button
+            type="button"
+            *ngFor="let habilidad of habilidadesDisponibles"
+            class="habilidad-chip"
+            [class.selected]="tieneHabilidad(habilidad)"
+            (click)="toggleHabilidad(habilidad)">
+
+            {{ habilidad }}
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="acciones-form">
+
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="proyectoForm.invalid || guardando">
+
+          {{ guardando ? 'Guardando...' : 'Actualizar Proyecto' }}
+
+        </button>
+
+        <button
+          type="button"
+          class="btn-outline"
+          (click)="cancelar()">
+
+          Cancelar
+
+        </button>
+
+      </div>
+
     </form>
+
   </div>
 
   <ng-template #loader>
-    <div class="table-card" style="text-align: center; padding: 50px;">
-      <p>Cargando datos del proyecto...</p>
+
+    <div class="table-card loader-card">
+
+      <p>
+        Cargando proyecto...
+      </p>
+
     </div>
+
   </ng-template>
+
 </div>

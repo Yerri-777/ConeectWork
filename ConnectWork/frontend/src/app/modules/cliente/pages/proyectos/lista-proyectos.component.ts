@@ -1,7 +1,8 @@
+
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ProyectoService } from '../../../../core/services/proyecto.service';
 
 @Component({
   selector: 'app-lista-proyectos',
@@ -11,11 +12,76 @@ import { ProyectoService } from '../../../../core/services/proyecto.service';
   styleUrls: ['./proyectos.component.css']
 })
 export class ListaProyectosComponent implements OnInit {
+
   proyectos: any[] = [];
 
-  constructor(private proyectoService: ProyectoService) {}
+  cargando = false;
 
   ngOnInit(): void {
-    this.proyectoService.listar().subscribe(data => this.proyectos = data);
+
+    console.log(' Cargando proyectos cliente...');
+
+    this.cargarProyectos();
+  }
+
+
+  cargarProyectos(): void {
+
+    this.cargando = true;
+
+    try {
+
+      const proyectosGuardados =
+        localStorage.getItem('connectwork_proyectos');
+
+      this.proyectos = proyectosGuardados
+        ? JSON.parse(proyectosGuardados)
+        : [];
+
+      console.log(' Proyectos cargados:', this.proyectos);
+
+    } catch (error) {
+
+      console.error('Error cargando proyectos:', error);
+
+      this.proyectos = [];
+
+    } finally {
+
+      this.cargando = false;
+    }
+  }
+
+
+
+  trackByProyecto(index: number, proyecto: any): number {
+
+    return proyecto.id || index;
+  }
+
+  obtenerClaseEstado(estado: string): string {
+
+    if (!estado) return 'badge-abierto';
+
+    switch (estado.toUpperCase()) {
+
+      case 'ABIERTO':
+        return 'badge-abierto';
+
+      case 'EN_PROGRESO':
+        return 'badge-progreso';
+
+      case 'COMPLETADO':
+        return 'badge-completado';
+
+      case 'CANCELADO':
+        return 'badge-cancelado';
+
+      case 'ENTREGA_PENDIENTE':
+        return 'badge-pendiente';
+
+      default:
+        return 'badge-abierto';
+    }
   }
 }

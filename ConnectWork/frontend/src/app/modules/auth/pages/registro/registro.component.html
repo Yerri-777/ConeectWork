@@ -206,11 +206,13 @@
 
     <!-- Footer -->
     <div class="registro-footer">
-      <p>¿Ya tienes cuenta?
-        <a routerLink="/auth/login">Inicia sesión aquí</a>
-      </p>
-    </div>
-  </div>
+  <p>
+    ¿Ya tienes cuenta?
+    <a [routerLink]="['/auth/login']">
+      Inicia sesión aquí
+    </a>
+  </p>
+</div>
 
   <!-- Lado derecho: Beneficios -->
   <div class="registro-info">

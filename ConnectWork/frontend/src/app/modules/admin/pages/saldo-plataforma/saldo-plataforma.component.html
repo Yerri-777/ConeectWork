@@ -1,20 +1,23 @@
 <div class="saldo-container" *ngIf="!cargando">
-  <h1>Saldo de la Plataforma</h1>
+  <div class="header-main">
+    <h1>Saldo de la Plataforma</h1>
+    <p class="subtitle">Gestión de comisiones y movimientos financieros</p>
+  </div>
 
   <div class="stats-grid">
     <div class="stat-card total">
-      <div class="stat-icon"></div>
+      <div class="stat-icon">💰</div>
       <div class="stat-info">
         <h3>Saldo Total Acumulado</h3>
-      <p class="amount">{{ saldoData!.totalAcumulado | currency:'GTQ':'symbol':'1.2-2' }}</p>
+        <p class="amount">{{ saldoData.totalAcumulado | currency:'GTQ':'symbol':'1.2-2' }}</p>
       </div>
     </div>
 
     <div class="stat-card pending">
-      <div class="stat-icon"></div>
+      <div class="stat-icon">⏳</div>
       <div class="stat-info">
         <h3>Comisiones Pendientes</h3>
-      <p class="amount">{{ saldoData!.comisionesPendientes | currency:'GTQ':'symbol':'1.2-2' }}</p>
+        <p class="amount">{{ saldoData.comisionesPendientes | currency:'GTQ':'symbol':'1.2-2' }}</p>
       </div>
     </div>
   </div>
@@ -23,16 +26,20 @@
     <div class="card-header">
       <h2>Últimos Movimientos</h2>
       <div class="header-actions">
-        <button class="btn-refrescar" (click)="cargarSaldo()">Actualizar</button>
-        <button class="btn-descargar" (click)="descargarReporte()">Descargar PDF</button>
+        <button class="btn-refrescar" (click)="cargarSaldo()" [disabled]="cargando">Actualizar</button>
+        <button class="btn-descargar" (click)="descargarReporte()" *ngIf="transacciones.length > 0">Descargar PDF</button>
       </div>
     </div>
 
+    <!-- Slider para ajustar la comisión dinámicamente -->
     <div class="comision-control">
-      <label>Comisión Actual: {{ comisionActual }}%</label>
+      <div class="label-group">
+        <label>Comisión del Sistema: <strong>{{ comisionActual }}%</strong></label>
+        <span class="info-tag">Ajuste en tiempo real</span>
+      </div>
       <input type="range" min="0" max="100" [value]="comisionActual"
              #rangeInput
-             (change)="actualizarComision(+rangeInput.value)">
+             (input)="actualizarComision(+rangeInput.value)">
     </div>
 
     <div class="table-container" *ngIf="transacciones.length > 0">
@@ -48,15 +55,15 @@
         </thead>
         <tbody>
           <tr *ngFor="let trans of transacciones">
-            <td>{{ trans.fecha | date:'short' }}</td>
+            <td>{{ trans.fecha | date:'shortDate' }}</td>
             <td>
               <div class="concepto-info">
                 <strong>{{ trans.tipo }}</strong>
-                <span>ID Proyecto: {{ trans.proyectoId }}</span>
+                <small>ID: {{ trans.proyectoId }}</small>
               </div>
             </td>
-           <td>{{ trans.montoBruto | currency:'GTQ':'symbol':'1.2-2' }}</td>
-           <td class="comision-text">+{{ trans.montoComision | currency:'GTQ':'symbol':'1.2-2' }}</td>
+            <td>{{ trans.montoBruto | currency:'GTQ':'symbol':'1.2-2' }}</td>
+            <td class="comision-text">+{{ trans.montoComision | currency:'GTQ':'symbol':'1.2-2' }}</td>
             <td>
               <span class="status-badge" [ngClass]="trans.estado.toLowerCase()">
                 {{ trans.estado }}
@@ -66,9 +73,9 @@
         </tbody>
         <tfoot>
           <tr class="total-row">
-            <td colspan="2">TOTAL</td>
+            <td colspan="2">TOTAL GENERAL</td>
             <td>{{ getTotalBruto() | currency:'GTQ':'symbol':'1.2-2' }}</td>
-           <td>{{ getTotalComisiones() | currency:'GTQ':'symbol':'1.2-2' }}</td>
+            <td class="total-comision">{{ getTotalComisiones() | currency:'GTQ':'symbol':'1.2-2' }}</td>
             <td></td>
           </tr>
         </tfoot>
@@ -76,12 +83,13 @@
     </div>
 
     <div *ngIf="transacciones.length === 0" class="empty-state">
-      <p>No se registran transacciones recientes</p>
+      <div class="empty-icon">📁</div>
+      <p>No se registran transacciones recientes en el sistema.</p>
     </div>
   </div>
 </div>
 
-<div class="cargando" *ngIf="cargando">
+<div class="cargando-overlay" *ngIf="cargando">
   <div class="spinner"></div>
-  <p>Cargando datos...</p>
+  <p>Procesando información financiera...</p>
 </div>

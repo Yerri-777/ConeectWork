@@ -1,9 +1,6 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 
-/**
- * Directiva: Trunca texto con ellipsis
- * Uso: <p appTruncate="50">Texto largo que será truncado...</p>
- */
+
 @Directive({
   selector: '[appTruncate]',
   standalone: true
@@ -29,7 +26,7 @@ export class TruncateDirective implements OnInit {
     if (texto.length > this.appTruncate) {
       const textoTruncado = texto.substring(0, this.appTruncate) + this.truncateEnd;
       elemento.textContent = textoTruncado;
-      elemento.title = texto; // Mostrar texto completo en tooltip
+      elemento.title = texto;
     }
   }
 }

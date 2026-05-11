@@ -1,6 +1,4 @@
-/**
- * CONTRATO - Modelo para contratos
- */
+
 export interface Contrato {
   id?: number;
   propuestaId: number;
@@ -20,9 +18,6 @@ export interface Contrato {
   nombreFreelancer?: string;
 }
 
-/**
- * Datos adicionales para ver contrato
- */
 export interface ContratoDetalle extends Contrato {
   entregas?: any[];
   ultimaEntrega?: any;

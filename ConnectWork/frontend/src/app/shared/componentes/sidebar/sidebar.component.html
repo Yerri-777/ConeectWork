@@ -1,6 +1,6 @@
 <aside class="sidebar" [class.collapsed]="sidebarColapsado">
-  <button class="sidebar-toggle" (click)="toggleSidebar()">
-    <span>☰</span>
+  <button class="sidebar-toggle" (click)="toggleSidebar()" [title]="sidebarColapsado ? 'Expandir' : 'Contraer'">
+    <span>=</span>
   </button>
 
   <div class="sidebar-header">
@@ -13,6 +13,7 @@
       <a *ngIf="!item.children"
          [routerLink]="item.route"
          routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: false }"
          class="menu-item"
          [title]="sidebarColapsado ? item.label : ''">
         <span class="menu-icon">{{ item.icon }}</span>
@@ -20,15 +21,18 @@
       </a>
 
       <div *ngIf="item.children" class="menu-group">
-        <button class="menu-item menu-toggle" (click)="toggleSubmenu(item.label)">
+        <button class="menu-item menu-toggle"
+                (click)="toggleSubmenu(item.label)"
+                [title]="sidebarColapsado ? item.label : ''">
           <span class="menu-icon">{{ item.icon }}</span>
           <span class="menu-label" *ngIf="!sidebarColapsado">{{ item.label }}</span>
-          <span class="menu-arrow" *ngIf="!sidebarColapsado">▼</span>
+          <span class="menu-arrow" *ngIf="!sidebarColapsado" [class.open]="isSubmenuOpen(item.label)">v</span>
         </button>
-        <div class="submenu" *ngIf="isSubmenuOpen(item.label) && !sidebarColapsado">
+        <div class="submenu" [class.open]="isSubmenuOpen(item.label)" *ngIf="isSubmenuOpen(item.label) && !sidebarColapsado">
           <a *ngFor="let subitem of item.children"
              [routerLink]="subitem.route"
              routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: false }"
              class="submenu-item">
             {{ subitem.label }}
           </a>
@@ -37,12 +41,12 @@
     </div>
   </nav>
 
-  <div class="sidebar-footer" *ngIf="!sidebarColapsado">
+  <div class="sidebar-footer" *ngIf="!sidebarColapsado && usuarioActual">
     <div class="user-info">
-    <div class="user-avatar">{{ getAvatarInitial() }}</div>
+      <div class="user-avatar">{{ getAvatarInitial() }}</div>
       <div class="user-details">
-        <p class="user-name">{{ usuarioActual?.nombreCompleto }}</p>
-        <small class="user-role">{{ usuarioActual?.rol }}</small>
+        <p class="user-name">{{ usuarioActual.nombreCompleto }}</p>
+        <small class="user-role">{{ usuarioActual.rol }}</small>
       </div>
     </div>
   </div>

@@ -1,108 +1,423 @@
 package servlet;
 
 import dao.SolicitudDAO;
+
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import modelo.SolicitudCategoria;
 import modelo.SolicitudHabilidad;
+
 import util.JsonUtil;
 
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * HABILIDADES (freelancer → admin):
- * POST /api/solicitudes/habilidades           → crear solicitud (FREELANCER)
- * GET  /api/solicitudes/habilidades?estado=   → listar (ADMIN/FREELANCER)
- * PUT  /api/solicitudes/habilidades/{id}/aceptar|rechazar → resolver (ADMIN)
- *
- * CATEGORÍAS (cliente → admin):
- * POST /api/solicitudes/categorias            → crear solicitud (CLIENTE)
- * GET  /api/solicitudes/categorias?estado=    → listar (ADMIN/CLIENTE)
- * PUT  /api/solicitudes/categorias/{id}/aceptar|rechazar → resolver (ADMIN)
- */
 @WebServlet("/api/solicitudes/*")
 public class SolicitudServlet extends HttpServlet {
 
     private final SolicitudDAO dao = new SolicitudDAO();
 
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
+    private String obtenerRol(HttpServletRequest req) {
+
+        try {
+
+            Object rolObj = req.getAttribute("rol");
+
+            if (rolObj == null) {
+                return "";
+            }
+
+            return rolObj.toString().trim().toUpperCase();
+
+        } catch (Exception e) {
+
+            System.err.println("[SolicitudServlet] Error obteniendo rol: " + e.getMessage());
+
+            return "";
+        }
+    }
+
+    private Integer obtenerUsuarioId(HttpServletRequest req) {
+
+        try {
+
+            Object uidObj = req.getAttribute("usuarioId");
+
+            if (uidObj == null) {
+                return null;
+            }
+
+            if (uidObj instanceof Integer) {
+                return (Integer) uidObj;
+            }
+
+            return Integer.parseInt(uidObj.toString());
+
+        } catch (Exception e) {
+
+            System.err.println("[SolicitudServlet] Error obteniendo usuarioId: " + e.getMessage());
+
+            return null;
+        }
+    }
+
+    private boolean esAdmin(HttpServletRequest req) {
+        return "ADMIN".equalsIgnoreCase(obtenerRol(req));
+    }
+
+    private boolean esFreelancer(HttpServletRequest req) {
+        return "FREELANCER".equalsIgnoreCase(obtenerRol(req));
+    }
+
+    private boolean esCliente(HttpServletRequest req) {
+        return "CLIENTE".equalsIgnoreCase(obtenerRol(req));
+    }
+
+    // =========================================================
+    // GET
+    // =========================================================
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String path   = req.getPathInfo();
-        String rol    = (String) req.getAttribute("rol");
+
+        String path = req.getPathInfo();
+
         String estado = req.getParameter("estado");
+
         try {
-            if (path.startsWith("/habilidades")) {
-                // Admin ve todas, freelancer solo las suyas (filtrado por estado)
-                JsonUtil.enviarJson(resp, 200, dao.listarSolicitudesHabilidad(estado));
-            } else if (path.startsWith("/categorias")) {
-                JsonUtil.enviarJson(resp, 200, dao.listarSolicitudesCategoria(estado));
-            } else {
-                JsonUtil.enviarError(resp, 404, "Ruta no encontrada");
+
+            if (path == null) {
+
+                JsonUtil.enviarError(resp, 404, "Ruta inválida");
+
+                return;
             }
-        } catch (Exception e) { JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage()); }
+
+            // =================================================
+            // SOLICITUDES HABILIDADES
+            // =================================================
+
+            if (path.startsWith("/habilidades")) {
+
+                JsonUtil.enviarJson(
+                        resp,
+                        200,
+                        dao.listarSolicitudesHabilidad(estado)
+                );
+
+                return;
+            }
+
+            // =================================================
+            // SOLICITUDES CATEGORIAS
+            // =================================================
+
+            if (path.startsWith("/categorias")) {
+
+                JsonUtil.enviarJson(
+                        resp,
+                        200,
+                        dao.listarSolicitudesCategoria(estado)
+                );
+
+                return;
+            }
+
+            JsonUtil.enviarError(resp, 404, "Ruta no encontrada");
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            JsonUtil.enviarError(
+                    resp,
+                    500,
+                    "Error al obtener solicitudes"
+            );
+        }
     }
+
+    // =========================================================
+    // POST
+    // =========================================================
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String path = req.getPathInfo();
-        String rol  = (String) req.getAttribute("rol");
-        int uid     = (int) req.getAttribute("usuarioId");
-        try {
-            if (path.startsWith("/habilidades")) {
-                if (!"FREELANCER".equals(rol)) { JsonUtil.enviarError(resp, 403, "Solo freelancers"); return; }
-                Map<?, ?> body = JsonUtil.leerJson(req, Map.class);
-                if (body.get("nombre") == null) { JsonUtil.enviarError(resp, 400, "nombre requerido"); return; }
-                SolicitudHabilidad s = new SolicitudHabilidad();
-                s.setFreelancerId(uid);
-                s.setNombre((String) body.get("nombre"));
-                s.setDescripcion((String) body.get("descripcion"));
-                int id = dao.crearSolicitudHabilidad(s);
-                JsonUtil.enviarJson(resp, 201, Map.of("id", id, "mensaje", "Solicitud enviada al administrador"));
 
-            } else if (path.startsWith("/categorias")) {
-                if (!"CLIENTE".equals(rol)) { JsonUtil.enviarError(resp, 403, "Solo clientes"); return; }
-                Map<?, ?> body = JsonUtil.leerJson(req, Map.class);
-                if (body.get("nombre") == null) { JsonUtil.enviarError(resp, 400, "nombre requerido"); return; }
-                SolicitudCategoria s = new SolicitudCategoria();
-                s.setClienteId(uid);
-                s.setNombre((String) body.get("nombre"));
-                s.setDescripcion((String) body.get("descripcion"));
-                int id = dao.crearSolicitudCategoria(s);
-                JsonUtil.enviarJson(resp, 201, Map.of("id", id, "mensaje", "Solicitud enviada al administrador"));
-            } else {
-                JsonUtil.enviarError(resp, 404, "Ruta no encontrada");
+        String path = req.getPathInfo();
+
+        Integer uid = obtenerUsuarioId(req);
+
+        if (uid == null) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    401,
+                    "Usuario no autenticado"
+            );
+
+            return;
+        }
+
+        try {
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body =
+                    (Map<String, Object>) JsonUtil.leerJson(req, Map.class);
+
+            // =================================================
+            // SOLICITAR HABILIDAD
+            // =================================================
+
+            if (path.startsWith("/habilidades")) {
+
+                if (!esFreelancer(req)) {
+
+                    JsonUtil.enviarError(
+                            resp,
+                            403,
+                            "Solo freelancers"
+                    );
+
+                    return;
+                }
+
+                if (body.get("nombre") == null) {
+
+                    JsonUtil.enviarError(
+                            resp,
+                            400,
+                            "Nombre requerido"
+                    );
+
+                    return;
+                }
+
+                SolicitudHabilidad solicitud = new SolicitudHabilidad();
+
+                solicitud.setFreelancerId(uid);
+                solicitud.setNombre((String) body.get("nombre"));
+                solicitud.setDescripcion((String) body.get("descripcion"));
+
+                int id = dao.crearSolicitudHabilidad(solicitud);
+
+                JsonUtil.enviarJson(
+                        resp,
+                        201,
+                        Map.of(
+                                "id", id,
+                                "mensaje", "Solicitud enviada correctamente"
+                        )
+                );
+
+                return;
             }
-        } catch (Exception e) { JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage()); }
+
+            // =================================================
+            // SOLICITAR CATEGORIA
+            // =================================================
+
+            if (path.startsWith("/categorias")) {
+
+                if (!esCliente(req)) {
+
+                    JsonUtil.enviarError(
+                            resp,
+                            403,
+                            "Solo clientes"
+                    );
+
+                    return;
+                }
+
+                if (body.get("nombre") == null) {
+
+                    JsonUtil.enviarError(
+                            resp,
+                            400,
+                            "Nombre requerido"
+                    );
+
+                    return;
+                }
+
+                SolicitudCategoria solicitud = new SolicitudCategoria();
+
+                solicitud.setClienteId(uid);
+                solicitud.setNombre((String) body.get("nombre"));
+                solicitud.setDescripcion((String) body.get("descripcion"));
+
+                int id = dao.crearSolicitudCategoria(solicitud);
+
+                JsonUtil.enviarJson(
+                        resp,
+                        201,
+                        Map.of(
+                                "id", id,
+                                "mensaje", "Solicitud enviada correctamente"
+                        )
+                );
+
+                return;
+            }
+
+            JsonUtil.enviarError(resp, 404, "Ruta inválida");
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            JsonUtil.enviarError(
+                    resp,
+                    500,
+                    "Error al crear solicitud"
+            );
+        }
     }
+
+    // =========================================================
+    // PUT
+    // =========================================================
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!"ADMIN".equals(req.getAttribute("rol"))) { JsonUtil.enviarError(resp, 403, "Solo admin"); return; }
+
+        if (!esAdmin(req)) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    403,
+                    "Solo administradores"
+            );
+
+            return;
+        }
+
         String path = req.getPathInfo();
-        int uid     = (int) req.getAttribute("usuarioId");
+
+        Integer uid = obtenerUsuarioId(req);
+
+        if (uid == null) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    401,
+                    "Usuario no autenticado"
+            );
+
+            return;
+        }
+
         try {
-            // /habilidades/{id}/aceptar  o  /categorias/{id}/rechazar
+
             String[] partes = path.substring(1).split("/");
-            String tipo     = partes[0];
-            int id          = Integer.parseInt(partes[1]);
-            String accion   = partes[2];
 
-            if (!"aceptar".equals(accion) && !"rechazar".equals(accion)) {
-                JsonUtil.enviarError(resp, 400, "Acción no válida"); return;
-            }
-            String nuevoEstado = "aceptar".equals(accion) ? "ACEPTADA" : "RECHAZADA";
-            boolean ok;
+            String tipo = partes[0];
 
-            if ("habilidades".equals(tipo)) {
-                ok = dao.resolverSolicitudHabilidad(id, nuevoEstado, uid);
-            } else if ("categorias".equals(tipo)) {
-                ok = dao.resolverSolicitudCategoria(id, nuevoEstado, uid);
-            } else {
-                JsonUtil.enviarError(resp, 404, "Tipo no válido"); return;
+            int solicitudId = Integer.parseInt(partes[1]);
+
+            String accion = partes[2];
+
+            if (!"aceptar".equalsIgnoreCase(accion)
+                    && !"rechazar".equalsIgnoreCase(accion)) {
+
+                JsonUtil.enviarError(
+                        resp,
+                        400,
+                        "Acción inválida"
+                );
+
+                return;
             }
-            if (!ok) JsonUtil.enviarError(resp, 400, "Solicitud no encontrada o ya procesada");
-            else      JsonUtil.enviarJson(resp, 200, Map.of("mensaje", "Solicitud " + nuevoEstado.toLowerCase()));
-        } catch (Exception e) { JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage()); }
+
+            String nuevoEstado =
+                    "aceptar".equalsIgnoreCase(accion)
+                            ? "ACEPTADA"
+                            : "RECHAZADA";
+
+            boolean resultado;
+
+            // =================================================
+            // HABILIDADES
+            // =================================================
+
+            if ("habilidades".equalsIgnoreCase(tipo)) {
+
+                resultado = dao.resolverSolicitudHabilidad(
+                        solicitudId,
+                        nuevoEstado,
+                        uid
+                );
+            }
+
+            // =================================================
+            // CATEGORIAS
+            // =================================================
+
+            else if ("categorias".equalsIgnoreCase(tipo)) {
+
+                resultado = dao.resolverSolicitudCategoria(
+                        solicitudId,
+                        nuevoEstado,
+                        uid
+                );
+            }
+
+            else {
+
+                JsonUtil.enviarError(
+                        resp,
+                        404,
+                        "Tipo inválido"
+                );
+
+                return;
+            }
+
+            if (!resultado) {
+
+                JsonUtil.enviarError(
+                        resp,
+                        400,
+                        "Solicitud no encontrada o ya procesada"
+                );
+
+                return;
+            }
+
+            JsonUtil.enviarJson(
+                    resp,
+                    200,
+                    Map.of(
+                            "mensaje",
+                            "Solicitud " + nuevoEstado.toLowerCase()
+                    )
+            );
+
+        } catch (NumberFormatException e) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    400,
+                    "ID inválido"
+            );
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            JsonUtil.enviarError(
+                    resp,
+                    500,
+                    "Error al procesar solicitud"
+            );
+        }
     }
 }

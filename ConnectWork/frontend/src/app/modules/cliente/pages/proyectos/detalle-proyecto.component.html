@@ -1,25 +1,136 @@
-<div class="proyectos-container" *ngIf="proyecto">
+
+
+<div
+  class="proyectos-container"
+  *ngIf="proyecto; else noEncontrado">
+
+
   <div class="header-flex">
-    <button class="btn-outline" routerLink="/cliente/proyectos">← Volver</button>
+
+    <button
+      class="btn-outline"
+      routerLink="/cliente/proyectos">
+
+      ← Volver
+
+    </button>
+
     <div class="actions">
-      <button class="btn-primary" [routerLink]="['/cliente/proyectos/editar', proyecto.id]">Editar</button>
+
+      <button
+        class="btn-primary"
+        [routerLink]="['/cliente/proyectos/editar', proyecto.id]">
+
+         Editar
+
+      </button>
+
     </div>
+
   </div>
 
-  <div class="grid-form" style="grid-template-columns: 2fr 1fr;">
+  <!-- GRID -->
+  <div
+    class="grid-form"
+    style="grid-template-columns: 2fr 1fr;">
+
+    <!-- INFO -->
     <div class="table-card">
+
       <h1>{{ proyecto.titulo }}</h1>
-      <p class="estado">Estado: <span class="badge badge-abierto">{{ proyecto.estado }}</span></p>
+
+      <p class="estado">
+
+        Estado:
+
+        <span
+          class="badge"
+          [ngClass]="obtenerClaseEstado(proyecto.estado)">
+
+          {{ proyecto.estado }}
+
+        </span>
+
+      </p>
+
       <hr>
+
       <h3>Descripción</h3>
-      <p>{{ proyecto.descripcion }}</p>
+
+      <p>
+        {{ proyecto.descripcion }}
+      </p>
+
+      <hr>
+
+      <h3>Habilidades requeridas</h3>
+
+      <div class="habilidades-container">
+
+        <span
+          class="badge badge-skill"
+          *ngFor="let skill of proyecto.habilidades">
+
+          {{ skill }}
+
+        </span>
+
+      </div>
+
     </div>
 
+    <!-- RESUMEN -->
     <div class="table-card">
-      <h3>Resumen</h3>
-      <p><strong>Presupuesto:</strong> {{ proyecto.presupuesto | currency:'GTQ' }}</p>
-      <p><strong>Fecha Pub:</strong> {{ proyecto.fechaCreacion | date }}</p>
-      <p><strong>Propuestas:</strong> {{ proyecto.totalPropuestas }}</p>
+
+      <h3> Resumen</h3>
+
+      <p>
+        <strong>Categoría:</strong>
+        {{ proyecto.categoria }}
+      </p>
+
+      <p>
+        <strong>Presupuesto:</strong>
+        {{ proyecto.presupuesto | currency:'GTQ' }}
+      </p>
+
+      <p>
+        <strong>Fecha Publicación:</strong>
+        {{ proyecto.fechaCreacion | date:'mediumDate' }}
+      </p>
+
+      <p>
+        <strong>Fecha Límite:</strong>
+        {{ proyecto.fechaLimite | date:'mediumDate' }}
+      </p>
+
+      <p>
+        <strong>Propuestas:</strong>
+        {{ proyecto.totalPropuestas || 0 }}
+      </p>
+
+      <p>
+        <strong>Cliente:</strong>
+        {{ proyecto.clienteNombre }}
+      </p>
+
     </div>
+
   </div>
+
 </div>
+
+<!-- EMPTY -->
+<ng-template #noEncontrado>
+
+  <div class="table-card">
+
+    <h2> Proyecto no encontrado</h2>
+
+    <p>
+      El proyecto solicitado no existe o fue eliminado.
+    </p>
+
+  </div>
+
+</ng-template>

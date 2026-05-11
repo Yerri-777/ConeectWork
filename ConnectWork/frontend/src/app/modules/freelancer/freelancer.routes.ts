@@ -34,6 +34,13 @@ export const FREELANCER_ROUTES: Routes = [
             path: '',
             loadComponent: () => import('./pages/propuestas/mis-propuestas.component').then(m => m.MisPropuestasComponent)
           },
+
+          {
+            path: 'crear',
+            redirectTo: '/freelancer/explorar',
+            pathMatch: 'full'
+          },
+
           {
             path: 'crear/:proyectoId',
             loadComponent: () => import('./pages/propuestas/crear-propuesta.component').then(m => m.CrearPropuestaComponent)

@@ -1,3 +1,4 @@
+// detalle-contrato.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -22,8 +23,16 @@ export class DetalleContratoComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.contratoService.obtenerPorId(id).subscribe({
-        next: (data) => this.contrato = data
+        next: (data: any) => {
+          if (data) {
+            this.contrato = {
+              ...data,
+              proyecto: { titulo: data.proyectoTitulo || 'Proyecto' },
+              cliente: { nombreCompleto: data.clienteNombre || 'Cliente' },
+              monto: data.montoAcordado || data.monto || 0
+            };
+          }
+        }
       });
     }
-  }
-}
+  } }

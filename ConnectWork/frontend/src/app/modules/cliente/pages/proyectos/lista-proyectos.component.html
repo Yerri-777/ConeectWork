@@ -1,35 +1,136 @@
+
+
 <div class="proyectos-container">
+
   <div class="header-flex">
-    <h1>Mis Proyectos</h1>
-    <button class="btn-primary" routerLink="crear">+ Nuevo Proyecto</button>
+
+    <div>
+      <h1> Mis Proyectos</h1>
+      <p class="subtitle">
+        Administra tus proyectos publicados
+      </p>
+    </div>
+
+    <button
+      class="btn-primary"
+      routerLink="crear">
+
+      ➕ Nuevo Proyecto
+
+    </button>
+
   </div>
 
-  <div class="table-card">
-    <table *ngIf="proyectos.length > 0; else noData">
+
+  <div
+    *ngIf="cargando"
+    class="table-card">
+
+    <p style="text-align:center;">
+      Cargando proyectos...
+    </p>
+
+  </div>
+
+  <!-- TABLA -->
+  <div
+    class="table-card"
+    *ngIf="!cargando">
+
+    <table
+      *ngIf="proyectos.length > 0; else noData">
+
       <thead>
+
         <tr>
-          <th>Título</th>
+          <th>Proyecto</th>
           <th>Estado</th>
+          <th>Categoría</th>
           <th>Presupuesto</th>
           <th>Propuestas</th>
+          <th>Fecha</th>
           <th>Acciones</th>
         </tr>
+
       </thead>
+
       <tbody>
-        <tr *ngFor="let p of proyectos">
-          <td><strong>{{ p.titulo }}</strong></td>
-          <td><span [class]="'badge badge-' + p.estado.toLowerCase()">{{ p.estado }}</span></td>
-          <td>{{ p.presupuesto | currency:'GTQ' }}</td>
-          <td>{{ p.totalPropuestas }}</td>
+
+        <tr
+          *ngFor="let p of proyectos; trackBy: trackByProyecto">
+
           <td>
-            <button class="btn-outline" [routerLink]="['detalle', p.id]">Ver</button>
-            <button class="btn-outline" [routerLink]="['editar', p.id]" style="margin-left: 5px;">📝</button>
+            <strong>{{ p.titulo }}</strong>
           </td>
+
+          <td>
+
+            <span
+              class="badge"
+              [ngClass]="obtenerClaseEstado(p.estado)">
+
+              {{ p.estado }}
+
+            </span>
+
+          </td>
+
+          <td>
+            {{ p.categoria }}
+          </td>
+
+          <td>
+            {{ p.presupuesto | currency:'GTQ' }}
+          </td>
+
+          <td>
+            {{ p.totalPropuestas || 0 }}
+          </td>
+
+          <td>
+            {{ p.fechaCreacion | date:'shortDate' }}
+          </td>
+
+          <td class="acciones">
+
+            <button
+              class="btn-outline"
+              [routerLink]="['detalle', p.id]">
+
+              Ver
+
+            </button>
+
+            <button
+              class="btn-outline"
+              [routerLink]="['editar', p.id]">
+
+               Editar
+
+            </button>
+
+          </td>
+
         </tr>
+
       </tbody>
+
     </table>
+
+    <!-- EMPTY -->
     <ng-template #noData>
-      <p style="text-align: center; color: #95a5a6;">No has publicado proyectos aún.</p>
+
+      <div class="empty-state">
+        <h3> No hay proyectos publicados</h3>
+
+        <p>
+          Publica tu primer proyecto y empieza a recibir propuestas
+        </p>
+
+      </div>
+
     </ng-template>
+
   </div>
+
 </div>

@@ -5,25 +5,36 @@
   </div>
 
   <form [formGroup]="propuestaForm" (ngSubmit)="enviarPropuesta()" class="crear-form">
+
     <div class="form-section" *ngIf="proyecto">
-      <h2>Proyecto: {{ proyecto.titulo }}</h2>
+      <h2>Proyecto: {{ proyecto?.titulo }}</h2>
+
       <div class="proyecto-info">
-        <p>{{ proyecto.descripcion }}</p>
+        <p>{{ proyecto?.descripcion }}</p>
+
         <div class="proyecto-meta">
-          <span>Presupuesto original: Q{{ proyecto.presupuestoMinimo }} - {{ proyecto.presupuestoMaximo }}</span>
+          <span>
+            Presupuesto original:
+            Q{{ proyecto?.presupuestoMinimo }} - {{ proyecto?.presupuestoMaximo }}
+          </span>
         </div>
       </div>
     </div>
 
     <div class="form-section">
       <h2>Modificar Propuesta Técnica</h2>
+
       <div class="form-group">
         <label>Contenido de la Propuesta</label>
+
         <textarea
           formControlName="contenido"
           rows="10"
-          placeholder="Describe detalladamente tu solución..."></textarea>
-        <span class="error" *ngIf="propuestaForm.get('contenido')?.invalid && propuestaForm.get('contenido')?.touched">
+          placeholder="Describe detalladamente tu solución...">
+        </textarea>
+
+        <span class="error"
+              *ngIf="propuestaForm.get('contenido')?.invalid && propuestaForm.get('contenido')?.touched">
           La propuesta debe tener al menos 100 caracteres.
         </span>
       </div>
@@ -31,37 +42,53 @@
 
     <div class="form-section">
       <h2>Ajustar Términos</h2>
-      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+      <div class="form-row"
+           style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
         <div class="form-group">
           <label>Nuevo Monto (GTQ)</label>
+
           <input type="number" formControlName="monto" placeholder="0.00">
-          <span class="error" *ngIf="propuestaForm.get('monto')?.invalid && propuestaForm.get('monto')?.touched">
+
+          <span class="error"
+                *ngIf="propuestaForm.get('monto')?.invalid && propuestaForm.get('monto')?.touched">
             El monto mínimo es Q100.
           </span>
         </div>
 
         <div class="form-group">
           <label>Nuevo Plazo (Días)</label>
+
           <input type="number" formControlName="plazo" placeholder="Ej: 5">
-          <span class="error" *ngIf="propuestaForm.get('plazo')?.invalid && propuestaForm.get('plazo')?.touched">
+
+          <span class="error"
+                *ngIf="propuestaForm.get('plazo')?.invalid && propuestaForm.get('plazo')?.touched">
             Debes definir al menos 1 día de plazo.
           </span>
         </div>
+
       </div>
     </div>
 
-    <div class="form-actions" style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
-      <button type="button" class="btn-cancelar" routerLink="/freelancer/propuestas" style="background: #95a5a6; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer;">
+    <div class="form-actions"
+         style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+
+      <button type="button"
+              routerLink="/freelancer/propuestas"
+              class="btn-cancelar"
+              style="background:#95a5a6;color:white;border:none;padding:12px 25px;border-radius:6px;">
         Cancelar Cambios
       </button>
 
-      <button
-        type="submit"
-        class="btn-guardar"
-        [disabled]="propuestaForm.invalid || cargando"
-        style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; border: none; padding: 12px 40px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+      <button type="submit"
+              class="btn-guardar"
+              [disabled]="propuestaForm.invalid || cargando"
+              style="background:linear-gradient(135deg,#f39c12,#e67e22);color:white;border:none;padding:12px 40px;border-radius:6px;">
         {{ cargando ? 'Guardando cambios...' : 'Actualizar Propuesta' }}
       </button>
+
     </div>
+
   </form>
 </div>

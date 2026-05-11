@@ -1,18 +1,38 @@
 import { Component, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+
+import {
+  ActivatedRoute,
+  Router,
+  RouterModule
+} from '@angular/router';
+
 import { ContratoService } from '../../../../core/services/contrato.service';
+
 import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-detalle-contrato',
+
   standalone: true,
-  imports: [CommonModule],
+
+  imports: [
+    CommonModule,
+    RouterModule
+  ],
+
   templateUrl: './detalle-contrato.component.html',
+
   styleUrls: ['./contratos.component.css']
 })
 export class DetalleContratoComponent implements OnInit {
-  contrato: any;
+
+  contrato: any = null;
+
+  cargando = true;
+
+  procesando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,21 +42,105 @@ export class DetalleContratoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.contratoService.obtenerPorId(id).subscribe(data => this.contrato = data);
+
+    const id =
+      this.route.snapshot.paramMap.get('id');
+
+    if (!id) {
+
+      this.router.navigate([
+        '/cliente/contratos'
+      ]);
+
+      return;
     }
+
+    this.cargarContrato(id);
+  }
+
+  cargarContrato(
+    id: string
+  ): void {
+
+    this.cargando = true;
+
+    this.contratoService.obtenerPorId(id).subscribe({
+
+      next: (data: any) => {
+
+        this.contrato = data;
+
+        this.cargando = false;
+      },
+
+      error: (error) => {
+
+        console.error(
+          '[DetalleContrato] Error:',
+          error
+        );
+
+        this.cargando = false;
+
+        this.notificationService.mostrarError(
+          'No se pudo cargar el contrato'
+        );
+
+        this.router.navigate([
+          '/cliente/contratos'
+        ]);
+      }
+    });
   }
 
   cancelarContrato(): void {
-    if (confirm('¿Estás seguro de solicitar la cancelación? Esto notificará al freelancer.')) {
-      this.contratoService.cancelar(this.contrato.id).subscribe({
-        next: () => {
-          this.notificationService.mostrarExito('Solicitud enviada');
-          this.router.navigate(['/cliente/contratos']);
-        },
-        error: () => this.notificationService.mostrarError('No se pudo cancelar el contrato')
-      });
+
+    if (
+      !this.contrato ||
+      this.procesando
+    ) {
+      return;
     }
+
+    const confirmar = confirm(
+      '¿Estás seguro de solicitar la cancelación del contrato?'
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.procesando = true;
+
+    this.contratoService
+      .cancelar(this.contrato.id)
+      .subscribe({
+
+        next: () => {
+
+          this.procesando = false;
+
+          this.contrato.estado =
+            'CANCELADO';
+
+          this.notificationService.mostrarExito(
+            'Contrato cancelado correctamente'
+          );
+        },
+
+        error: (error) => {
+
+          console.error(
+            '[DetalleContrato] Error cancelando:',
+            error
+          );
+
+          this.procesando = false;
+
+          this.notificationService.mostrarError(
+            'No se pudo cancelar el contrato'
+          );
+        }
+      });
   }
 }

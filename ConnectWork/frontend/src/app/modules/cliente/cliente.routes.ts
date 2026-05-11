@@ -54,19 +54,31 @@ export const CLIENTE_ROUTES: Routes = [
         loadComponent: () => import('./pages/contratos/detalle-contrato.component').then(m => m.DetalleContratoComponent)
       },
 
-      // Entregas
-      {
-        path: 'entregas/aprobar/:id',
-        loadComponent: () => import('./pages/entregas/aprobar-entrega.component').then(m => m.AprobarEntregaComponent)
-      },
-      {
-        path: 'entregas/rechazar/:id',
-        loadComponent: () => import('./pages/entregas/rechazar-entrega.component').then(m => m.RechazarEntregaComponent)
-      },
-      {
-        path: 'entregas/calificar/:id',
-        loadComponent: () => import('./pages/entregas/calificar-freelancer.component').then(m => m.CalificarFreelancerComponent)
-      },
+    // Entregas
+{
+  path: 'entregas',
+  loadComponent: () =>
+    import('./pages/entregas/revisar-entregas.component')
+      .then(m => m.RevisarEntregasComponent)
+},
+{
+  path: 'entregas/aprobar/:id',
+  loadComponent: () =>
+    import('./pages/entregas/aprobar-entrega.component')
+      .then(m => m.AprobarEntregaComponent)
+},
+{
+  path: 'entregas/rechazar/:id',
+  loadComponent: () =>
+    import('./pages/entregas/rechazar-entrega.component')
+      .then(m => m.RechazarEntregaComponent)
+},
+{
+  path: 'entregas/calificar/:id',
+  loadComponent: () =>
+    import('./pages/entregas/calificar-freelancer.component')
+      .then(m => m.CalificarFreelancerComponent)
+},
 
       // Saldo
       {

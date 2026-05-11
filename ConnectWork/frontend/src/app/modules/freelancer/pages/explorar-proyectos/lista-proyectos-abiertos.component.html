@@ -1,44 +1,121 @@
+<div class="explorar-container">
 
-<div class="proyectos-container">
-  <div class="proyectos-header">
-    <h1>Explorar Proyectos</h1>
-    <p>Encuentra proyectos que se adapten a tus habilidades</p>
+  <header class="hero-section">
+    <div class="hero-content">
+      <div>
+        <span class="hero-badge">Oportunidades Disponibles</span>
+        <h1>Explorar Proyectos</h1>
+        <p>Conecta con clientes y encuentra el próximo desafío para tu carrera profesional.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="mini-stat">
+          <strong>{{ proyectosFiltrados.length }}</strong>
+          <span>Resultados</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="filtros-container">
+    <div class="filtro-group buscador">
+      <label>Buscar Proyecto</label>
+      <input
+        type="text"
+        [(ngModel)]="busqueda"
+        (input)="emitirFiltros()"
+        placeholder="Título, tecnologías o descripción..." />
+    </div>
+
+    <div class="filtro-group">
+      <label>Categoría</label>
+      <select [(ngModel)]="filtroCategoria" (change)="emitirFiltros()">
+        <option value="">Todas las categorías</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">
+          {{ cat.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filtro-group">
+      <label>Presupuesto</label>
+      <select [(ngModel)]="filtroPresupuesto" (change)="emitirFiltros()">
+        <option value="">Todos los rangos</option>
+        <option value="0-1000">Q0 - Q1,000</option>
+        <option value="1000-5000">Q1,000 - Q5,000</option>
+        <option value="5000-10000">Q5,000 - Q10,000</option>
+        <option value="10000+">Q10,000+</option>
+      </select>
+    </div>
+
+    <div class="filtro-btn">
+      <button class="btn-limpiar" (click)="limpiarFiltros()">
+        Limpiar
+      </button>
+    </div>
   </div>
 
-  <app-filtros-busqueda
-    [categorias]="categorias"
-    (cambioFiltros)="aplicarFiltros($event)">
-  </app-filtros-busqueda>
-
   <div class="proyectos-grid">
-    <div *ngFor="let proyecto of proyectosFiltrados"
-      class="proyecto-card"
-      [routerLink]="['/freelancer/explorar', proyecto.id]">
 
-      <div class="proyecto-header">
-        <h3>{{ proyecto.titulo }}</h3>
-        <span class="presupuesto">{{ getPresupuestoTexto(proyecto) }}</span>
+    <div class="proyecto-card"
+         *ngFor="let proyecto of proyectosFiltrados">
+
+      <div class="card-top">
+        <span class="categoria-badge">
+          {{ getCategoriaNombre(proyecto) }}
+        </span>
+        <span class="presupuesto">
+          {{ getPresupuesto(proyecto) }}
+        </span>
       </div>
 
-      <p class="descripcion">{{ proyecto.descripcion | slice:0:150 }}...</p>
+      <h3>{{ proyecto.titulo }}</h3>
 
-      <div class="proyecto-meta">
-        <span class="meta-item">Categoria: {{ getCategoriaNombre(proyecto) }}</span>
-        <span class="meta-item">Propuestas: {{ getPropuestasCount(proyecto) }}</span>
-        <span class="meta-item">Plazo: {{ getPlazo(proyecto) }} dias</span>
-      </div>
+      <p class="descripcion">
+        {{ proyecto.descripcion | slice:0:140 }}{{ proyecto.descripcion?.length > 140 ? '...' : '' }}
+      </p>
 
-      <div class="proyecto-footer">
-        <div class="cliente-info">
-          <span>Cliente: {{ getClienteNombre(proyecto) }}</span>
-          <span class="calificacion">Calificacion: {{ getClienteCalificacion(proyecto) | number:'1.1-1' }}</span>
+      <div class="meta-grid">
+        <div class="meta-box">
+          <strong>{{ getPropuestasCount(proyecto) }}</strong>
+          <span>Propuestas</span>
         </div>
-        <button class="btn-ver">Ver Detalles</button>
+        <div class="meta-box">
+          <strong>{{ getPlazo(proyecto) }}</strong>
+          <span>Días</span>
+        </div>
+        <div class="meta-box">
+          <span [class]="getEstadoClase(proyecto.estado)" style="font-weight: 700; font-size: 11px;">
+            {{ proyecto.estado }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="cliente-info">
+          <span class="cliente-label">Cliente</span>
+          <strong>{{ getClienteNombre(proyecto) }}</strong>
+          <div style="color: #fbbf24; font-size: 12px; margin-top: 2px;">
+            ★ {{ getClienteCalificacion(proyecto) }}
+          </div>
+        </div>
+
+        <button class="btn-detalle" [routerLink]="['/freelancer/explorar', proyecto.id]">
+          Ver más
+        </button>
       </div>
     </div>
 
-    <div *ngIf="proyectosFiltrados.length === 0" class="empty-state">
-      <p>No hay proyectos que coincidan con tus criterios</p>
+    <div class="empty-state" *ngIf="!cargando && proyectosFiltrados.length === 0">
+      <h2>No encontramos proyectos</h2>
+      <p>Intenta cambiar los términos de búsqueda o los filtros aplicados.</p>
+      <button class="btn-propuesta" (click)="limpiarFiltros()" style="width: auto; margin-top: 20px;">
+        Ver todos los proyectos
+      </button>
     </div>
+
+    <div class="empty-state" *ngIf="cargando">
+      <p>Cargando proyectos...</p>
+    </div>
+
   </div>
 </div>

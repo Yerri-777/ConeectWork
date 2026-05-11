@@ -101,7 +101,6 @@ export class SaldoPlataformaComponent implements OnInit {
       const doc = new jsPDF();
       const fechaCorte = new Date().toLocaleDateString();
 
-      // Configuración de encabezado
       doc.setFontSize(18);
       doc.text('Reporte de Saldo - Plataforma', 14, 20);
 
@@ -110,17 +109,14 @@ export class SaldoPlataformaComponent implements OnInit {
       doc.text(`Fecha de reporte: ${fechaCorte}`, 14, 30);
       doc.text(`Comisión aplicada: ${this.comisionActual}%`, 14, 37);
 
-      // Línea divisoria
       doc.setDrawColor(200);
       doc.line(14, 42, 196, 42);
 
-      // Resumen de totales
       doc.setTextColor(0);
       doc.text(`Total Bruto: Q${this.getTotalBruto().toFixed(2)}`, 14, 50);
       doc.text(`Total Comisiones: Q${this.getTotalComisiones().toFixed(2)}`, 80, 50);
       doc.text(`Pendiente: Q${this.saldoData.comisionesPendientes.toFixed(2)}`, 140, 50);
 
-      // Generar tabla de transacciones
       autoTable(doc, {
         startY: 60,
         head: [['Fecha', 'Concepto', 'Monto Bruto', 'Comisión', 'Estado']],

@@ -76,7 +76,7 @@ export class DashboardFreelancerComponent implements OnInit {
 
     this.reporteService.obtenerEstadisticasGlobales().subscribe({
       next: (stats) => {
-        // this.stats.calificacion = stats.miCalificacion || 0;
+
       }
     });
   }

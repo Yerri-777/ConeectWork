@@ -3,43 +3,52 @@ package util;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * Utilidad centralizada para encriptación de contraseñas con BCrypt. Todos los
- * componentes del backend deben usar esta clase en lugar de llamar a BCrypt
- * directamente.
+ * Utilidad para hashear y verificar contraseñas usando BCrypt
+ * Desarrollado para ConnectWork - CUNOC
  */
 public class PasswordUtil {
 
-    private static final int ROUNDS = 12;
-
-    private PasswordUtil() {
+    /**
+     * Hashea una contraseña usando BCrypt
+     * @param password Contraseña en texto plano
+     * @return Contraseña hasheada
+     */
+    public static String hashPassword(String password) {
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+        }
+        return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
 
     /**
-     * Genera el hash BCrypt de una contraseña en texto plano.
-     *
-     * @param plainPassword contraseña sin encriptar
-     * @return hash BCrypt listo para almacenar en BD
+     * Verifica una contraseña contra un hash
+     * @param password Contraseña en texto plano
+     * @param hash Hash de la contraseña
+     * @return true si coinciden, false si no
      */
-    public static String encriptar(String plainPassword) {
-        return BCrypt.hashpw(plainPassword, BCrypt.gensalt(ROUNDS));
-    }
-
-    /**
-     * Verifica si una contraseña en texto plano coincide con un hash
-     * almacenado.
-     *
-     * @param plainPassword contraseña ingresada por el usuario
-     * @param hash hash almacenado en la base de datos
-     * @return true si coinciden
-     */
-    public static boolean verificar(String plainPassword, String hash) {
-        if (plainPassword == null || hash == null) {
+    public static boolean checkPassword(String password, String hash) {
+        if (password == null || password.isBlank() || hash == null || hash.isBlank()) {
             return false;
         }
         try {
-            return BCrypt.checkpw(plainPassword, hash);
+            return BCrypt.checkpw(password, hash);
         } catch (Exception e) {
+            System.err.println("[PasswordUtil] Error verificando password: " + e.getMessage());
             return false;
         }
     }
+
+    /**
+     * Verifica si una contraseña ya está hasheada
+     * @param hash String a verificar
+     * @return true si parece ser un hash BCrypt
+     */
+    public static boolean isHashed(String hash) {
+     return hash != null &&
+       (
+           hash.startsWith("$2a$") ||
+           hash.startsWith("$2b$") ||
+           hash.startsWith("$2y$")
+       );
+}
 }

@@ -1,11 +1,7 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 
-/**
- * Directiva: Muestra/oculta elementos según rol del usuario
- * Uso: <button *appRequiredRole="'ADMIN'">Solo Admin</button>
- *      <div *appRequiredRole="['CLIENTE', 'FREELANCER']">Cliente o Freelancer</div>
- */
+
 @Directive({
   selector: '[appRequiredRole]',
   standalone: true

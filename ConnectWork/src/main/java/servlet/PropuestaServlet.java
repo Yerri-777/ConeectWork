@@ -1,7 +1,10 @@
 package servlet;
 
+import dao.PropuestaDAO;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import service.PropuestaService;
 import util.JsonUtil;
 
@@ -13,115 +16,331 @@ public class PropuestaServlet extends HttpServlet {
 
     private final PropuestaService service = new PropuestaService();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String path = req.getPathInfo();
-        String rol = (String) req.getAttribute("rol");
-        int uid = (int) req.getAttribute("usuarioId");
+    // ====================================
+    // HELPERS
+    // ====================================
+
+    private Integer obtenerUsuarioId(HttpServletRequest req) {
+
         try {
-            if ("/mias".equals(path)) {
-                if (!"FREELANCER".equals(rol)) {
-                    JsonUtil.enviarError(resp, 403, "Solo freelancers");
-                    return;
-                }
-                JsonUtil.enviarJson(resp, 200, service.listarMias(uid));
-            } else {
-                String param = req.getParameter("proyectoId");
-                if (param == null) {
-                    JsonUtil.enviarError(resp, 400, "proyectoId requerido");
-                    return;
-                }
-                if ("ADMIN".equals(rol)) {
-                    JsonUtil.enviarJson(resp, 200, new dao.PropuestaDAO().listarPorProyecto(Integer.parseInt(param)));
-                } else {
-                    if (!"CLIENTE".equals(rol)) {
-                        JsonUtil.enviarError(resp, 403, "Solo clientes");
-                        return;
-                    }
-                    JsonUtil.enviarJson(resp, 200, service.listarPorProyecto(Integer.parseInt(param), uid));
-                }
+
+            Object uidObj = req.getAttribute("usuarioId");
+
+            if (uidObj == null) {
+                System.err.println("[PropuestaServlet] usuarioId NULL");
+                return null;
             }
-        } catch (SecurityException e) {
-            JsonUtil.enviarError(resp, 403, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            JsonUtil.enviarError(resp, 400, e.getMessage());
+
+            if (uidObj instanceof Integer) {
+                return (Integer) uidObj;
+            }
+
+            return Integer.parseInt(uidObj.toString());
+
         } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
+
+            System.err.println("[PropuestaServlet] Error usuarioId: " + e.getMessage());
+            return null;
         }
     }
+
+    private String obtenerRol(HttpServletRequest req) {
+
+        try {
+
+            Object rolObj = req.getAttribute("rol");
+
+            if (rolObj == null) {
+                System.err.println("[PropuestaServlet] rol NULL");
+                return "";
+            }
+
+            return rolObj.toString().trim().toUpperCase();
+
+        } catch (Exception e) {
+
+            System.err.println("[PropuestaServlet] Error rol: " + e.getMessage());
+            return "";
+        }
+    }
+
+    // ====================================
+    // GET
+    // ====================================
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+        String path = req.getPathInfo();
+
+        Integer uid = obtenerUsuarioId(req);
+        String rol = obtenerRol(req);
+
+        if (uid == null) {
+            JsonUtil.enviarError(resp, 401, "Usuario no autenticado");
+            return;
+        }
+
+        try {
+
+            // ====================================
+            // PROPUESTAS DEL FREELANCER
+            // ====================================
+
+            if ("/mias".equals(path)) {
+
+                if (!"FREELANCER".equalsIgnoreCase(rol)) {
+                    JsonUtil.enviarError(resp, 403,
+                            "Solo freelancers pueden listar sus propuestas");
+                    return;
+                }
+
+                JsonUtil.enviarJson(resp, 200, service.listarMias(uid));
+                return;
+            }
+
+            // ====================================
+            // PROPUESTAS POR PROYECTO
+            // ====================================
+
+            String proyectoIdStr = req.getParameter("proyectoId");
+
+            if (proyectoIdStr == null || proyectoIdStr.isBlank()) {
+                JsonUtil.enviarError(resp, 400,
+                        "Parámetro proyectoId requerido");
+                return;
+            }
+
+            int proyectoId = Integer.parseInt(proyectoIdStr);
+
+            // ADMIN
+            if ("ADMIN".equalsIgnoreCase(rol)) {
+
+                JsonUtil.enviarJson(resp, 200,
+                        new PropuestaDAO().listarPorProyecto(proyectoId));
+
+                return;
+            }
+
+            // CLIENTE
+            if ("CLIENTE".equalsIgnoreCase(rol)) {
+
+                JsonUtil.enviarJson(resp, 200,
+                        service.listarPorProyecto(proyectoId, uid));
+
+                return;
+            }
+
+            JsonUtil.enviarError(resp, 403,
+                    "No autorizado para ver propuestas");
+
+        } catch (NumberFormatException e) {
+
+            JsonUtil.enviarError(resp, 400,
+                    "ID de proyecto inválido");
+
+        } catch (SecurityException e) {
+
+            JsonUtil.enviarError(resp, 403, e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+
+            JsonUtil.enviarError(resp, 400, e.getMessage());
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            JsonUtil.enviarError(resp, 500,
+                    "Error cargando propuestas: " + e.getMessage());
+        }
+    }
+
+    // ====================================
+    // POST
+    // ====================================
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!"FREELANCER".equals(req.getAttribute("rol"))) {
-            JsonUtil.enviarError(resp, 403, "Solo freelancers");
+
+        String rol = obtenerRol(req);
+        Integer uid = obtenerUsuarioId(req);
+
+        if (uid == null) {
+            JsonUtil.enviarError(resp, 401, "Usuario no autenticado");
             return;
         }
-        int uid = (int) req.getAttribute("usuarioId");
+
+        if (!"FREELANCER".equalsIgnoreCase(rol)) {
+            JsonUtil.enviarError(resp, 403,
+                    "Solo freelancers pueden enviar propuestas");
+            return;
+        }
+
         try {
+
             @SuppressWarnings("unchecked")
-            var body = (Map<String, Object>) JsonUtil.leerJson(req, Map.class);
+            Map<String, Object> body =
+                    (Map<String, Object>) JsonUtil.leerJson(req, Map.class);
+
             int id = service.enviar(uid, body);
-            JsonUtil.enviarJson(resp, 201, Map.of("id", id, "mensaje", "Propuesta enviada correctamente"));
+
+            JsonUtil.enviarJson(resp, 201,
+                    Map.of(
+                            "id", id,
+                            "mensaje", "Propuesta enviada correctamente"
+                    ));
+
         } catch (IllegalArgumentException e) {
+
             JsonUtil.enviarError(resp, 400, e.getMessage());
+
         } catch (IllegalStateException e) {
-            int code = e.getMessage().contains("habilidad") ? 400 : 409;
-            JsonUtil.enviarError(resp, code, e.getMessage());
+
+            JsonUtil.enviarError(resp, 409, e.getMessage());
+
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("Duplicate")) {
-                JsonUtil.enviarError(resp, 409, "Ya enviaste una propuesta a este proyecto");
+
+            e.printStackTrace();
+
+            if (e.getMessage() != null &&
+                    e.getMessage().contains("Duplicate")) {
+
+                JsonUtil.enviarError(resp, 409,
+                        "Ya enviaste una propuesta a este proyecto");
+
             } else {
-                JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
+
+                JsonUtil.enviarError(resp, 500,
+                        "Error enviando propuesta: " + e.getMessage());
             }
         }
     }
 
+    // ====================================
+    // PUT
+    // ====================================
+
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         String path = req.getPathInfo();
-        String rol = (String) req.getAttribute("rol");
-        int uid = (int) req.getAttribute("usuarioId");
+
+        Integer uid = obtenerUsuarioId(req);
+        String rol = obtenerRol(req);
+
+        if (uid == null) {
+            JsonUtil.enviarError(resp, 401, "Usuario no autenticado");
+            return;
+        }
+
+        if (path == null || path.equals("/")) {
+            JsonUtil.enviarError(resp, 400, "Ruta inválida");
+            return;
+        }
+
         try {
+
             String[] p = path.substring(1).split("/");
+
             int id = Integer.parseInt(p[0]);
-            String accion = p.length > 1 ? p[1] : "";
+
+            String accion = p.length > 1
+                    ? p[1].toLowerCase()
+                    : "";
+
             switch (accion) {
+
+                // ====================================
+                // RETIRAR
+                // ====================================
+
                 case "retirar" -> {
-                    if (!"FREELANCER".equals(rol)) {
-                        JsonUtil.enviarError(resp, 403, "Solo freelancers");
+
+                    if (!"FREELANCER".equalsIgnoreCase(rol)) {
+                        JsonUtil.enviarError(resp, 403,
+                                "Solo freelancers pueden retirar propuestas");
                         return;
                     }
+
                     service.retirar(id, uid);
-                    JsonUtil.enviarJson(resp, 200, Map.of("mensaje", "Propuesta retirada"));
+
+                    JsonUtil.enviarJson(resp, 200,
+                            Map.of("mensaje",
+                                    "Propuesta retirada correctamente"));
                 }
+
+                // ====================================
+                // ACEPTAR
+                // ====================================
+
                 case "aceptar" -> {
-                    if (!"CLIENTE".equals(rol)) {
-                        JsonUtil.enviarError(resp, 403, "Solo clientes");
+
+                    if (!"CLIENTE".equalsIgnoreCase(rol)) {
+                        JsonUtil.enviarError(resp, 403,
+                                "Solo clientes pueden aceptar propuestas");
                         return;
                     }
-                    JsonUtil.enviarJson(resp, 201, service.aceptar(id, uid));
+
+                    JsonUtil.enviarJson(resp, 201,
+                            service.aceptar(id, uid));
                 }
+
+                // ====================================
+                // RECHAZAR
+                // ====================================
+
                 case "rechazar" -> {
-                    if (!"CLIENTE".equals(rol)) {
-                        JsonUtil.enviarError(resp, 403, "Solo clientes");
+
+                    if (!"CLIENTE".equalsIgnoreCase(rol)) {
+                        JsonUtil.enviarError(resp, 403,
+                                "Solo clientes pueden rechazar propuestas");
                         return;
                     }
+
                     service.rechazar(id, uid);
-                    JsonUtil.enviarJson(resp, 200, Map.of("mensaje", "Propuesta rechazada"));
+
+                    JsonUtil.enviarJson(resp, 200,
+                            Map.of("mensaje",
+                                    "Propuesta rechazada correctamente"));
                 }
+
                 default ->
-                    JsonUtil.enviarError(resp, 400, "Acción no válida");
+                        JsonUtil.enviarError(resp, 400,
+                                "Acción inválida");
             }
+
+        } catch (NumberFormatException e) {
+
+            JsonUtil.enviarError(resp, 400, "ID inválido");
+
         } catch (IllegalArgumentException e) {
+
             JsonUtil.enviarError(resp, 400, e.getMessage());
+
         } catch (IllegalStateException e) {
-            int code = e.getMessage().contains("SALDO") ? 400 : 400;
-            String msg = e.getMessage().equals("SALDO_INSUFICIENTE") ? "Saldo insuficiente para aceptar esta propuesta" : e.getMessage();
-            JsonUtil.enviarError(resp, code, msg);
+
+            String mensaje = e.getMessage();
+
+            if ("SALDO_INSUFICIENTE".equalsIgnoreCase(mensaje)) {
+
+                JsonUtil.enviarError(resp, 400,
+                        "Saldo insuficiente para aceptar esta propuesta");
+
+            } else {
+
+                JsonUtil.enviarError(resp, 400, mensaje);
+            }
+
         } catch (SecurityException e) {
+
             JsonUtil.enviarError(resp, 403, e.getMessage());
+
         } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
+
+            e.printStackTrace();
+
+            JsonUtil.enviarError(resp, 500,
+                    "Error actualizando propuesta: " + e.getMessage());
         }
     }
 }

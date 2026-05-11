@@ -1,66 +1,511 @@
 <div class="dashboard-container">
+
+  <!-- ===================================================== -->
+  <!-- HEADER -->
+  <!-- ===================================================== -->
+
   <div class="dashboard-header">
-    <h1> Dashboard Administrativo</h1>
-    <p>Bienvenido al panel de control</p>
+
+    <div class="header-content">
+
+      <div>
+        <h1>
+          {{ obtenerSaludo() }}, Administrador
+        </h1>
+
+        <p>
+          Bienvenido al panel de control de ConnectWork
+        </p>
+      </div>
+
+      <div class="header-info">
+        <span class="fecha">
+          {{ fechaActual | date:'fullDate':'':'es' }}
+        </span>
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="stats-grid">
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
+
+  <div
+    class="loading-container"
+    *ngIf="cargando">
+
+    <div class="spinner"></div>
+
+    <p>Cargando dashboard administrativo...</p>
+
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- DASHBOARD -->
+  <!-- ===================================================== -->
+
+  <div *ngIf="!cargando">
+
+    <!-- ===================================================== -->
+    <!-- CARDS ESTADISTICAS -->
+    <!-- ===================================================== -->
+
     <div
-      *ngFor="let stat of estadisticas"
-      class="stat-card"
-      [ngClass]="'stat-' + stat.color"
-      [@fadeInUp]>
-      <div class="stat-header">
-        <span class="stat-icon">{{ stat.icono }}</span>
-        <h3>{{ stat.titulo }}</h3>
+      class="stats-grid"
+      *ngIf="estadisticas.length > 0">
+
+      <div
+        *ngFor="let stat of estadisticas; trackBy: trackByIndex"
+        class="stat-card"
+        [ngClass]="obtenerClaseColor(stat.color)"
+        [@fadeInUp]>
+
+        <div class="stat-header">
+
+          <div class="stat-icon">
+            {{ stat.icono }}
+          </div>
+
+          <div class="stat-title">
+            <h3>{{ stat.titulo }}</h3>
+          </div>
+
+        </div>
+
+        <div class="stat-body">
+
+          <div class="stat-value">
+            {{ stat.valor }}
+          </div>
+
+        </div>
+
       </div>
-      <div class="stat-value">{{ stat.valor }}</div>
+
     </div>
+
+    <!-- ===================================================== -->
+    <!-- SECCIONES -->
+    <!-- ===================================================== -->
+
+    <div class="dashboard-sections">
+
+      <!-- ===================================================== -->
+      <!-- TOP FREELANCERS -->
+      <!-- ===================================================== -->
+
+      <div
+        class="section-card"
+        [@fadeInUp]>
+
+        <div class="section-header">
+
+          <h2>
+             Top 5 Freelancers
+          </h2>
+
+          <p>
+            Freelancers con mayores ingresos y contratos completados
+          </p>
+
+        </div>
+
+        <div class="table-container">
+
+          <table
+            class="table"
+            *ngIf="topFreelancers.length > 0">
+
+            <thead>
+
+              <tr>
+                <th>#</th>
+                <th>Freelancer</th>
+                <th>Contratos</th>
+                <th>Ingresos</th>
+                <th>Comisión</th>
+                <th>Calificación</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr
+                *ngFor="let freelancer of topFreelancers; let i = index">
+
+                <td>
+                  <strong>#{{ i + 1 }}</strong>
+                </td>
+
+                <td>
+                  <div class="usuario-info">
+
+                    <strong>
+                      {{
+                        freelancer.nombreCompleto ||
+                        freelancer.nombre
+                      }}
+                    </strong>
+
+                  </div>
+                </td>
+
+                <td>
+                  {{
+                    freelancer.contratosCompletados || 0
+                  }}
+                </td>
+
+                <td class="text-success">
+
+                  <strong>
+                    {{
+                      formatearMoneda(
+                        freelancer.totalIngresado || 0
+                      )
+                    }}
+                  </strong>
+
+                </td>
+
+                <td class="text-warning">
+
+                  <strong>
+                    {{
+                      formatearMoneda(
+                        freelancer.comisionGenerada || 0
+                      )
+                    }}
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  <span class="rating">
+
+
+                    {{
+                      freelancer.promedioCalificacion || 0
+                    }}
+
+                  </span>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+          <!-- EMPTY -->
+
+          <div
+            *ngIf="topFreelancers.length === 0"
+            class="empty-state">
+
+            <div class="empty-icon">
+
+            </div>
+
+            <p>
+              No existen freelancers registrados actualmente
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- TOP CATEGORIAS -->
+      <!-- ===================================================== -->
+
+      <div
+        class="section-card"
+        [@fadeInUp]>
+
+        <div class="section-header">
+
+          <h2>
+             Top 5 Categorías
+          </h2>
+
+          <p>
+            Categorías con mayor actividad y contratos
+          </p>
+
+        </div>
+
+        <div class="table-container">
+
+          <table
+            class="table"
+            *ngIf="topCategorias.length > 0">
+
+            <thead>
+
+              <tr>
+                <th>#</th>
+                <th>Categoría</th>
+                <th>Contratos</th>
+                <th>Comisiones</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr
+                *ngFor="let categoria of topCategorias; let i = index">
+
+                <td>
+                  <strong>#{{ i + 1 }}</strong>
+                </td>
+
+                <td>
+
+                  <strong>
+                    {{ categoria.nombre }}
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  {{
+                    categoria.totalContratos || 0
+                  }}
+
+                </td>
+
+                <td class="text-success">
+
+                  <strong>
+
+                    {{
+                      formatearMoneda(
+                        categoria.totalComisiones || 0
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+          <!-- EMPTY -->
+
+          <div
+            *ngIf="topCategorias.length === 0"
+            class="empty-state">
+
+            <div class="empty-icon">
+
+            </div>
+
+            <p>
+              No hay categorías con actividad actualmente
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- RESUMEN FINANCIERO -->
+      <!-- ===================================================== -->
+
+      <div
+        class="section-card full-width"
+        [@fadeInUp]>
+
+        <div class="section-header">
+
+          <h2>
+             Resumen Financiero
+          </h2>
+
+          <p>
+            Estado global de ingresos y comisiones de la plataforma
+          </p>
+
+        </div>
+
+        <div class="ingresos-grid">
+
+          <!-- TOTAL INGRESOS -->
+
+          <div class="ingreso-card">
+
+            <div class="ingreso-icon">
+
+            </div>
+
+            <div class="ingreso-content">
+
+              <span class="ingreso-label">
+                Total Ingresos
+              </span>
+
+              <strong class="ingreso-value">
+
+                {{
+                  formatearMoneda(
+                    ingresos.totalIngresos
+                  )
+                }}
+
+              </strong>
+
+            </div>
+
+          </div>
+
+          <!-- TOTAL COMISIONES -->
+
+          <div class="ingreso-card">
+
+            <div class="ingreso-icon">
+
+            </div>
+
+            <div class="ingreso-content">
+
+              <span class="ingreso-label">
+                Total Comisiones
+              </span>
+
+              <strong class="ingreso-value">
+
+                {{
+                  formatearMoneda(
+                    ingresos.totalComisiones
+                  )
+                }}
+
+              </strong>
+
+            </div>
+
+          </div>
+
+          <!-- COMISION ACTUAL -->
+
+          <div class="ingreso-card">
+
+            <div class="ingreso-icon">
+
+            </div>
+
+            <div class="ingreso-content">
+
+              <span class="ingreso-label">
+                Comisión Actual
+              </span>
+
+              <strong class="ingreso-value">
+
+                {{
+                  ingresos.comisionActual || 0
+                }}%
+
+              </strong>
+
+            </div>
+
+          </div>
+
+          <!-- CONTRATOS -->
+
+          <div class="ingreso-card">
+
+            <div class="ingreso-icon">
+
+            </div>
+
+            <div class="ingreso-content">
+
+              <span class="ingreso-label">
+                Contratos Completados
+              </span>
+
+              <strong class="ingreso-value">
+
+                {{
+                  ingresos.totalContratos || 0
+                }}
+
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- LOGS SISTEMA -->
+      <!-- ===================================================== -->
+
+      <div
+        class="section-card full-width"
+        [@fadeInUp]>
+
+        <div class="section-header">
+
+          <h2>
+            🖥️ Estado del Sistema
+          </h2>
+
+          <p>
+            Simulación frontend de endpoints REST consumidos
+          </p>
+
+        </div>
+
+        <div class="system-status">
+
+          <div class="status-item success">
+            ✅ GET /api/reportes/admin/estadisticas
+          </div>
+
+          <div class="status-item success">
+            ✅ GET /api/reportes/admin/top-freelancers
+          </div>
+
+          <div class="status-item success">
+            ✅ GET /api/reportes/admin/top-categorias
+          </div>
+
+          <div class="status-item success">
+            ✅ GET /api/reportes/admin/ingresos
+          </div>
+
+          <div class="status-item warning">
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="dashboard-sections">
-    <div class="section-card">
-      <h2> Top Freelancers</h2>
-      <table class="table" *ngIf="topFreelancers.length > 0">
-        <tr *ngFor="let f of topFreelancers">
-          <td>{{ f.nombre }}</td>
-          <td>{{ f.calificacion | number:'1.1-1' }} ⭐</td>
-          <td>Q{{ f.ingresos | number:'1.2-2' }}</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="section-card">
-      <h2>Top Categorías</h2>
-      <table class="table" *ngIf="topCategorias.length > 0">
-        <tr *ngFor="let c of topCategorias">
-          <td>{{ c.nombre }}</td>
-          <td>{{ c.totalProyectos }} proyectos</td>
-          <td>Q{{ c.volumenTotal | number:'1.2-2' }}</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="section-card full-width">
-      <h2> Resumen Ingresos</h2>
-      <div class="ingreso-summary" *ngIf="ingresos">
-        <div class="ingreso-item">
-          <span>Total Ingresos:</span>
-          <strong>Q{{ ingresos.totalIngresos | number:'1.2-2' }}</strong>
-        </div>
-        <div class="ingreso-item">
-          <span>Comisiones:</span>
-          <strong>Q{{ ingresos.totalComisiones | number:'1.2-2' }}</strong>
-        </div>
-        <div class="ingreso-item">
-          <span>% Comisión:</span>
-          <strong>{{ ingresos.comisionActual }}%</strong>
-        </div>
-        <div class="ingreso-item">
-          <span>Contratos:</span>
-          <strong>{{ ingresos.totalContratos }}</strong>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

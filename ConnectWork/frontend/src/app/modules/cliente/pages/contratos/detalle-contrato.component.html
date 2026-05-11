@@ -1,37 +1,47 @@
+y este:
+<p style="color: #555; line-height: 1.7;">
+  {{ contrato.descripcionAcuerdo || 'Acuerdo generado automáticamente al aceptar la propuesta.' }}
+</p>
+
+a este:
 <div class="contratos-container" *ngIf="contrato">
-  <div class="header">
-    <button class="btn-outline" routerLink="/cliente/contratos">← Volver al listado</button>
-    <h2>Contrato: {{ contrato.proyectoTitulo }}</h2>
+  <div class="contratos-header">
+    <button routerLink="/freelancer/contratos" class="btn-detalle">← Volver</button>
+    <h1>Gestión de Contrato</h1>
   </div>
 
-  <div class="detalle-grid">
-    <div class="contratos-card">
-      <h3>Información del Acuerdo</h3>
-      <div class="info-box">
-        <p><strong>Freelancer:</strong> {{ contrato.freelancerNombre }}</p>
-        <p><strong>Fecha de Inicio:</strong> {{ contrato.fechaInicio | date:'longDate' }}</p>
-        <p><strong>Monto en Depósito (Garantía):</strong> {{ contrato.montoAcordado | currency:'GTQ' }}</p>
+  <div class="contrato-card" style="display: block; cursor: default;">
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+      <div>
+        <h2>{{ contrato.proyecto.titulo }}</h2>
+        <span class="badge-estado" [ngClass]="contrato.estado.toLowerCase()">{{ contrato.estado }}</span>
       </div>
-
-      <h3 style="margin-top: 25px;">Descripción del Trabajo</h3>
-      <p style="color: #555; line-height: 1.6;">{{ contrato.descripcionAcuerdo }}</p>
+      <div class="monto-contrato" style="font-size: 24px;">
+        Q{{ contrato.monto | number:'1.2-2' }}
+      </div>
     </div>
 
-    <div class="contratos-card">
-      <h3>Estado Actual</h3>
-      <span class="badge" [ngClass]="'badge-' + contrato.estado.toLowerCase()" style="font-size: 16px;">
-        {{ contrato.estado }}
-      </span>
+    <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+      <div class="detalles-tecnicos">
+        <h4>Especificaciones</h4>
+        <p><strong>Fecha de Inicio:</strong> {{ contrato.fechaInicio | date:'longDate' }}</p>
+        <p><strong>Plazo Acordado:</strong> {{ contrato.plazo }} días</p>
+        <p><strong>Cliente:</strong> {{ contrato.cliente.nombreCompleto }}</p>
+      </div>
 
-      <div class="info-box" style="margin-top: 20px;">
-        <h4>Acciones Disponibles</h4>
-        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">
-          Solo puedes cancelar si el trabajo no ha sido entregado.
-        </p>
-        <button class="btn-cancelar" *ngIf="contrato.estado === 'ACTIVO'" (click)="cancelarContrato()">
-          Solicitar Cancelación
+      <div class="acciones-contrato" style="text-align: right;">
+        <h4>Gestión de Entregas</h4>
+        <p>Para recibir el pago, debes subir los archivos finales aquí.</p>
+        <button
+          *ngIf="contrato.estado === 'ACTIVO'"
+          class="btn-detalle"
+          [routerLink]="['/freelancer/entregas/subir', contrato.id]"
+          style="background: #27ae60; padding: 12px 25px;">
+          Subir Archivos de Entrega
         </button>
       </div>
     </div>
   </div>
 </div>
+
+

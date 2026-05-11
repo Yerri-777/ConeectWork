@@ -1,47 +1,125 @@
 <div class="contratos-container">
+
   <div class="header">
-    <h1>📜 Mis Contratos</h1>
-    <p>Gestión de acuerdos legales y seguimiento de trabajo</p>
+
+    <h1>
+      Mis Contratos
+    </h1>
+
+    <p>
+      Gestión de acuerdos legales y seguimiento de trabajo
+    </p>
+
   </div>
 
   <div class="contratos-card">
-    <div class="table-responsive">
-      <table *ngIf="contratos.length > 0; else noContratos">
+
+    <div
+      class="table-responsive"
+      *ngIf="contratos.length > 0; else noContratos">
+
+      <table>
+
         <thead>
+
           <tr>
-            <th>ID</th>
-            <th>Freelancer</th>
-            <th>Proyecto</th>
-            <th>Monto Total</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+
+            <th>
+              ID
+            </th>
+
+            <th>
+              Freelancer
+            </th>
+
+            <th>
+              Proyecto
+            </th>
+
+            <th>
+              Monto Total
+            </th>
+
+            <th>
+              Estado
+            </th>
+
+            <th>
+              Acciones
+            </th>
+
           </tr>
+
         </thead>
+
         <tbody>
+
           <tr *ngFor="let c of contratos">
-            <td>#{{ c.id }}</td>
-            <td><strong>{{ c.freelancerNombre }}</strong></td>
-            <td>{{ c.proyectoTitulo }}</td>
-            <td>{{ c.montoAcordado | currency:'GTQ' }}</td>
+
             <td>
-              <span class="badge" [ngClass]="'badge-' + c.estado.toLowerCase()">
+              #{{ c.id }}
+            </td>
+
+            <td>
+
+              <strong>
+                {{ c.freelancerNombre }}
+              </strong>
+
+            </td>
+
+            <td>
+              {{ c.proyectoTitulo }}
+            </td>
+
+            <td>
+              {{ c.montoAcordado | currency:'GTQ' }}
+            </td>
+
+            <td>
+
+              <span
+                class="badge"
+                [ngClass]="'badge-' + (c.estado || '').toLowerCase()">
+
                 {{ c.estado }}
+
               </span>
+
             </td>
+
             <td>
-              <button class="btn-detalle" [routerLink]="['/cliente/contratos/detalle', c.id]">
+
+              <button
+                class="btn-detalle"
+                [routerLink]="['/cliente/contratos/detalle', c.id]">
+
                 Ver Gestión
+
               </button>
+
             </td>
+
           </tr>
+
         </tbody>
+
       </table>
+
     </div>
 
     <ng-template #noContratos>
-      <div style="text-align: center; padding: 40px; color: #95a5a6;">
-        <p>No tienes contratos registrados actualmente.</p>
+
+      <div class="empty-state">
+
+        <p>
+          No tienes contratos registrados actualmente.
+        </p>
+
       </div>
+
     </ng-template>
+
   </div>
+
 </div>

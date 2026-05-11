@@ -1,71 +1,334 @@
 package servlet;
 
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import modelo.Habilidad;
+
 import service.HabilidadService;
+
 import util.JsonUtil;
 
 import java.io.IOException;
 import java.util.Map;
 
 @WebServlet("/api/habilidades/*")
-public class HabilidadServlet extends HttpServlet {
+public class HabilidadServlet extends BaseServlet {
 
-    private final HabilidadService service = new HabilidadService();
+    private final HabilidadService service =
+            new HabilidadService();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String rol = (String) req.getAttribute("rol");
-        String catStr = req.getParameter("categoriaId");
-        try {
-            Integer catId = catStr != null ? Integer.parseInt(catStr) : null;
-            JsonUtil.enviarJson(resp, 200, service.listar(catId, !"ADMIN".equals(rol)));
-        } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
-        }
-    }
+    // =====================================================
+    // GET
+    // =====================================================
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!"ADMIN".equals(req.getAttribute("rol"))) {
-            JsonUtil.enviarError(resp, 403, "Solo admin");
+    protected void doGet(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
+        if (!requerirAutenticacion(req, resp)) {
             return;
         }
-        try {
-            Habilidad h = JsonUtil.leerJson(req, Habilidad.class);
-            int id = service.crear(h);
-            JsonUtil.enviarJson(resp, 201, Map.of("id", id, "mensaje", "Habilidad creada"));
-        } catch (IllegalArgumentException e) {
-            JsonUtil.enviarError(resp, 400, e.getMessage());
-        } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
-        }
-    }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (!"ADMIN".equals(req.getAttribute("rol"))) {
-            JsonUtil.enviarError(resp, 403, "Solo admin");
-            return;
-        }
-        String path = req.getPathInfo();
         try {
-            String[] p = path.substring(1).split("/");
-            int id = Integer.parseInt(p[0]);
-            if (p.length > 1) {
-                service.cambiarEstado(id, "activar".equals(p[1]));
-                JsonUtil.enviarJson(resp, 200, Map.of("mensaje", "Estado actualizado"));
-            } else {
-                Habilidad h = JsonUtil.leerJson(req, Habilidad.class);
-                h.setId(id);
-                service.actualizar(h);
-                JsonUtil.enviarJson(resp, 200, Map.of("mensaje", "Habilidad actualizada"));
+
+            String path = obtenerPath(req);
+
+            // =================================================
+            // LISTAR
+            // =================================================
+
+            if (path.equals("/")) {
+
+                String categoriaStr =
+                        req.getParameter("categoriaId");
+
+                Integer categoriaId = null;
+
+                if (categoriaStr != null &&
+                        !categoriaStr.isBlank()) {
+
+                    categoriaId =
+                            Integer.parseInt(categoriaStr);
+                }
+
+                boolean soloActivas =
+                        !esAdmin(req);
+
+                JsonUtil.enviarJson(
+                        resp,
+                        200,
+                        service.listar(
+                                categoriaId,
+                                soloActivas
+                        )
+                );
+
+                return;
             }
+
+            // =================================================
+            // DETALLE
+            // =================================================
+
+            Integer id =
+                    obtenerIdDesdePath(req);
+
+            if (id == null) {
+
+                responderBadRequest(
+                        resp,
+                        "ID inválido"
+                );
+
+                return;
+            }
+
+            JsonUtil.enviarJson(
+                    resp,
+                    200,
+                    service.buscarPorId(id)
+            );
+
         } catch (IllegalArgumentException e) {
-            JsonUtil.enviarError(resp, 400, e.getMessage());
+
+            responderBadRequest(
+                    resp,
+                    e.getMessage()
+            );
+
         } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
+
+            responderErrorInterno(resp, e);
+        }
+    }
+
+    // =====================================================
+    // POST
+    // =====================================================
+
+    @Override
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
+        if (!requerirAutenticacion(req, resp)) {
+            return;
+        }
+
+        if (!requerirAdmin(req, resp)) {
+            return;
+        }
+
+        try {
+
+            Habilidad habilidad =
+                    JsonUtil.leerJson(
+                            req,
+                            Habilidad.class
+                    );
+
+            int id =
+                    service.crear(habilidad);
+
+            JsonUtil.enviarJson(
+                    resp,
+                    201,
+                    Map.of(
+                            "success", true,
+                            "id", id,
+                            "mensaje",
+                            "Habilidad creada correctamente"
+                    )
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            responderBadRequest(
+                    resp,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+
+            responderErrorInterno(resp, e);
+        }
+    }
+
+    // =====================================================
+    // PUT
+    // =====================================================
+
+    @Override
+    protected void doPut(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
+        if (!requerirAutenticacion(req, resp)) {
+            return;
+        }
+
+        if (!requerirAdmin(req, resp)) {
+            return;
+        }
+
+        try {
+
+            String path = obtenerPath(req);
+
+            if (path.equals("/")) {
+
+                responderBadRequest(
+                        resp,
+                        "ID requerido"
+                );
+
+                return;
+            }
+
+            String[] partes =
+                    path.substring(1).split("/");
+
+            int id =
+                    Integer.parseInt(partes[0]);
+
+            // =============================================
+            // ACTIVAR / DESACTIVAR
+            // =============================================
+
+            if (partes.length > 1) {
+
+                String accion = partes[1];
+
+                if (!accion.equalsIgnoreCase("activar") &&
+                        !accion.equalsIgnoreCase("desactivar")) {
+
+                    responderBadRequest(
+                            resp,
+                            "Acción inválida"
+                    );
+
+                    return;
+                }
+
+                boolean activo =
+                        accion.equalsIgnoreCase("activar");
+
+                service.cambiarEstado(
+                        id,
+                        activo
+                );
+
+                JsonUtil.enviarJson(
+                        resp,
+                        200,
+                        Map.of(
+                                "success", true,
+                                "mensaje",
+                                "Estado actualizado"
+                        )
+                );
+
+                return;
+            }
+
+            // =============================================
+            // UPDATE NORMAL
+            // =============================================
+
+            Habilidad habilidad =
+                    JsonUtil.leerJson(
+                            req,
+                            Habilidad.class
+                    );
+
+            habilidad.setId(id);
+
+            service.actualizar(habilidad);
+
+            JsonUtil.enviarJson(
+                    resp,
+                    200,
+                    Map.of(
+                            "success", true,
+                            "mensaje",
+                            "Habilidad actualizada"
+                    )
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            responderBadRequest(
+                    resp,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+
+            responderErrorInterno(resp, e);
+        }
+    }
+
+    // =====================================================
+    // DELETE
+    // =====================================================
+
+    @Override
+    protected void doDelete(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
+        if (!requerirAutenticacion(req, resp)) {
+            return;
+        }
+
+        if (!requerirAdmin(req, resp)) {
+            return;
+        }
+
+        try {
+
+            Integer id =
+                    obtenerIdDesdePath(req);
+
+            if (id == null) {
+
+                responderBadRequest(
+                        resp,
+                        "ID inválido"
+                );
+
+                return;
+            }
+
+            service.eliminar(id);
+
+            JsonUtil.enviarJson(
+                    resp,
+                    200,
+                    Map.of(
+                            "success", true,
+                            "mensaje",
+                            "Habilidad eliminada"
+                    )
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            responderBadRequest(
+                    resp,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+
+            responderErrorInterno(resp, e);
         }
     }
 }

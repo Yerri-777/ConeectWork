@@ -1,10 +1,13 @@
 <div class="propuestas-container">
+
   <div class="propuestas-header">
-    <h1> Mis Propuestas</h1>
-    <a routerLink="/freelancer/explorar" class="btn-nueva">+ Nueva Propuesta</a>
+    <h1>Mis Propuestas</h1>
+    <a routerLink="/freelancer/explorar" class="btn-nueva">
+      + Nueva Propuesta
+    </a>
   </div>
 
-  <div class="filtros">
+  <div class="filtros" *ngIf="propuestas.length > 0">
     <select [(ngModel)]="filtroEstado" (change)="filtrar()">
       <option value="">-- Todos los estados --</option>
       <option value="PENDIENTE">Pendientes</option>
@@ -13,40 +16,75 @@
     </select>
   </div>
 
-  <div class="propuestas-list">
+  <div class="propuestas-list" *ngIf="propuestasFiltradas.length > 0; else sinPropuestas">
+
     <div *ngFor="let propuesta of propuestasFiltradas" class="propuesta-item">
+
       <div class="propuesta-header">
         <div class="propuesta-info">
-          <h3>{{ propuesta.proyecto.titulo }}</h3>
-          <p class="cliente">👤 {{ propuesta.proyecto.cliente.nombreCompleto }}</p>
+          <h3>{{ propuesta.proyecto?.titulo }}</h3>
+          <p class="cliente">
+            👤 {{ propuesta.proyecto?.cliente?.nombreCompleto || 'Cliente Demo' }}
+          </p>
         </div>
-        <span class="estado-badge" [ngClass]="'estado-' + propuesta.estado.toLowerCase()">
+
+        <span class="estado-badge" [ngClass]="'estado-' + (propuesta.estado || '').toLowerCase()">
           {{ propuesta.estado }}
         </span>
       </div>
 
-      <p class="propuesta-contenido">{{ propuesta.contenido | slice:0:200 }}...</p>
+      <p class="propuesta-contenido">
+        {{ propuesta.contenido | slice:0:200 }}{{ propuesta.contenido.length > 200 ? '...' : '' }}
+      </p>
 
       <div class="propuesta-meta">
-        <span> Q{{ propuesta.monto | number:'1.2-2' }}</span>
-        <span>{{ propuesta.plazo }} días</span>
+        <span><strong>Monto:</strong> Q{{ propuesta.monto | number:'1.2-2' }}</span>
+        <span><strong>Entrega:</strong> {{ propuesta.plazo }} días</span>
       </div>
 
       <div class="propuesta-actions">
-        <button *ngIf="propuesta.estado === 'PENDIENTE'" class="btn-editar"
-                [routerLink]="['/freelancer/propuestas/editar', propuesta.id]">✏️ Editar</button>
-        <button *ngIf="propuesta.estado === 'PENDIENTE'" class="btn-retirar"
-                (click)="retirarPropuesta(propuesta)">🗑️ Retirar</button>
+        <ng-container *ngIf="propuesta.estado === 'PENDIENTE'">
+          <button
+            class="btn-editar"
+            [routerLink]="['/freelancer/propuestas/editar', propuesta.id]">
+            Editar
+          </button>
+
+          <button
+            class="btn-retirar"
+            (click)="retirarPropuesta(propuesta)">
+            Retirar
+          </button>
+        </ng-container>
+
+        <button
+          *ngIf="propuesta.estado === 'ACEPTADA'"
+          class="btn-guardar"
+          [routerLink]="['/freelancer/contratos']">
+          Ver Contrato
+        </button>
       </div>
     </div>
   </div>
 
+  <ng-template #sinPropuestas>
+    <div class="empty-state" style="text-align: center; padding: 50px; background: white; border-radius: 12px; margin-top: 20px;">
+      <div style="font-size: 50px; margin-bottom: 20px;">📂</div>
+      <h2>No se encontraron propuestas</h2>
+      <p>Parece que aún no has aplicado a ningún proyecto o el filtro no coincide.</p>
+      <button class="btn-nueva" style="margin-top: 20px; display: inline-block;" (click)="limpiarFiltros()">
+        Ver todos los proyectos
+      </button>
+    </div>
+  </ng-template>
+
   <app-modal-confirmar
     [visible]="modalAbierto"
     titulo="Retirar Propuesta"
-    mensaje="¿Estás seguro de que deseas retirar esta propuesta?"
+    mensaje="¿Estás seguro de que deseas retirar esta propuesta? Esta acción no se puede deshacer."
     tipo="peligro"
     (confirm)="confirmarRetiro()"
     (cancel)="cerrarModal()">
   </app-modal-confirmar>
+
 </div>

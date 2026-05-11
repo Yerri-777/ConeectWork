@@ -1,104 +1,299 @@
 package service;
- 
+
 import dao.UsuarioDAO;
 import modelo.Usuario;
 import util.JwtUtil;
 import util.PasswordUtil;
- 
+
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.LinkedHashMap;
 import java.util.Map;
- 
-/**
- * Lógica de negocio para autenticación.
- * El AuthServlet delega aquí; este servicio orquesta UsuarioDAO + JwtUtil.
- */
+
 public class AuthService {
- 
+
     private final UsuarioDAO usuarioDAO;
- 
+
     public AuthService() {
-        this.usuarioDAO = new UsuarioDAO();
+
+        this.usuarioDAO =
+                new UsuarioDAO();
     }
- 
-    // ─── Login ────────────────────────────────────────────────────────────────
-    /**
-     * @return Map con token y datos del usuario, o null si credenciales inválidas
-     */
-    public Map<String, Object> login(String username, String password) throws SQLException {
-        System.out.println("DEBUG: Intentando login con usuario: " + username);
-        
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            throw new IllegalArgumentException("username y password son requeridos");
+
+    // =========================================================
+    // LOGIN
+    // =========================================================
+
+    public Map<String, Object> login(
+            String username,
+            String password
+    ) throws SQLException {
+
+        // =====================================================
+        // VALIDACIONES
+        // =====================================================
+
+        if (
+                username == null ||
+                username.isBlank()
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Username requerido"
+            );
         }
-        
-        Usuario u = usuarioDAO.login(username, password);
-        
-        if (u == null) {
-            System.out.println("DEBUG: Usuario no encontrado o credenciales incorrectas: " + username);
-            return null;   // credenciales incorrectas o cuenta inactiva
+
+        if (
+                password == null ||
+                password.isBlank()
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Password requerido"
+            );
         }
- 
-        System.out.println("DEBUG: Usuario encontrado y autenticado: " + u.getUsername());
-        
-        String token = JwtUtil.generarToken(u.getId(), u.getUsername(), u.getRol());
-        
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("token",          token);
-        data.put("id",             u.getId());
-        data.put("nombreCompleto", u.getNombreCompleto());
-        data.put("username",       u.getUsername());
-        data.put("correo",         u.getCorreo());
-        data.put("rol",            u.getRol());
-        data.put("saldo",          u.getSaldo());
-        data.put("perfilCompleto", u.isPerfilCompleto());
-        
-        System.out.println("DEBUG: Login exitoso, token generado");
-        return data;
+
+        username = username.trim();
+
+        System.out.println(
+                "[AuthService] Login username: "
+                        + username
+        );
+
+        // =====================================================
+        // BUSCAR USUARIO
+        // =====================================================
+
+        Usuario usuario =
+                usuarioDAO.buscarPorUsername(
+                        username
+                );
+
+        if (usuario == null) {
+
+            System.err.println(
+                    "[AuthService] Usuario no encontrado"
+            );
+
+            return null;
+        }
+
+        // =====================================================
+        // VALIDAR PASSWORD
+        // =====================================================
+
+        boolean passwordCorrecto =
+                PasswordUtil.checkPassword(
+                        password,
+                        usuario.getPasswordHash()
+                );
+
+        if (!passwordCorrecto) {
+
+            System.err.println(
+                    "[AuthService] Password incorrecto"
+            );
+
+            return null;
+        }
+
+        // =====================================================
+        // VALIDAR ACTIVO
+        // =====================================================
+
+        if (!usuario.isActivo()) {
+
+            throw new IllegalStateException(
+                    "Usuario inactivo"
+            );
+        }
+
+        // =====================================================
+        // JWT
+        // =====================================================
+
+        String token =
+                JwtUtil.generarToken(
+                        usuario.getId(),
+                        usuario.getUsername(),
+                        usuario.getRol()
+                );
+
+        // =====================================================
+        // RESPONSE
+        // =====================================================
+
+        Map<String, Object> response =
+                new LinkedHashMap<>();
+
+        response.put("token", token);
+
+        response.put("id",
+                usuario.getId());
+
+        response.put("nombreCompleto",
+                usuario.getNombreCompleto());
+
+        response.put("username",
+                usuario.getUsername());
+
+        response.put("correo",
+                usuario.getCorreo());
+
+        response.put("rol",
+                usuario.getRol());
+
+        response.put("saldo",
+                usuario.getSaldo());
+
+        response.put("perfilCompleto",
+                usuario.isPerfilCompleto());
+
+        System.out.println(
+                "[AuthService] ✓ Login correcto"
+        );
+
+        return response;
     }
- 
-    // ─── Registro ─────────────────────────────────────────────────────────────
-    /**
-     * @return id del nuevo usuario
-     * @throws IllegalArgumentException si los datos son inválidos o ya existen
-     */
-    public int registrar(Map<String, Object> datos) throws SQLException {
-        String rol = (String) datos.get("rol");
-        if (!"CLIENTE".equals(rol) && !"FREELANCER".equals(rol)) {
-            throw new IllegalArgumentException("rol debe ser CLIENTE o FREELANCER");
+
+    // =========================================================
+    // REGISTRO
+    // =========================================================
+
+    public int registrar(
+            Map<String, Object> datos
+    ) throws SQLException {
+
+        if (
+                datos == null ||
+                datos.isEmpty()
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Datos requeridos"
+            );
         }
- 
-        String[] obligatorios = {"nombreCompleto","username","password","correo",
-                                  "telefono","direccion","cui","fechaNacimiento"};
-        for (String campo : obligatorios) {
-            Object val = datos.get(campo);
-            if (val == null || val.toString().isBlank()) {
-                throw new IllegalArgumentException("Campo requerido: " + campo);
-            }
+
+        String rol =
+                obtenerString(datos.get("rol"));
+
+        if (
+                rol == null ||
+                rol.isBlank()
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Rol requerido"
+            );
         }
- 
-        if (usuarioDAO.existeUsername((String) datos.get("username"))) {
-            throw new IllegalStateException("USERNAME_DUPLICADO");
+
+        rol = rol.trim().toUpperCase();
+
+        if (
+                !rol.equals("CLIENTE") &&
+                !rol.equals("FREELANCER")
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Rol inválido"
+            );
         }
-        if (usuarioDAO.existeCorreo((String) datos.get("correo"))) {
-            throw new IllegalStateException("CORREO_DUPLICADO");
-        }
- 
+
         Usuario u = new Usuario();
-        u.setNombreCompleto((String) datos.get("nombreCompleto"));
-        u.setUsername((String) datos.get("username"));
-        u.setPasswordHash((String) datos.get("password"));   // UsuarioDAO hace el hash
-        u.setCorreo((String) datos.get("correo"));
-        u.setTelefono((String) datos.get("telefono"));
-        u.setDireccion((String) datos.get("direccion"));
-        u.setCui((String) datos.get("cui"));
-        u.setFechaNacimiento(LocalDate.parse((String) datos.get("fechaNacimiento")));
+
+        u.setNombreCompleto(
+                obtenerString(
+                        datos.get("nombreCompleto")
+                )
+        );
+
+        u.setUsername(
+                obtenerString(
+                        datos.get("username")
+                )
+        );
+
+        u.setCorreo(
+                obtenerString(
+                        datos.get("correo")
+                )
+        );
+
+        u.setTelefono(
+                obtenerString(
+                        datos.get("telefono")
+                )
+        );
+
+        u.setDireccion(
+                obtenerString(
+                        datos.get("direccion")
+                )
+        );
+
+        u.setCui(
+                obtenerString(
+                        datos.get("cui")
+                )
+        );
+
+        u.setFechaNacimiento(
+                LocalDate.parse(
+                        obtenerString(
+                                datos.get("fechaNacimiento")
+                        )
+                )
+        );
+
         u.setRol(rol);
-        u.setActivo(true); // AGREGAR ESTA LÍNEA - Usuario nuevo activo por defecto
- 
-        int id = usuarioDAO.registrar(u);
-        if (id < 0) throw new RuntimeException("Error al insertar usuario en BD");
+
+        u.setActivo(true);
+
+        u.setPerfilCompleto(false);
+
+        // =====================================================
+        // HASH PASSWORD
+        // =====================================================
+
+        String password =
+                obtenerString(
+                        datos.get("password")
+                );
+
+        u.setPasswordHash(
+                PasswordUtil.hashPassword(
+                        password
+                )
+        );
+
+        // =====================================================
+        // INSERT
+        // =====================================================
+
+        int id =
+                usuarioDAO.registrar(u);
+
+        System.out.println(
+                "[AuthService] ✓ Usuario registrado ID: "
+                        + id
+        );
+
         return id;
+    }
+
+    // =========================================================
+    // HELPER
+    // =========================================================
+
+    private String obtenerString(
+            Object obj
+    ) {
+
+        if (obj == null) {
+            return null;
+        }
+
+        return obj.toString().trim();
     }
 }

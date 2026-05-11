@@ -1,84 +1,329 @@
 <div class="dashboard-container">
-  <header class="dashboard-header">
-    <div class="header-content">
-      <h1>Dashboard Cliente</h1>
-      <p>Bienvenido de nuevo, aquí tienes un resumen de <strong>ConnectWork</strong></p>
-    </div>
-  </header>
 
+  <!-- HERO -->
+  <section class="dashboard-hero">
+
+    <div class="hero-content">
+
+      <div class="hero-text">
+
+        <span class="hero-badge">
+          CONNECTWORK CLIENTE
+        </span>
+
+        <h1>
+          Bienvenido de nuevo
+        </h1>
+
+        <p>
+          Gestiona tus proyectos, contratos, propuestas y pagos desde un solo lugar.
+        </p>
+
+      </div>
+
+      <div class="hero-balance">
+
+        <span class="balance-label">
+          Saldo Disponible
+        </span>
+
+        <h2>
+          {{ stats.saldoDisponible | currency:'GTQ':'symbol':'1.2-2' }}
+        </h2>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- STATS -->
   <div class="stats-grid">
-    <!-- Card: Proyectos -->
-    <div class="stat-card blue" [@fadeInUp]>
-      <div class="stat-icon"><i class="ph ph-folder"></i> </div>
-      <div class="stat-info">
-        <h3>Proyectos Activos</h3>
-        <span class="value">{{ stats.proyectosActivos }}</span>
+
+    <!-- PROYECTOS -->
+    <div
+      class="stat-card blue"
+      [@fadeInUp]>
+
+      <div class="stat-icon">
+
       </div>
+
+      <div class="stat-info">
+
+        <span>
+          Proyectos Activos
+        </span>
+
+        <h3>
+          {{ stats.proyectosActivos }}
+        </h3>
+
+      </div>
+
     </div>
 
-    <!-- Card: Propuestas -->
-    <div class="stat-card green" [@fadeInUp]>
-      <div class="stat-icon"><i class="ph ph-chat-circle"></i> </div>
-      <div class="stat-info">
-        <h3>Propuestas</h3>
-        <span class="value">{{ stats.propuestasRecibidas }}</span>
+
+    <div
+      class="stat-card green"
+      [@fadeInUp]>
+
+      <div class="stat-icon">
+
       </div>
+
+      <div class="stat-info">
+
+        <span>
+          Propuestas Recibidas
+        </span>
+
+        <h3>
+          {{ stats.propuestasRecibidas }}
+        </h3>
+
+      </div>
+
     </div>
 
-    <!-- Card: Contratos -->
-    <div class="stat-card orange" [@fadeInUp]>
-      <div class="stat-icon"><i class="ph ph-file-text"></i> </div>
-      <div class="stat-info">
-        <h3>Contratos</h3>
-        <span class="value">{{ stats.contratosActivos }}</span>
+
+    <div
+      class="stat-card orange"
+      [@fadeInUp]>
+
+      <div class="stat-icon">
+
       </div>
+
+      <div class="stat-info">
+
+        <span>
+          Contratos Activos
+        </span>
+
+        <h3>
+          {{ stats.contratosActivos }}
+        </h3>
+
+      </div>
+
     </div>
 
-    <!-- Card: Saldo -->
-    <div class="stat-card purple" [@fadeInUp]>
-      <div class="stat-icon"><i class="ph ph-wallet"></i> </div>
-      <div class="stat-info">
-        <h3>Saldo Disponible</h3>
-        <span class="value">{{ stats.saldoDisponible | currency:'GTQ':'symbol':'1.2-2' }}</span>
+    <div
+      class="stat-card purple"
+      [@fadeInUp]>
+
+      <div class="stat-icon">
+
       </div>
+
+      <div class="stat-info">
+
+        <span>
+          Balance General
+        </span>
+
+        <h3>
+          {{ stats.saldoDisponible | currency:'GTQ':'symbol':'1.2-2' }}
+        </h3>
+
+      </div>
+
     </div>
+
   </div>
 
-  <div class="dashboard-content">
-    <!-- Actividad Reciente -->
-    <section class="section-card main-section">
-      <div class="section-header">
-        <h2> Actividad Reciente</h2>
+
+  <div class="dashboard-main-grid">
+
+
+    <section class="dashboard-card activity-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2>
+            Actividad Reciente
+          </h2>
+
+          <p>
+            Últimos movimientos dentro de la plataforma.
+          </p>
+
+        </div>
+
       </div>
-      <div class="empty-state">
-        <div class="empty-icon"></div>
-        <p>No hay actividad reciente para mostrar por ahora.</p>
+
+      <div class="activity-list">
+
+        <div class="activity-item">
+
+          <div class="activity-dot blue-dot"></div>
+
+          <div class="activity-info">
+
+            <strong>
+              Tus proyectos están siendo monitoreados.
+            </strong>
+
+            <span>
+              ConnectWork mantiene tus contratos y pagos protegidos.
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="activity-item">
+
+          <div class="activity-dot green-dot"></div>
+
+          <div class="activity-info">
+
+            <strong>
+              Propuestas recibidas actualizadas.
+            </strong>
+
+            <span>
+              Revisa nuevos freelancers y oportunidades.
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="activity-item">
+
+          <div class="activity-dot orange-dot"></div>
+
+          <div class="activity-info">
+
+            <strong>
+              Tus contratos están activos.
+            </strong>
+
+            <span>
+              Puedes aprobar entregas y liberar pagos.
+            </span>
+
+          </div>
+
+        </div>
+
       </div>
+
     </section>
 
-    <!-- Accesos Rápidos -->
-    <aside class="section-card side-section">
-      <div class="section-header">
-        <h2>Accesos Rápidos</h2>
+    <!-- ACCIONES -->
+    <aside class="dashboard-card quick-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2>
+            Accesos Rápidos
+          </h2>
+
+          <p>
+            Navega rápidamente por las funciones principales.
+          </p>
+
+        </div>
+
       </div>
-      <div class="quick-actions-grid">
-        <a routerLink="/cliente/proyectos/crear" class="action-item primary">
-          <span class="icon"></span>
-          <span>Crear Proyecto</span>
+
+      <div class="quick-grid">
+
+        <a
+          routerLink="/cliente/proyectos/crear"
+          class="quick-item primary">
+
+          <div class="quick-icon">
+
+          </div>
+
+          <span>
+            Crear Proyecto
+          </span>
+
         </a>
-        <a routerLink="/cliente/proyectos" class="action-item">
-          <span class="icon"></span>
-          <span>Ver Proyectos</span>
+
+        <a
+          routerLink="/cliente/proyectos"
+          class="quick-item">
+
+          <div class="quick-icon">
+
+          </div>
+
+          <span>
+            Mis Proyectos
+          </span>
+
         </a>
-        <a routerLink="/cliente/propuestas" class="action-item">
-          <span class="icon"></span>
-          <span>Propuestas</span>
+
+        <a
+          routerLink="/cliente/propuestas"
+          class="quick-item">
+
+          <div class="quick-icon">
+
+          </div>
+
+          <span>
+            Propuestas
+          </span>
+
         </a>
-        <a routerLink="/cliente/contratos" class="action-item">
-          <span class="icon"></span>
-          <span>Contratos</span>
+
+        <a
+          routerLink="/cliente/contratos"
+          class="quick-item">
+
+          <div class="quick-icon">
+
+          </div>
+
+          <span>
+            Contratos
+          </span>
+
         </a>
+
+        <a
+          routerLink="/cliente/saldo"
+          class="quick-item">
+
+          <div class="quick-icon">
+
+          </div>
+
+          <span>
+            Mi Saldo
+          </span>
+
+        </a>
+
+        <a
+          routerLink="/cliente/reportes"
+          class="quick-item">
+
+          <div class="quick-icon">
+
+          </div>
+
+          <span>
+            Reportes
+          </span>
+
+        </a>
+
       </div>
+
     </aside>
+
   </div>
+
 </div>

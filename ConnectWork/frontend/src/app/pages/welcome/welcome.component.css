@@ -1,6 +1,6 @@
 .welcome-container {
   background: white;
-  color: #2c3e50;
+  color: #107fee;
   overflow-x: hidden;
 }
 
@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 60px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #dd0914 0%, #ce0e0e 100%);
   color: white;
   min-height: 600px;
   gap: 40px;
@@ -42,7 +42,7 @@
 
 .btn-primary {
   background: white;
-  color: #667eea;
+  color: #1035dd;
 }
 
 .btn-primary:hover {

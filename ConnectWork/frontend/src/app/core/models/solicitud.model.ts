@@ -1,6 +1,4 @@
-/**
- * SOLICITUD_HABILIDAD - Modelo para solicitudes de nuevas habilidades
- */
+
 export interface SolicitudHabilidad {
   id?: number;
   freelancerId: number;
@@ -12,9 +10,6 @@ export interface SolicitudHabilidad {
   createdAt?: string;
 }
 
-/**
- * SOLICITUD_CATEGORIA - Modelo para solicitudes de nuevas categorías
- */
 export interface SolicitudCategoria {
   id?: number;
   clienteId: number;
@@ -26,9 +21,6 @@ export interface SolicitudCategoria {
   createdAt?: string;
 }
 
-/**
- * Datos adicionales para solicitudes
- */
 export interface SolicitudDetalle {
   id: number;
   nombre: string;
@@ -40,9 +32,7 @@ export interface SolicitudDetalle {
   reviewedAt?: string;
 }
 
-/**
- * Filtros para buscar solicitudes
- */
+
 export interface FiltrosSolicitud {
   estado?: string;
   desde?: string;
@@ -50,9 +40,6 @@ export interface FiltrosSolicitud {
   solicitanteId?: number;
 }
 
-/**
- * Resumen de solicitudes pendientes
- */
 export interface SolicitudesPendientes {
   habilidadesPendientes: number;
   categoriasPendientes: number;

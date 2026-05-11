@@ -16,9 +16,7 @@ const buildUrl = (path: string) => `${API_URL}${path}`;
 export class FreelancerService {
 
   /**
-   * Constructor con inyección de dependencias
-   *
-   * DEPENDENCIAS:
+
    * @param httpClient - Cliente HTTP de Angular para requests personalizados
    * @param apiService - Servicio wrapper que maneja requests genéricos
    */
@@ -28,12 +26,12 @@ export class FreelancerService {
   ) {}
 
   /**
-   * Obtener estadísticas del dashboard del freelancer
+   * stadísticas del dashboard del freelancer
    *
    * BACKEND ENDPOINT:
    * GET /api/freelancer/dashboard/stats
 
-   *
+
    * @return Observable<any> - Estadísticas del dashboard
    */
   obtenerDashboardStats(): Observable<any> {
@@ -95,10 +93,6 @@ export class FreelancerService {
     return this.apiService.get('/freelancer/reporte-propuestas');
   }
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // MÉTODOS DE DESCARGA Y EXPORTACIÓN
-  // ═════════════════════════════════════════════════════════════════════════
-
 
   descargarReportePDF(): Observable<Blob> {
 
@@ -109,7 +103,7 @@ export class FreelancerService {
   }
 
   /**
-   * Descargar reporte en formato Excel
+   *
    * BACKEND ENDPOINT:
    * GET /api/freelancer/reportes/excel
 
@@ -123,10 +117,9 @@ export class FreelancerService {
   }
 
   /**
-   * Descargar reporte de propuestas en formato CSV
-
    *
-   * @return Observable<Blob> - Archivo CSV binario
+   *
+   * @return Observable<Blob>
    */
   descargarReportePropuestasCSV(): Observable<Blob> {
     return this.httpClient.get(

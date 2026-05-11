@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../../../core/services/usuario.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ModalConfirmarComponent } from '../../../../shared/componentes/modal-confirmar/modal-confirmar.component';
 import { Usuario } from '../../../../core/models/usuario.model';
@@ -20,25 +21,47 @@ export class ListaUsuariosComponent implements OnInit {
   filtroRol = '';
   usuarioSeleccionado: Usuario | null = null;
   modalAbierto = false;
+  cargando = false;
+  usuarioActual: any = null;
 
   constructor(
     private usuarioService: UsuarioService,
+    private authService: AuthService,
     private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
+    this.usuarioActual = this.authService.getCurrentUser();
+
+    if (!this.usuarioActual || this.usuarioActual.rol !== 'ADMIN') {
+      this.notificationService.mostrarError('No tienes permiso para acceder a esta sección');
+      return;
+    }
+
     this.cargarUsuarios();
   }
 
-  private cargarUsuarios(): void {
+  cargarUsuarios(): void {
+    this.cargando = true;
+
     this.usuarioService.listarTodos().subscribe({
       next: (usuarios) => {
-        this.usuarios = usuarios;
-        this.usuariosFiltrados = usuarios;
+        this.usuarios = usuarios || [];
+        this.usuariosFiltrados = usuarios || [];
+        this.cargando = false;
       },
       error: (error) => {
-        console.error('Error:', error);
-        this.notificationService.mostrarError('Error al cargar usuarios');
+        this.cargando = false;
+        console.error('Error al cargar usuarios:', error);
+
+        if (error.status === 403) {
+          this.notificationService.mostrarError('No tienes permisos para ver usuarios');
+        } else {
+          this.notificationService.mostrarError('Error al cargar usuarios');
+        }
+
+        this.usuarios = [];
+        this.usuariosFiltrados = [];
       }
     });
   }
@@ -46,8 +69,8 @@ export class ListaUsuariosComponent implements OnInit {
   filtrarUsuarios(): void {
     this.usuariosFiltrados = this.usuarios.filter(usuario => {
       const cumpleBusqueda = this.busqueda === '' ||
-        usuario.nombreCompleto.toLowerCase().includes(this.busqueda.toLowerCase()) ||
-        usuario.username.toLowerCase().includes(this.busqueda.toLowerCase());
+        (usuario.nombreCompleto && usuario.nombreCompleto.toLowerCase().includes(this.busqueda.toLowerCase())) ||
+        (usuario.username && usuario.username.toLowerCase().includes(this.busqueda.toLowerCase()));
 
       const cumpleRol = this.filtroRol === '' || usuario.rol === this.filtroRol;
 
@@ -56,7 +79,7 @@ export class ListaUsuariosComponent implements OnInit {
   }
 
   abrirModal(usuario: Usuario): void {
-    this.usuarioSeleccionado = usuario;
+    this.usuarioSeleccionado = { ...usuario };
     this.modalAbierto = true;
   }
 
@@ -66,7 +89,9 @@ export class ListaUsuariosComponent implements OnInit {
   }
 
   confirmarActualizarEstado(): void {
-    if (!this.usuarioSeleccionado) return;
+    if (!this.usuarioSeleccionado || !this.usuarioSeleccionado.id) {
+      return;
+    }
 
     const accion = this.usuarioSeleccionado.activo
       ? this.usuarioService.desactivar(this.usuarioSeleccionado.id)
@@ -81,8 +106,19 @@ export class ListaUsuariosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error:', error);
-        this.notificationService.mostrarError('Error al actualizar usuario');
+
+        if (error.status === 403) {
+          this.notificationService.mostrarError('No tienes permisos para realizar esta acción');
+        } else if (error.status === 404) {
+          this.notificationService.mostrarError('Usuario no encontrado');
+        } else {
+          this.notificationService.mostrarError('Error al actualizar usuario');
+        }
       }
     });
+  }
+
+  toggleEstado(usuario: Usuario): void {
+    this.abrirModal(usuario);
   }
 }

@@ -1,33 +1,186 @@
 <div class="entrega-container">
+
   <div class="entrega-header">
-    <h1>📋 Historial de Entregas</h1>
-    <p>Seguimiento de tus trabajos enviados</p>
+
+    <h1>
+      Historial de Entregas
+    </h1>
+
+    <p>
+      Seguimiento de tus trabajos enviados
+    </p>
+
   </div>
 
-  <table class="table-entregas" *ngIf="entregas.length > 0">
+  <!-- TABLA -->
+  <table
+    class="table-entregas"
+    *ngIf="entregas.length > 0"
+  >
+
     <thead>
+
       <tr>
+
         <th>Proyecto</th>
+
         <th>Fecha</th>
+
         <th>Archivos</th>
+
         <th>Estado</th>
+
+        <!-- NUEVA COLUMNA -->
+        <th>Calificación</th>
+
       </tr>
+
     </thead>
+
     <tbody>
+
       <tr *ngFor="let e of entregas">
-        <td>{{ e.proyectoTitulo }}</td>
-        <td>{{ e.fechaCreacion | date:'short' }}</td>
-        <td>{{ e.totalArchivos }} archivos</td>
+
+        <!-- PROYECTO -->
         <td>
-          <span class="estado-entrega" [ngClass]="e.estado.toLowerCase()">
-            {{ e.estado }}
-          </span>
+          {{ e.proyectoTitulo }}
         </td>
+
+        <!-- FECHA -->
+        <td>
+          {{
+            (e.fechaCreacion || e.fecha)
+              | date:'short'
+          }}
+        </td>
+
+        <!-- ARCHIVOS -->
+        <td>
+
+          {{
+            e.totalArchivos || 1
+          }}
+
+          archivos
+
+        </td>
+
+        <!-- ESTADO -->
+        <td>
+
+          <span
+            class="estado-entrega"
+            [ngClass]="
+              e.estado?.toLowerCase()
+            "
+          >
+
+            {{ e.estado }}
+
+          </span>
+
+        </td>
+
+        <!-- CALIFICACIÓN -->
+        <td>
+
+          <!-- SI EXISTE CALIFICACIÓN -->
+          <div
+            *ngIf="e.estrellas"
+            [title]="e.comentarioCalif"
+          >
+
+            <!-- ESTRELLAS -->
+            <span
+              style="
+                color: #f1c40f;
+                font-size: 1.1em;
+              "
+            >
+
+              {{ e.estrellas }}
+
+            </span>
+
+            <!-- COMENTARIO -->
+            <small
+
+              *ngIf="e.comentarioCalif"
+
+              style="
+                display: block;
+                color: #7f8c8d;
+                font-style: italic;
+                max-width: 180px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                margin-top: 4px;
+              "
+            >
+
+              "{{ e.comentarioCalif }}"
+
+            </small>
+
+          </div>
+
+          <!-- SI ESTÁ APROBADA PERO SIN CALIFICAR -->
+          <span
+
+            *ngIf="
+              !e.estrellas &&
+              e.estado === 'APROBADA'
+            "
+
+            style="
+              color: #bdc3c7;
+              font-size: 0.85em;
+            "
+          >
+
+            Pendiente
+
+          </span>
+
+          <!-- SI NO APLICA -->
+          <span
+
+            *ngIf="
+              e.estado !== 'APROBADA'
+            "
+
+            style="
+              color: #bdc3c7;
+            "
+          >
+
+            -
+
+          </span>
+
+        </td>
+
       </tr>
+
     </tbody>
+
   </table>
 
-  <div *ngIf="entregas.length === 0" style="text-align: center; padding: 50px; color: #95a5a6;">
+  <!-- SIN ENTREGAS -->
+  <div
+
+    *ngIf="entregas.length === 0"
+
+    style="
+      text-align: center;
+      padding: 50px;
+      color: #95a5a6;
+    "
+  >
+
     No has realizado entregas todavía.
+
   </div>
+
 </div>

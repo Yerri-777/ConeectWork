@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class LoaderService {
-  // Backwards-compatible wrappers expected by interceptors
+
   show(): void {
     this.mostrar();
   }
@@ -15,11 +15,9 @@ export class LoaderService {
   hide(): void {
     this.ocultar();
   }
-  // BehaviorSubject que emite el estado de carga
+
   private cargando$ = new BehaviorSubject<boolean>(false);
 
-  // Contador interno de requests activos
-  // Evita que se oculte el loader antes de que todos terminen
   private contador: number = 0;
 
   constructor() {}
@@ -32,9 +30,9 @@ export class LoaderService {
   ocultar(): void {
     this.contador--;
 
-    // Solo mostrar como no cargando cuando TODOS los requests terminan
+
     if (this.contador <= 0) {
-      this.contador = 0; // Reset a 0 por seguridad
+      this.contador = 0;
       this.cargando$.next(false);
     }
   }

@@ -2,23 +2,44 @@
   display: flex;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 100%; /* Asegura que ocupe todo el ancho */
 }
 
 .registro-box {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* Cambiado: permite que el contenido crezca si es necesario */
+  justify-content: flex-start;
   padding: 40px;
   background: white;
-  overflow-y: auto;
-  max-height: 100vh;
+  /* Eliminado max-height para evitar que el contenido desaparezca */
+  overflow-y: visible;
+  min-height: 100vh;
+}
+
+/* Añadimos un contenedor interno para centrar el contenido sin romper el scroll */
+.registro-box > * {
+    max-width: 500px; /* Opcional: para que el form no sea infinitamente ancho */
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }
 
 .registro-header {
   text-align: center;
   margin-bottom: 30px;
+  margin-top: auto; /* Ayuda a centrar verticalmente si hay espacio */
 }
+
+.registro-footer {
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: auto; /* Ayuda a centrar verticalmente si hay espacio */
+  padding-top: 20px;
+}
+
+/* --- El resto de tu lógica se mantiene igual --- */
 
 .logo {
   display: flex;
@@ -179,26 +200,6 @@
   cursor: not-allowed;
 }
 
-.registro-footer {
-  text-align: center;
-  font-size: 12px;
-}
-
-.registro-footer p {
-  margin: 0;
-  color: #95a5a6;
-}
-
-.registro-footer a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.registro-footer a:hover {
-  text-decoration: underline;
-}
-
 .registro-info {
   flex: 1;
   display: flex;
@@ -242,6 +243,8 @@
   opacity: 0.9;
 }
 
+/* --- Media Queries corregidas --- */
+
 @media (max-width: 1024px) {
   .registro-container {
     flex-direction: column;
@@ -251,6 +254,11 @@
     display: none;
   }
 
+  .registro-box {
+    width: 100%;
+    padding: 40px 20px;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
   }
@@ -258,7 +266,7 @@
 
 @media (max-width: 768px) {
   .registro-box {
-    padding: 20px;
+    padding: 30px 20px;
   }
 
   .logo-text {

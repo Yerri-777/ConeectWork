@@ -42,7 +42,7 @@ export class DashboardClienteComponent implements OnInit {
   }
 
   private cargarDatos(): void {
-  // Proyectos del cliente
+
   this.proyectoService.listar().subscribe({
     next: (proyectos) => {
       this.stats.proyectosActivos = (proyectos || []).length;
@@ -53,7 +53,7 @@ export class DashboardClienteComponent implements OnInit {
     }
   });
 
-  // Propuestas recibidas
+
   this.propuestaService.listarMias().subscribe({
     next: (propuestas) => {
       this.stats.propuestasRecibidas = (propuestas || []).length;
@@ -64,7 +64,7 @@ export class DashboardClienteComponent implements OnInit {
     }
   });
 
-  // Contratos en curso
+
   this.contratoService.listar().subscribe({
     next: (contratos) => {
       this.stats.contratosActivos = (contratos || []).length;
@@ -75,7 +75,7 @@ export class DashboardClienteComponent implements OnInit {
     }
   });
 
-  // Saldo disponible
+
   this.saldoService.consultarSaldo().subscribe({
     next: (saldo: any) => {
       this.stats.saldoDisponible = saldo?.disponible || 0;

@@ -1,73 +1,334 @@
 package servlet;
 
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import service.ContratoService;
+
 import util.JsonUtil;
 
 import java.io.IOException;
 import java.util.Map;
 
 @WebServlet("/api/contratos/*")
-public class ContratoServlet extends HttpServlet {
+public class ContratoServlet extends BaseServlet {
 
-    private final ContratoService service = new ContratoService();
+    private final ContratoService service =
+            new ContratoService();
+
+    // =====================================================
+    // GET
+    // =====================================================
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String path = req.getPathInfo();
-        String rol = (String) req.getAttribute("rol");
-        int uid = (int) req.getAttribute("usuarioId");
+    protected void doGet(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
         try {
-            if (path == null || path.equals("/")) {
-                if ("FREELANCER".equals(rol)) {
-                    JsonUtil.enviarJson(resp, 200, service.listarActivosFreelancer(uid));
-                } else if ("CLIENTE".equals(rol)) {
-                    JsonUtil.enviarJson(resp, 200, service.listarTodosCliente(uid));
-                } else {
-                    JsonUtil.enviarError(resp, 403, "No autorizado");
-                }
-            } else {
-                int id = Integer.parseInt(path.substring(1).split("/")[0]);
-                JsonUtil.enviarJson(resp, 200, service.detalle(id, uid, rol));
+
+            // =============================================
+            // VALIDAR SESION
+            // =============================================
+
+            if (!requerirAutenticacion(req, resp)) {
+                return;
             }
+
+            String path =
+                    obtenerPath(req);
+
+            String rol =
+                    obtenerRol(req);
+
+            Integer uid =
+                    obtenerUsuarioId(req);
+
+            System.out.println(
+                    "[ContratoServlet.GET] "
+                            + rol
+                            + " -> "
+                            + path
+            );
+
+            // =============================================
+            // LISTAR
+            // =============================================
+
+            if (path.equals("/")) {
+
+                switch (rol) {
+
+                    case "ADMIN" ->
+
+                            JsonUtil.enviarJson(
+                                    resp,
+                                    200,
+                                    service.listarTodos()
+                            );
+
+                    case "CLIENTE" ->
+
+                            JsonUtil.enviarJson(
+                                    resp,
+                                    200,
+                                    service.listarTodosCliente(uid)
+                            );
+
+                    case "FREELANCER" ->
+
+                            JsonUtil.enviarJson(
+                                    resp,
+                                    200,
+                                    service.listarActivosFreelancer(uid)
+                            );
+
+                    default ->
+
+                            JsonUtil.enviarError(
+                                    resp,
+                                    403,
+                                    "Rol no autorizado"
+                            );
+                }
+
+                return;
+            }
+
+            // =============================================
+            // DETALLE
+            // =============================================
+
+            String[] partes =
+                    path.substring(1).split("/");
+
+            int contratoId =
+                    Integer.parseInt(partes[0]);
+
+            JsonUtil.enviarJson(
+                    resp,
+                    200,
+                    service.detalle(
+                            contratoId,
+                            uid,
+                            rol
+                    )
+            );
+
+        } catch (NumberFormatException e) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    400,
+                    "ID inválido"
+            );
+
         } catch (SecurityException e) {
-            JsonUtil.enviarError(resp, 403, e.getMessage());
+
+            JsonUtil.enviarError(
+                    resp,
+                    403,
+                    e.getMessage()
+            );
+
         } catch (IllegalArgumentException e) {
-            JsonUtil.enviarError(resp, 404, e.getMessage());
+
+            JsonUtil.enviarError(
+                    resp,
+                    404,
+                    e.getMessage()
+            );
+
         } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
+
+            responderErrorInterno(resp, e);
         }
     }
 
+    // =====================================================
+    // POST
+    // =====================================================
+
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String path = req.getPathInfo();
-        String rol = (String) req.getAttribute("rol");
-        int uid = (int) req.getAttribute("usuarioId");
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
         try {
-            String[] p = path.substring(1).split("/");
-            int id = Integer.parseInt(p[0]);
-            if (p.length > 1 && "cancelar".equals(p[1])) {
+
+            if (!requerirAutenticacion(req, resp)) {
+                return;
+            }
+
+            if (!requerirAdmin(req, resp)) {
+                return;
+            }
+
+            JsonUtil.enviarJson(
+                    resp,
+                    200,
+                    Map.of(
+                            "success", true,
+                            "mensaje",
+                            "Endpoint POST contratos listo"
+                    )
+            );
+
+        } catch (Exception e) {
+
+            responderErrorInterno(resp, e);
+        }
+    }
+
+    // =====================================================
+    // PUT
+    // =====================================================
+
+    @Override
+    protected void doPut(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException {
+
+        try {
+
+            if (!requerirAutenticacion(req, resp)) {
+                return;
+            }
+
+            String rol =
+                    obtenerRol(req);
+
+            Integer uid =
+                    obtenerUsuarioId(req);
+
+            String path =
+                    obtenerPath(req);
+
+            if (path.equals("/")) {
+
+                JsonUtil.enviarError(
+                        resp,
+                        400,
+                        "Ruta inválida"
+                );
+
+                return;
+            }
+
+            String[] partes =
+                    path.substring(1).split("/");
+
+            int contratoId =
+                    Integer.parseInt(partes[0]);
+
+            // =============================================
+            // CANCELAR
+            // =============================================
+
+            if (partes.length > 1
+                    && "cancelar".equalsIgnoreCase(
+                    partes[1]
+            )) {
+
                 if (!"CLIENTE".equals(rol)) {
-                    JsonUtil.enviarError(resp, 403, "Solo clientes");
+
+                    JsonUtil.enviarError(
+                            resp,
+                            403,
+                            "Solo CLIENTE puede cancelar contratos"
+                    );
+
                     return;
                 }
+
                 @SuppressWarnings("unchecked")
-                var body = (Map<String, Object>) JsonUtil.leerJson(req, Map.class);
-                service.cancelar(id, uid, (String) body.get("motivo"));
-                JsonUtil.enviarJson(resp, 200, Map.of("mensaje", "Contrato cancelado. Saldo reembolsado al cliente."));
-            } else {
-                JsonUtil.enviarError(resp, 400, "Acción no válida");
+                Map<String, Object> body =
+                        (Map<String, Object>)
+                                JsonUtil.leerJson(
+                                        req,
+                                        Map.class
+                                );
+
+                if (body == null) {
+
+                    JsonUtil.enviarError(
+                            resp,
+                            400,
+                            "Body inválido"
+                    );
+
+                    return;
+                }
+
+                String motivo =
+                        body.get("motivo") != null
+                                ? body.get("motivo").toString()
+                                : "";
+
+                service.cancelar(
+                        contratoId,
+                        uid,
+                        motivo
+                );
+
+                JsonUtil.enviarJson(
+                        resp,
+                        200,
+                        Map.of(
+                                "success", true,
+                                "mensaje",
+                                "Contrato cancelado correctamente"
+                        )
+                );
+
+                return;
             }
-        } catch (IllegalArgumentException e) {
-            JsonUtil.enviarError(resp, 400, e.getMessage());
-        } catch (IllegalStateException e) {
-            JsonUtil.enviarError(resp, 400, e.getMessage());
+
+            JsonUtil.enviarError(
+                    resp,
+                    400,
+                    "Acción inválida"
+            );
+
+        } catch (NumberFormatException e) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    400,
+                    "ID inválido"
+            );
+
         } catch (SecurityException e) {
-            JsonUtil.enviarError(resp, 403, e.getMessage());
+
+            JsonUtil.enviarError(
+                    resp,
+                    403,
+                    e.getMessage()
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    400,
+                    e.getMessage()
+            );
+
+        } catch (IllegalStateException e) {
+
+            JsonUtil.enviarError(
+                    resp,
+                    400,
+                    e.getMessage()
+            );
+
         } catch (Exception e) {
-            JsonUtil.enviarError(resp, 500, "Error: " + e.getMessage());
+
+            responderErrorInterno(resp, e);
         }
     }
 }

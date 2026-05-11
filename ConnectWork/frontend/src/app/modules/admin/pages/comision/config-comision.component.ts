@@ -12,10 +12,15 @@ import { NotificationService } from '../../../../core/services/notification.serv
   styleUrls: ['./config-comision.component.css']
 })
 export class ConfigComisionComponent implements OnInit {
+  // Variables conectadas al HTML vía Interpolación y ngModel
   comisionActual = 0;
-  nuevosPorcentaje = 0;
+  nuevosPorcentaje: number | null = null;
   ultimaActualizacion: Date = new Date();
   historial: any[] = [];
+
+  // Estados de UI
+  cargando = false;
+  guardando = false;
 
   constructor(
     private saldoService: SaldoService,
@@ -23,51 +28,85 @@ export class ConfigComisionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarDatosIniciales();
+  }
+
+  /**
+   * Orquesta la carga de datos para asegurar sincronía
+   */
+  private cargarDatosIniciales(): void {
     this.cargarComision();
     this.cargarHistorial();
   }
 
-  private cargarComision(): void {
+  /**
+   * Obtiene la comisión vigente y sincroniza el input del formulario
+   */
+  cargarComision(): void {
+    this.cargando = true;
     this.saldoService.obtenerComisionActual().subscribe({
       next: (data) => {
-        this.comisionActual = data.porcentaje;
-        this.nuevosPorcentaje = data.porcentaje;
-        this.ultimaActualizacion = new Date(data.fechaInicio);
+        this.comisionActual = data.porcentaje || 0;
+        // Inicializamos el input con el valor actual para la lógica de validación del botón
+        this.nuevosPorcentaje = data.porcentaje || 0;
+        this.ultimaActualizacion = new Date(data.fechaInicio || new Date());
+        this.cargando = false;
       },
       error: (error) => {
+        this.cargando = false;
         console.error('Error al cargar comisión:', error);
         this.notificationService.mostrarError('No se pudo obtener la comisión actual');
       }
     });
   }
 
-  private cargarHistorial(): void {
+  /**
+   * Obtiene la lista de cambios históricos para la tabla
+   */
+  cargarHistorial(): void {
     this.saldoService.obtenerHistorialComisiones().subscribe({
       next: (data) => {
-        this.historial = data;
+        this.historial = data || [];
       },
-      error: (error) => console.error('Error al cargar historial:', error)
+      error: (error) => {
+        console.error('Error al cargar historial:', error);
+        this.historial = [];
+      }
     });
   }
 
+  /**
+   * Ejecuta el cambio de comisión tras validaciones
+   * Vinculado al (click) del botón en el HTML
+   */
   cambiarComision(): void {
-    if (this.nuevosPorcentaje < 0 || this.nuevosPorcentaje > 50) {
+    // Validamos que el valor no sea nulo y esté en el rango permitido (0-50 según tu HTML)
+    if (this.nuevosPorcentaje === null || this.nuevosPorcentaje < 0 || this.nuevosPorcentaje > 50) {
       this.notificationService.mostrarAdvertencia('El porcentaje debe estar entre 0% y 50%');
       return;
     }
 
-    if (confirm(`¿Estás seguro de cambiar la comisión de la plataforma a ${this.nuevosPorcentaje}%?`)) {
-      this.saldoService.cambiarComision(this.nuevosPorcentaje).subscribe({
-        next: () => {
-          this.notificationService.mostrarExito('Comisión actualizada correctamente');
-          this.cargarComision();
-          this.cargarHistorial();
-        },
-        error: (error) => {
-          console.error('Error al cambiar comisión:', error);
-          this.notificationService.mostrarError('Hubo un error al intentar actualizar la comisión');
-        }
-      });
+    // Evitamos enviar si no hubo cambios reales
+    if (this.nuevosPorcentaje === this.comisionActual) {
+      this.notificationService.mostrarAdvertencia('El porcentaje es igual al actual');
+      return;
     }
+
+    this.guardando = true;
+    this.saldoService.cambiarComision(this.nuevosPorcentaje).subscribe({
+      next: () => {
+        this.guardando = false;
+        this.notificationService.mostrarExito('Comisión actualizada correctamente');
+
+        // Refrescamos los datos para actualizar la UI y el historial
+        this.cargarComision();
+        this.cargarHistorial();
+      },
+      error: (error) => {
+        this.guardando = false;
+        console.error('Error al cambiar comisión:', error);
+        this.notificationService.mostrarError('Error al actualizar la comisión');
+      }
+    });
   }
 }

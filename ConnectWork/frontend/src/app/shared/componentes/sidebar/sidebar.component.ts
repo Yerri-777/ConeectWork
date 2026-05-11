@@ -38,11 +38,6 @@ export class SidebarComponent implements OnInit {
     });
   }
 
-  /**
-   * Obtener inicial segura para el avatar del usuario.
-   * Retorna la primera letra de `nombreCompleto` (mayúscula),
-   * o la primera letra de `username`, o 'U' si no hay datos.
-   */
   getAvatarInitial(): string {
     const user = this.usuarioActual;
     if (!user) return 'U';
@@ -55,47 +50,47 @@ export class SidebarComponent implements OnInit {
     switch (rol) {
       case 'ADMIN':
         this.menuItems = [
-          { label: 'Dashboard', route: '/admin/dashboard', icon: '📊' },
-          { label: 'Usuarios', route: '/admin/usuarios', icon: '👥' },
-          { label: 'Categorías', route: '/admin/categorias', icon: '🏷️' },
-          { label: 'Habilidades', route: '/admin/habilidades', icon: '⚙️' },
-          { label: 'Solicitudes', route: '/admin/solicitudes', icon: '📮', children: [
-            { label: 'Habilidades', route: '/admin/solicitudes/habilidades', icon: '⚙️' },
-            { label: 'Categorías', route: '/admin/solicitudes/categorias', icon: '🏷️' }
+          { label: 'Dashboard', route: '/admin/dashboard', icon: 'D' },
+          { label: 'Usuarios', route: '/admin/usuarios', icon: 'U' },
+          { label: 'Categorias', route: '/admin/categorias', icon: 'C' },
+          { label: 'Habilidades', route: '/admin/habilidades', icon: 'H' },
+          { label: 'Solicitudes', route: '/admin/solicitudes', icon: 'S', children: [
+            { label: 'Habilidades', route: '/admin/solicitudes/habilidades', icon: '' },
+            { label: 'Categorias', route: '/admin/solicitudes/categorias', icon: '' }
           ]},
-          { label: 'Comisión', route: '/admin/comision', icon: '💰' },
-          { label: 'Saldo Plataforma', route: '/admin/saldo', icon: '💵' },
-          { label: 'Reportes', route: '/admin/reportes', icon: '📈' }
+          { label: 'Comision', route: '/admin/comision', icon: 'C' },
+          { label: 'Saldo Plataforma', route: '/admin/saldo', icon: 'S' },
+          { label: 'Reportes', route: '/admin/reportes', icon: 'R' }
         ];
         break;
 
       case 'CLIENTE':
         this.menuItems = [
-          { label: 'Dashboard', route: '/cliente/dashboard', icon: '📊' },
-          { label: 'Mis Proyectos', route: '/cliente/proyectos', icon: '📁', children: [
-            { label: 'Crear Proyecto', route: '/cliente/proyectos/crear', icon: '✨' },
-            { label: 'Mis Proyectos', route: '/cliente/proyectos/lista', icon: '📋' }
+          { label: 'Dashboard', route: '/cliente/dashboard', icon: 'D' },
+          { label: 'Mis Proyectos', route: '/cliente/proyectos', icon: 'P', children: [
+            { label: 'Crear Proyecto', route: '/cliente/proyectos/crear', icon: '' },
+            { label: 'Ver Proyectos', route: '/cliente/proyectos', icon: '' }
           ]},
-          { label: 'Propuestas', route: '/cliente/propuestas', icon: '💬' },
-          { label: 'Contratos', route: '/cliente/contratos', icon: '📜' },
-          { label: 'Entregas', route: '/cliente/entregas', icon: '📦' },
-          { label: 'Saldo', route: '/cliente/saldo', icon: '💰' },
-          { label: 'Reportes', route: '/cliente/reportes', icon: '📈' }
+          { label: 'Propuestas', route: '/cliente/propuestas', icon: 'P' },
+          { label: 'Contratos', route: '/cliente/contratos', icon: 'C' },
+          { label: 'Entregas', route: '/cliente/entregas', icon: 'E' },
+          { label: 'Saldo', route: '/cliente/saldo', icon: 'S' },
+          { label: 'Reportes', route: '/cliente/reportes', icon: 'R' }
         ];
         break;
 
       case 'FREELANCER':
         this.menuItems = [
-          { label: 'Dashboard', route: '/freelancer/dashboard', icon: '📊' },
-          { label: 'Explorar', route: '/freelancer/explorar', icon: '🔍' },
-          { label: 'Propuestas', route: '/freelancer/propuestas', icon: '💬', children: [
-            { label: 'Mis Propuestas', route: '/freelancer/propuestas/mias', icon: '📋' },
-            { label: 'Enviar Propuesta', route: '/freelancer/propuestas/nueva', icon: '✨' }
+          { label: 'Dashboard', route: '/freelancer/dashboard', icon: 'D' },
+          { label: 'Explorar Proyectos', route: '/freelancer/explorar', icon: 'E' },
+          { label: 'Propuestas', route: '/freelancer/propuestas', icon: 'P', children: [
+            { label: 'Mis Propuestas', route: '/freelancer/propuestas', icon: '' },
+            { label: 'Buscar Proyectos', route: '/freelancer/explorar', icon: '' }
           ]},
-          { label: 'Contratos', route: '/freelancer/contratos', icon: '📜' },
-          { label: 'Entregas', route: '/freelancer/entregas', icon: '📦' },
-          { label: 'Saldo', route: '/freelancer/saldo', icon: '💰' },
-          { label: 'Reportes', route: '/freelancer/reportes', icon: '📈' }
+          { label: 'Contratos', route: '/freelancer/contratos', icon: 'C' },
+         { label: 'Entregas', route: '/freelancer/entregas/historial', icon: 'E' },
+          { label: 'Saldo', route: '/freelancer/saldo', icon: 'S' },
+          { label: 'Reportes', route: '/freelancer/reportes', icon: 'R' }
         ];
         break;
     }
@@ -115,5 +110,10 @@ export class SidebarComponent implements OnInit {
 
   isSubmenuOpen(label: string): boolean {
     return this.submenuAbiertos.has(label);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

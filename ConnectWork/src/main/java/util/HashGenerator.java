@@ -5,9 +5,9 @@ import util.PasswordUtil;
 public class HashGenerator {
     public static void main(String[] args) {
         // Genera hashes para las 3 credenciales de prueba
-        String adminHash = PasswordUtil.encriptar("Admin123!");
-        String clienteHash = PasswordUtil.encriptar("Pass1234");
-        String freelancerHash = PasswordUtil.encriptar("Pass1234");
+        String adminHash = PasswordUtil.hashPassword("Admin123!");
+        String clienteHash = PasswordUtil.hashPassword("Pass1234");
+        String freelancerHash = PasswordUtil.hashPassword("Pass1234");
         
         System.out.println("=== HASHES GENERADOS ===");
         System.out.println("Admin123!    -> " + adminHash);

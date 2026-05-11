@@ -2,6 +2,7 @@ package service;
 
 import dao.ContratoDAO;
 import dao.EntregaDAO;
+
 import modelo.Contrato;
 import modelo.Entrega;
 
@@ -10,63 +11,230 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Lógica de negocio para contratos.
- */
 public class ContratoService {
 
     private final ContratoDAO contratoDAO;
+
     private final EntregaDAO entregaDAO;
 
     public ContratoService() {
-        this.contratoDAO = new ContratoDAO();
-        this.entregaDAO = new EntregaDAO();
+
+        this.contratoDAO =
+                new ContratoDAO();
+
+        this.entregaDAO =
+                new EntregaDAO();
     }
 
-    public List<Contrato> listarActivosFreelancer(int freelancerId) throws SQLException {
-        return contratoDAO.listarPorFreelancer(freelancerId);
+    // =====================================================
+    // ADMIN
+    // =====================================================
+
+    public List<Contrato> listarTodos()
+            throws SQLException {
+
+        return contratoDAO.listarTodos();
     }
 
-    public List<Contrato> listarTodosCliente(int clienteId) throws SQLException {
-        return contratoDAO.listarPorCliente(clienteId);
+    // =====================================================
+    // FREELANCER
+    // =====================================================
+
+    public List<Contrato> listarActivosFreelancer(
+            int freelancerId
+    ) throws SQLException {
+
+        validarId(freelancerId);
+
+        return contratoDAO.listarPorFreelancer(
+                freelancerId
+        );
     }
 
-    public Map<String, Object> detalle(int contratoId, int usuarioId, String rol) throws SQLException {
-        Contrato c = contratoDAO.buscarPorId(contratoId);
-        if (c == null) {
-            throw new IllegalArgumentException("Contrato no encontrado");
+    // =====================================================
+    // CLIENTE
+    // =====================================================
+
+    public List<Contrato> listarTodosCliente(
+            int clienteId
+    ) throws SQLException {
+
+        validarId(clienteId);
+
+        return contratoDAO.listarPorCliente(
+                clienteId
+        );
+    }
+
+    // =====================================================
+    // DETALLE
+    // =====================================================
+
+    public Map<String, Object> detalle(
+            int contratoId,
+            int usuarioId,
+            String rol
+    ) throws SQLException {
+
+        validarId(contratoId);
+
+        validarId(usuarioId);
+
+        Contrato contrato =
+                contratoDAO.buscarPorId(
+                        contratoId
+                );
+
+        if (contrato == null) {
+
+            throw new IllegalArgumentException(
+                    "Contrato no encontrado"
+            );
         }
 
-        boolean esAdmin = "ADMIN".equals(rol);
-        boolean esCliente = c.getClienteId() == usuarioId;
-        boolean esFreelancer = c.getFreelancerId() == usuarioId;
-        if (!esAdmin && !esCliente && !esFreelancer) {
-            throw new SecurityException("No autorizado para ver este contrato");
+        boolean esAdmin =
+                "ADMIN".equalsIgnoreCase(rol);
+
+        boolean esCliente =
+                contrato.getClienteId()
+                        == usuarioId;
+
+        boolean esFreelancer =
+                contrato.getFreelancerId()
+                        == usuarioId;
+
+        if (!esAdmin
+                && !esCliente
+                && !esFreelancer) {
+
+            throw new SecurityException(
+                    "No autorizado"
+            );
         }
 
-        List<Entrega> entregas = entregaDAO.listarPorContrato(contratoId);
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("contrato", c);
+        List<Entrega> entregas =
+                entregaDAO.listarPorContrato(
+                        contratoId
+                );
+
+        Map<String, Object> data =
+                new LinkedHashMap<>();
+
+        data.put("contrato", contrato);
+
         data.put("entregas", entregas);
+
         return data;
     }
 
-    public void cancelar(int contratoId, int clienteId, String motivo) throws SQLException {
-        if (motivo == null || motivo.isBlank()) {
-            throw new IllegalArgumentException("El motivo de cancelación es obligatorio");
+    // =====================================================
+    // CANCELAR
+    // =====================================================
+
+    public void cancelar(
+            int contratoId,
+            int clienteId,
+            String motivo
+    ) throws SQLException {
+
+        validarId(contratoId);
+
+        validarId(clienteId);
+
+        if (motivo == null
+                || motivo.isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Motivo requerido"
+            );
         }
 
-        Contrato c = contratoDAO.buscarPorId(contratoId);
-        if (c == null) {
-            throw new IllegalArgumentException("Contrato no encontrado");
-        }
-        if (c.getClienteId() != clienteId) {
-            throw new SecurityException("No es tu contrato");
-        }
-        if (!"ACTIVO".equals(c.getEstado())) {
-            throw new IllegalStateException("Solo se pueden cancelar contratos activos");
+        motivo = motivo.trim();
+
+        if (motivo.length() < 5) {
+
+            throw new IllegalArgumentException(
+                    "Motivo demasiado corto"
+            );
         }
 
-        contratoDAO.cancelar(contratoId, motivo);
+        Contrato contrato =
+                contratoDAO.buscarPorId(
+                        contratoId
+                );
+
+        if (contrato == null) {
+
+            throw new IllegalArgumentException(
+                    "Contrato no encontrado"
+            );
+        }
+
+        // ownership
+        if (contrato.getClienteId()
+                != clienteId) {
+
+            throw new SecurityException(
+                    "No puedes cancelar este contrato"
+            );
+        }
+
+        // estado válido
+        if (!"ACTIVO".equalsIgnoreCase(
+                contrato.getEstado()
+        )) {
+
+            throw new IllegalStateException(
+                    "Solo contratos activos pueden cancelarse"
+            );
+        }
+
+        // entregas pendientes
+        List<Entrega> entregas =
+                entregaDAO.listarPorContrato(
+                        contratoId
+                );
+
+        boolean pendientes =
+                entregas.stream()
+
+                        .anyMatch(e ->
+
+                                "PENDIENTE"
+                                        .equalsIgnoreCase(
+                                                e.getEstado()
+                                        )
+                        );
+
+        if (pendientes) {
+
+            throw new IllegalStateException(
+                    "Existen entregas pendientes"
+            );
+        }
+
+        contratoDAO.cancelar(
+                contratoId,
+                motivo
+        );
+
+        System.out.println(
+                "[ContratoService] ✓ Contrato cancelado ID: "
+                        + contratoId
+        );
+    }
+
+    // =====================================================
+    // VALIDAR ID
+    // =====================================================
+
+    private void validarId(int id) {
+
+        if (id <= 0) {
+
+            throw new IllegalArgumentException(
+                    "ID inválido"
+            );
+        }
     }
 }

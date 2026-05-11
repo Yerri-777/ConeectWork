@@ -1,19 +1,11 @@
-/**
- * ENUMS - Valores constantes usados en la aplicación
- */
 
-/**
- * Roles de usuario
- */
 export enum RolUsuario {
   CLIENTE = 'CLIENTE',
   FREELANCER = 'FREELANCER',
   ADMIN = 'ADMIN'
 }
 
-/**
- * Estados de proyecto
- */
+
 export enum EstadoProyecto {
   ABIERTO = 'ABIERTO',
   EN_REVISION = 'EN_REVISION',
@@ -23,9 +15,6 @@ export enum EstadoProyecto {
   CANCELADO = 'CANCELADO'
 }
 
-/**
- * Estados de propuesta
- */
 export enum EstadoPropuesta {
   PENDIENTE = 'PENDIENTE',
   ACEPTADA = 'ACEPTADA',
@@ -33,45 +22,35 @@ export enum EstadoPropuesta {
   RETIRADA = 'RETIRADA'
 }
 
-/**
- * Estados de contrato
- */
+
 export enum EstadoContrato {
   ACTIVO = 'ACTIVO',
   COMPLETADO = 'COMPLETADO',
   CANCELADO = 'CANCELADO'
 }
 
-/**
- * Estados de entrega
- */
+
 export enum EstadoEntrega {
   PENDIENTE = 'PENDIENTE',
   APROBADA = 'APROBADA',
   RECHAZADA = 'RECHAZADA'
 }
 
-/**
- * Estados de solicitud
- */
+
 export enum EstadoSolicitud {
   PENDIENTE = 'PENDIENTE',
   ACEPTADA = 'ACEPTADA',
   RECHAZADA = 'RECHAZADA'
 }
 
-/**
- * Niveles de experiencia para freelancers
- */
+
 export enum NivelExperiencia {
   JUNIOR = 'JUNIOR',
   SEMI_SENIOR = 'SEMI_SENIOR',
   SENIOR = 'SENIOR'
 }
 
-/**
- * Tipos de notificación
- */
+
 export enum TipoNotificacion {
   EXITO = 'exito',
   ERROR = 'error',
@@ -79,9 +58,6 @@ export enum TipoNotificacion {
   ADVERTENCIA = 'advertencia'
 }
 
-/**
- * Mensajes constantes
- */
 export const MENSAJES = {
   // Éxito
   EXITO_LOGIN: 'Sesión iniciada correctamente',
@@ -123,9 +99,7 @@ export const PATRONES = {
   URL: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
 };
 
-/**
- * Límites y restricciones
- */
+
 export const LIMITES = {
   MIN_PRESUPUESTO: 10,
   MAX_PRESUPUESTO: 100000,

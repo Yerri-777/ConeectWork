@@ -1,90 +1,120 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
+import { Observable, of } from 'rxjs';
 import { Contrato } from '../models/contrato.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContratoService {
-  private endpoint = '/api/contratos';
+  private KEY = 'connectwork_contratos';
 
-  constructor(private apiService: ApiService) {}
 
-  /**
-   * Listar contratos del usuario actual (cliente o freelancer)
-   */
+  private getContratos(): any[] {
+    try {
+      const data = localStorage.getItem(this.KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private saveContratos(contratos: any[]): void {
+    localStorage.setItem(this.KEY, JSON.stringify(contratos));
+  }
+
   listar(): Observable<Contrato[]> {
-    return this.apiService.get<Contrato[]>(this.endpoint);
+    const contratos = this.getContratos();
+    const formateados = contratos.map((c: any) => ({
+      ...c,
+      montoAcordado: c.monto // Mapeo crítico para tus tablas en el HTML
+    }));
+    return of(formateados);
   }
 
-  /**
-   * Listar contratos activos
-   */
-  listarActivos(): Observable<Contrato[]> {
-    return this.apiService.get<Contrato[]>(this.endpoint, { estado: 'ACTIVO' });
-  }
 
-  /**
-   * Listar contratos completados
-   */
-  listarCompletados(): Observable<Contrato[]> {
-    return this.apiService.get<Contrato[]>(this.endpoint, { estado: 'COMPLETADO' });
-  }
-
-  /**
-   * Listar contratos cancelados
-   */
-  listarCancelados(): Observable<Contrato[]> {
-    return this.apiService.get<Contrato[]>(this.endpoint, { estado: 'CANCELADO' });
-  }
-
-  /**
-   * Obtener contrato por ID
-   */
   obtenerPorId(id: string | number): Observable<Contrato> {
-    return this.apiService.get<Contrato>(`${this.endpoint}/${id}`);
+    const contratos = this.getContratos();
+    const contrato = contratos.find((c: any) => String(c.id) === String(id));
+
+    if (contrato) {
+      contrato.montoAcordado = contrato.monto;
+      contrato.descripcionAcuerdo = contrato.descripcionAcuerdo ||
+        'Términos y condiciones aceptados según la propuesta original en ConnectWork.';
+    }
+
+    return of(contrato);
   }
 
-  /**
-   * Cancelar contrato (cliente)
-   */
+
   cancelar(id: string | number, motivo?: string): Observable<any> {
-    return this.apiService.put<any>(`${this.endpoint}/${id}/cancelar`, { motivo });
+    const contratos = this.getContratos();
+    const actualizados = contratos.map((c: any) =>
+      String(c.id) === String(id)
+        ? { ...c, estado: 'CANCELADO', motivoCancelacion: motivo, fechaCancelacion: new Date() }
+        : c
+    );
+
+    this.saveContratos(actualizados);
+    return of({ success: true });
   }
 
-  /**
-   * Obtener entregas de un contrato
-   */
-  obtenerEntregas(id: string | number): Observable<any[]> {
-    return this.apiService.get<any[]>(`${this.endpoint}/${id}/entregas`);
+
+  listarActivos(): Observable<Contrato[]> {
+    return this.filtrarPorEstado('ACTIVO');
   }
 
-  /**
-   * Filtrar contratos por estado
-   */
+  listarCompletados(): Observable<Contrato[]> {
+    return this.filtrarPorEstado('COMPLETADO');
+  }
+
+  listarCancelados(): Observable<Contrato[]> {
+    return this.filtrarPorEstado('CANCELADO');
+  }
+
   filtrarPorEstado(estado: string): Observable<Contrato[]> {
-    return this.apiService.get<Contrato[]>(this.endpoint, { estado });
+    const contratos = this.getContratos();
+    const filtrados = contratos
+      .filter(c => c.estado === estado)
+      .map(c => ({ ...c, montoAcordado: c.monto }));
+    return of(filtrados);
+  }
+
+  obtenerEntregas(id: string | number): Observable<any[]> {
+    const entregas = JSON.parse(localStorage.getItem('connectwork_entregas') || '[]');
+    const filtradas = entregas.filter((e: any) => String(e.contratoId) === String(id));
+    return of(filtradas);
   }
 
   /**
-   * Filtrar contratos por fechas
-   */
-  filtrarPorFechas(desde: string, hasta: string): Observable<Contrato[]> {
-    return this.apiService.get<Contrato[]>(this.endpoint, { desde, hasta });
-  }
-
-  /**
-   * Obtener estadísticas de contratos
+   * ESTADÍSTICAS Y CONTEOS (Lógica de Reportes mantenida)
    */
   obtenerEstadisticas(): Observable<any> {
-    return this.apiService.get<any>(`${this.endpoint}/estadisticas`);
+    const contratos = this.getContratos();
+    return of({
+      total: contratos.length,
+      activos: contratos.filter(c => c.estado === 'ACTIVO').length,
+      completados: contratos.filter(c => c.estado === 'COMPLETADO').length,
+      cancelados: contratos.filter(c => c.estado === 'CANCELADO').length,
+      montoTotal: contratos.reduce((acc, c) => acc + (Number(c.monto) || 0), 0)
+    });
   }
 
-  /**
-   * Contar contratos por estado
-   */
   contarPorEstado(estado: string): Observable<{ total: number }> {
-    return this.apiService.get<{ total: number }>(`${this.endpoint}/count`, { estado });
+    const contratos = this.getContratos();
+    const total = contratos.filter(c => c.estado === estado).length;
+    return of({ total });
+  }
+
+  filtrarPorFechas(desde: string, hasta: string): Observable<Contrato[]> {
+    const contratos = this.getContratos();
+    const fDesde = new Date(desde);
+    const fHasta = new Date(hasta);
+
+    const filtrados = contratos.filter(c => {
+      const fContrato = new Date(c.fechaInicio);
+      return fContrato >= fDesde && fContrato <= fHasta;
+    }).map(c => ({ ...c, montoAcordado: c.monto }));
+
+    return of(filtrados);
   }
 }

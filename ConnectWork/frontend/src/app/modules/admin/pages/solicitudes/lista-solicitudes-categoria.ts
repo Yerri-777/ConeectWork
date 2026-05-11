@@ -12,6 +12,7 @@ import { SolicitudCategoria } from '../../../../core/models/solicitud.model';
   styleUrls: ['./lista-solicitudes.component.css']
 })
 export class ListaSolicitudesCategoriaComponent implements OnInit {
+[x: string]: any;
   solicitudes: SolicitudCategoria[] = [];
 
   constructor(

@@ -1,8 +1,18 @@
 <div class="solicitudes-container">
-  <h1>⚙️ Solicitudes de Habilidades</h1>
+  <div class="header-section">
+    <h1>⚙️ Solicitudes de Habilidades</h1>
+    <p class="subtitle">Gestión de nuevas competencias propuestas por los colaboradores</p>
+  </div>
 
-  <div class="table-container" *ngIf="solicitudes.length > 0">
-    <table class="table">
+  <!-- Estado de Carga -->
+  <div class="loading-state" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Actualizando lista de habilidades...</p>
+  </div>
+
+  <!-- Tabla de Solicitudes -->
+  <div class="table-container" *ngIf="!cargando && solicitudes.length > 0">
+    <table class="table-modern">
       <thead>
         <tr>
           <th>Freelancer</th>
@@ -14,35 +24,51 @@
       </thead>
       <tbody>
         <tr *ngFor="let sol of solicitudes">
-          <td>{{ sol.nombreFreelancer }}</td>
-          <td>{{ sol.nombre }}</td>
-          <td>{{ sol.descripcion || '-' }}</td>
+          <td>
+            <div class="user-info">
+              <strong>{{ sol.nombreFreelancer || 'Usuario' }}</strong>
+            </div>
+          </td>
+          <td class="skill-name">{{ sol.nombre }}</td>
+          <td class="desc-cell">{{ sol.descripcion || '-' }}</td>
           <td>
             <span class="badge"
-              [ngClass]="'badge-' + (sol.estado === 'PENDIENTE' ? 'warning' : (sol.estado || '').toLowerCase())">
+              [ngClass]="{
+                'badge-warning': sol.estado === 'PENDIENTE',
+                'badge-success': sol.estado === 'ACEPTADA',
+                'badge-danger': sol.estado === 'RECHAZADA'
+              }">
               {{ sol.estado }}
             </span>
           </td>
           <td class="acciones">
-            <button
-              *ngIf="sol.estado === 'PENDIENTE'"
-              class="btn-aceptar"
-              (click)="aceptarSolicitud(sol)">
-              ✓ Aceptar
-            </button>
-            <button
-              *ngIf="sol.estado === 'PENDIENTE'"
-              class="btn-rechazar"
-              (click)="rechazarSolicitud(sol)">
-              ✕ Rechazar
-            </button>
+            <div *ngIf="sol.estado === 'PENDIENTE'">
+              <button
+                class="btn-aceptar"
+                (click)="aceptarSolicitud(sol)"
+                title="Aceptar Habilidad">
+                ✓ Aceptar
+              </button>
+              <button
+                class="btn-rechazar"
+                (click)="rechazarSolicitud(sol)"
+                title="Rechazar Habilidad">
+                ✕ Rechazar
+              </button>
+            </div>
+            <span *ngIf="sol.estado !== 'PENDIENTE'" class="txt-processed">
+              Solicitud Finalizada
+            </span>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div *ngIf="solicitudes.length === 0" class="empty-state">
-    <p>No hay solicitudes de habilidades pendientes</p>
+  <!-- Estado Vacío -->
+  <div *ngIf="!cargando && solicitudes.length === 0" class="empty-state">
+    <div class="empty-icon">🛠️</div>
+    <p>No hay solicitudes de habilidades pendientes de revisión.</p>
+    <button class="btn-refresh" (click)="cargarSolicitudes()">Verificar de nuevo</button>
   </div>
 </div>

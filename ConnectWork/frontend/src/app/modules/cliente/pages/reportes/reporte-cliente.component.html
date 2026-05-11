@@ -1,41 +1,481 @@
 <div class="reportes-container">
-  <h1>📊 Reportes y Estadísticas</h1>
 
-  <div class="filtros-card">
-    <div class="form-group">
-      <label>Rango de Fechas</label>
-      <select class="form-control" [(ngModel)]="periodo" (change)="cargarDatos()">
-        <option value="mes">Último Mes</option>
-        <option value="trimestre">Último Trimestre</option>
-        <option value="año">Este Año</option>
-      </select>
+  <!-- HEADER -->
+  <div class="reportes-header">
+
+    <div>
+
+      <h1>
+        Reportes y Estadísticas
+      </h1>
+
+      <p class="subtitulo">
+        Analiza el rendimiento de tus proyectos, pagos realizados y actividad dentro de ConnectWork.
+      </p>
+
     </div>
-    <button class="btn-export" (click)="exportarPDF()">
-      <span>📄</span> Exportar PDF
+
+    <button
+      class="btn-export"
+      (click)="exportarPDF()"
+      [disabled]="cargando">
+
+      Exportar PDF
+
     </button>
+
   </div>
 
-  <div class="reporte-grid">
-    <div class="chart-placeholder">
-      <h3>Inversión por Categoría</h3>
-      <div class="grafico-mock">[Gráfico de Pastel]</div>
-      <table class="data-table">
-        <tr *ngFor="let item of statsCategorias">
-          <td>{{ item.nombre }}</td>
-          <td class="text-right"><strong>{{ item.total | currency:'GTQ' }}</strong></td>
-        </tr>
-      </table>
+  <!-- FILTROS -->
+  <div class="filtros-card">
+
+    <div class="form-group">
+
+      <label>
+        Periodo de análisis
+      </label>
+
+      <select
+        class="form-control"
+        [(ngModel)]="periodo"
+        (change)="cargarDatos()">
+
+        <option value="mes">
+          Último Mes
+        </option>
+
+        <option value="trimestre">
+          Último Trimestre
+        </option>
+
+        <option value="año">
+          Este Año
+        </option>
+
+      </select>
+
     </div>
 
-    <div class="chart-placeholder">
-      <h3>Estado de Proyectos</h3>
-      <div class="grafico-mock">[Gráfico de Barras]</div>
-      <table class="data-table">
-        <tr *ngFor="let item of statsEstados">
-          <td>{{ item.estado }}</td>
-          <td class="text-right"><strong>{{ item.cantidad }} proyectos</strong></td>
-        </tr>
-      </table>
+    <div class="filtro-info">
+
+      <span class="badge-periodo">
+        {{ periodo | uppercase }}
+      </span>
+
+      <small>
+        Datos sincronizados con tu saldo real
+      </small>
+
     </div>
+
   </div>
+
+  <!-- LOADING -->
+  <div
+    *ngIf="cargando"
+    class="loading-container">
+
+    <div class="loading-spinner"></div>
+
+    <p>
+      Generando estadísticas...
+    </p>
+
+  </div>
+
+  <!-- CONTENIDO -->
+  <div *ngIf="!cargando">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+
+      <!-- TOTAL PROYECTOS -->
+      <div class="stat-card">
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Total Proyectos
+          </span>
+
+          <h2>
+            {{ estadisticas.totalProyectos || 0 }}
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- ACTIVOS -->
+      <div class="stat-card">
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Proyectos Activos
+          </span>
+
+          <h2>
+            {{ estadisticas.proyectosActivos || 0 }}
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- FINALIZADOS -->
+      <div class="stat-card">
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Finalizados
+          </span>
+
+          <h2>
+            {{ estadisticas.proyectosFinalizados || 0 }}
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- GASTADO -->
+      <div class="stat-card success">
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Total Gastado
+          </span>
+
+          <h2>
+
+            {{
+              estadisticas.totalGastado || 0
+                | currency:'GTQ'
+            }}
+
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- SALDO -->
+      <div class="stat-card primary">
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            Saldo Actual
+          </span>
+
+          <h2>
+
+            {{
+              estadisticas.saldoActual || 0
+                | currency:'GTQ'
+            }}
+
+          </h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- GRID -->
+    <div class="reporte-grid">
+
+      <!-- CATEGORÍAS -->
+      <div class="chart-card">
+
+        <div class="chart-header">
+
+          <div>
+
+            <h3>
+              Inversión por Categoría
+            </h3>
+
+            <p>
+              Distribución total invertida por tipo de proyecto.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+          *ngIf="statsCategorias.length === 0"
+          class="empty-chart">
+
+          No hay datos disponibles
+
+        </div>
+
+        <!-- TABLA -->
+        <table
+          *ngIf="statsCategorias.length > 0"
+          class="data-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Categoría
+              </th>
+
+              <th class="text-right">
+                Total
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr
+              *ngFor="let item of statsCategorias">
+
+              <td>
+                {{ item.nombre }}
+              </td>
+
+              <td class="text-right">
+
+                <strong>
+
+                  {{
+                    item.total
+                      | currency:'GTQ'
+                  }}
+
+                </strong>
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- ESTADOS -->
+      <div class="chart-card">
+
+        <div class="chart-header">
+
+          <div>
+
+            <h3>
+              Estado de Proyectos
+            </h3>
+
+            <p>
+              Estado actual de todos tus proyectos registrados.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+          *ngIf="statsEstados.length === 0"
+          class="empty-chart">
+
+          No hay estados registrados
+
+        </div>
+
+        <!-- TABLA -->
+        <table
+          *ngIf="statsEstados.length > 0"
+          class="data-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="text-right">
+                Cantidad
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr
+              *ngFor="let item of statsEstados">
+
+              <td>
+
+                <span
+                  class="estado-badge"
+                  [ngClass]="{
+
+                    'estado-activo':
+                      item.estado === 'ACTIVO'
+                      || item.estado === 'EN_PROGRESO',
+
+                    'estado-finalizado':
+                      item.estado === 'FINALIZADO',
+
+                    'estado-abierto':
+                      item.estado === 'ABIERTO'
+
+                  }">
+
+                  {{ item.estado }}
+
+                </span>
+
+              </td>
+
+              <td class="text-right">
+
+                <strong>
+                  {{ item.cantidad }}
+                </strong>
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+    <!-- HISTORIAL -->
+    <div
+      class="historial-card"
+      *ngIf="contratos.length > 0">
+
+      <div class="chart-header">
+
+        <div>
+
+          <h3>
+            Contratos Registrados
+          </h3>
+
+          <p>
+            Resumen de contratos y pagos realizados.
+          </p>
+
+        </div>
+
+      </div>
+
+      <table class="data-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Proyecto
+            </th>
+
+            <th>
+              Freelancer
+            </th>
+
+            <th class="text-right">
+              Monto
+            </th>
+
+            <th>
+              Estado
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr
+            *ngFor="let contrato of contratos">
+
+            <td>
+              {{ contrato.proyectoTitulo || 'Proyecto' }}
+            </td>
+
+            <td>
+              {{ contrato.freelancerNombre || 'Freelancer' }}
+            </td>
+
+            <td class="text-right">
+
+              <strong>
+
+                {{
+                  contrato.montoAcordado || 0
+                    | currency:'GTQ'
+                }}
+
+              </strong>
+
+            </td>
+
+            <td>
+
+              <span
+                class="estado-badge estado-finalizado">
+
+                {{
+                  contrato.estado || 'ACTIVO'
+                }}
+
+              </span>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- EMPTY -->
+    <div
+      *ngIf="
+        proyectos.length === 0 &&
+        contratos.length === 0
+      "
+      class="empty-state">
+
+      <h3>
+        No hay datos suficientes
+      </h3>
+
+      <p>
+        Crea proyectos y realiza contrataciones para visualizar estadísticas.
+      </p>
+
+    </div>
+
+  </div>
+
 </div>

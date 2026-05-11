@@ -4,17 +4,15 @@
   min-height: 100vh;
 }
 
-/* Tarjeta de Balance */
+
 .balance-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 30px;
-  border-radius: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 20px rgba(118, 75, 162, 0.2);
+  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 15px;
 }
 
 .balance-info h2 {
@@ -30,7 +28,7 @@
   margin-top: 5px;
 }
 
-/* Historial y Formularios */
+
 .saldo-grid {
   display: grid;
   grid-template-columns: 1fr 1.5fr;

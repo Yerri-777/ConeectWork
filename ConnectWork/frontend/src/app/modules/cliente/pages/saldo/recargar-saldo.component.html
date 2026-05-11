@@ -1,33 +1,81 @@
 <div class="saldo-container">
-  <div class="card-white" style="max-width: 500px; margin: auto; text-align: center;">
-    <h2>💰 Recargar Saldo</h2>
-    <p>Ingresa el monto que deseas añadir a tu cuenta.</p>
 
-    <div class="form-recarga">
+  <div class="card-white recarga-card">
+
+    <div class="recarga-header">
+
+      <h2>
+        Recargar Saldo
+      </h2>
+
+      <p>
+        Agrega fondos a tu cuenta para contratar freelancers.
+      </p>
+
+    </div>
+
+    <!-- MONTO -->
+    <div class="form-group">
+
+      <label>
+        Monto a recargar
+      </label>
+
       <input
         type="number"
-        [(ngModel)]="monto"
+        min="1"
         class="input-recarga"
-        placeholder="0.00"
-        min="10">
+        [(ngModel)]="monto"
+        placeholder="Q0.00">
 
-      <div class="metodos-pago" style="margin: 20px 0; text-align: left;">
-        <label style="font-weight: 600; font-size: 13px;">Método de Pago Seleccionado:</label>
-        <div style="padding: 15px; border: 1px solid #667eea; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; gap: 10px;">
-          <span>💳</span> Tarjeta terminada en **** 4589
-        </div>
-      </div>
-
-      <button
-        (click)="confirmarRecarga()"
-        [disabled]="monto < 10 || procesando"
-        style="width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-        {{ procesando ? 'Procesando...' : 'Confirmar Recarga' }}
-      </button>
-
-      <button class="btn-outline" routerLink=".." style="margin-top: 15px; border: none; background: none; color: #95a5a6; cursor: pointer;">
-        Cancelar
-      </button>
     </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-box">
+
+      <span>
+        Total a acreditar:
+      </span>
+
+      <strong>
+        {{ (monto || 0) | currency:'GTQ' }}
+      </strong>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="acciones-flex">
+
+      <!-- CONFIRMAR -->
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="confirmarRecarga()"
+        [disabled]="procesando || monto <= 0">
+
+        {{
+
+          procesando
+            ? 'Procesando...'
+            : 'Confirmar Recarga'
+
+        }}
+
+      </button>
+
+      <!-- CANCELAR -->
+      <button
+        type="button"
+        class="btn-outline"
+        (click)="cancelar()"
+        [disabled]="procesando">
+
+        Cancelar
+
+      </button>
+
+    </div>
+
   </div>
+
 </div>

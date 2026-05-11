@@ -15,21 +15,24 @@
         <input
           type="number"
           [(ngModel)]="nuevosPorcentaje"
+          name="nuevosPorcentaje"
           min="0"
           max="50"
           placeholder="0-50">
         <small>El porcentaje debe estar entre 0% y 50%</small>
       </div>
 
-      <div class="warning" *ngIf="nuevosPorcentaje !== comisionActual && nuevosPorcentaje !== null">
-        <p><strong> Advertencia:</strong> Este cambio afectará a todos los contratos futuros.</p>
+      <!-- Advertencia: Solo se muestra si hay un valor válido, es diferente al actual y no es nulo -->
+      <div class="warning" *ngIf="nuevosPorcentaje !== null && nuevosPorcentaje !== comisionActual && nuevosPorcentaje >= 0 && nuevosPorcentaje <= 50">
+        <p><strong>⚠️ Advertencia:</strong> Este cambio afectará a todos los contratos futuros.</p>
       </div>
 
+      <!-- Botón Guardar con validaciones concatenadas correctamente -->
       <button
         class="btn-guardar"
-        [disabled]="nuevosPorcentaje === comisionActual || nuevosPorcentaje < 0 || nuevosPorcentaje > 50"
+        [disabled]="nuevosPorcentaje === null || nuevosPorcentaje === comisionActual || nuevosPorcentaje < 0 || nuevosPorcentaje > 50 || guardando"
         (click)="cambiarComision()">
-        Guardar Cambios
+        {{ guardando ? 'Guardando...' : 'Guardar Cambios' }}
       </button>
     </div>
   </div>
@@ -37,7 +40,7 @@
   <div class="historial-card">
     <h2>Historial de Cambios</h2>
     <div class="table-container">
-      <table class="table" *ngIf="historial.length > 0">
+      <table class="table" *ngIf="historial && historial.length > 0">
         <thead>
           <tr>
             <th>Porcentaje</th>
@@ -53,7 +56,9 @@
           </tr>
         </tbody>
       </table>
-      <div *ngIf="historial.length === 0" class="empty-state">
+
+      <!-- Estado vacío -->
+      <div *ngIf="!historial || historial.length === 0" class="empty-state">
         <p>No hay registros en el historial</p>
       </div>
     </div>

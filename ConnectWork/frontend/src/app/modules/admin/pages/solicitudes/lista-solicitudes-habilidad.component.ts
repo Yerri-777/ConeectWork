@@ -12,7 +12,9 @@ import { SolicitudHabilidad } from '../../../../core/models/solicitud.model';
   styleUrls: ['./lista-solicitudes.component.css']
 })
 export class ListaSolicitudesHabilidadComponent implements OnInit {
+  // Inicialización explícita para evitar errores de "index signature"
   solicitudes: SolicitudHabilidad[] = [];
+  cargando: boolean = false;
 
   constructor(
     private solicitudService: SolicitudService,
@@ -23,31 +25,50 @@ export class ListaSolicitudesHabilidadComponent implements OnInit {
     this.cargarSolicitudes();
   }
 
-  private cargarSolicitudes(): void {
+  cargarSolicitudes(): void {
+    this.cargando = true;
     this.solicitudService.listarSolicitudesHabilidad().subscribe({
-      next: (data) => this.solicitudes = data,
-      error: (err) => console.error('Error:', err)
+      next: (data) => {
+        this.solicitudes = data || [];
+        this.cargando = false;
+      },
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error:', err);
+        this.notificationService.mostrarError('Error al cargar las solicitudes de habilidades');
+        this.solicitudes = [];
+      }
     });
   }
 
   aceptarSolicitud(solicitud: SolicitudHabilidad): void {
-    this.solicitudService.aceptarSolicitudHabilidad(solicitud.id!).subscribe({
+    if (!solicitud.id) return;
+
+    this.solicitudService.aceptarSolicitudHabilidad(solicitud.id).subscribe({
       next: () => {
-        this.notificationService.mostrarExito('Solicitud aceptada');
+        this.notificationService.mostrarExito(`Habilidad "${solicitud.nombre}" aprobada correctamente`);
         this.cargarSolicitudes();
       },
-      error: () => this.notificationService.mostrarError('Error al aceptar solicitud')
+      error: (error) => {
+        console.error('Error:', error);
+        this.notificationService.mostrarError('No se pudo procesar la aceptación');
+      }
     });
   }
 
   rechazarSolicitud(solicitud: SolicitudHabilidad): void {
-    if (confirm('¿Rechazar esta solicitud de habilidad?')) {
-      this.solicitudService.rechazarSolicitudHabilidad(solicitud.id!).subscribe({
+    if (!solicitud.id) return;
+
+    if (confirm(`¿Estás seguro de rechazar la habilidad: ${solicitud.nombre}?`)) {
+      this.solicitudService.rechazarSolicitudHabilidad(solicitud.id).subscribe({
         next: () => {
           this.notificationService.mostrarExito('Solicitud rechazada');
           this.cargarSolicitudes();
         },
-        error: () => this.notificationService.mostrarError('Error al rechazar solicitud')
+        error: (error) => {
+          console.error('Error:', error);
+          this.notificationService.mostrarError('Error al rechazar la solicitud');
+        }
       });
     }
   }

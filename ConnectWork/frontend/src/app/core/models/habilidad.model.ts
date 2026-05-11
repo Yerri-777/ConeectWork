@@ -1,6 +1,4 @@
-/**
- * HABILIDAD - Modelo para habilidades
- */
+
 export interface Habilidad {
   id?: number;
   categoriaId: number;

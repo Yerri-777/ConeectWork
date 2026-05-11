@@ -1,6 +1,4 @@
-/**
- * RECARGA_SALDO - Modelo para recargas de saldo
- */
+
 export interface RecargaSaldo {
   id?: number;
   clienteId: number;
@@ -8,9 +6,7 @@ export interface RecargaSaldo {
   createdAt?: string;
 }
 
-/**
- * COMISION_CONFIG - Modelo para configuración de comisión
- */
+
 export interface ComisionConfig {
   id?: number;
   porcentaje: number;
@@ -19,9 +15,7 @@ export interface ComisionConfig {
   adminId?: number;
 }
 
-/**
- * Datos adicionales de saldo
- */
+
 export interface ResumenSaldo {
   saldoActual: number;
   totalRecargas: number;

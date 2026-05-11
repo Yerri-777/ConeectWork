@@ -1,39 +1,76 @@
 <div class="crear-container">
+
   <div class="crear-header">
     <h1>Enviar Propuesta</h1>
   </div>
 
   <form [formGroup]="propuestaForm" (ngSubmit)="enviarPropuesta()" class="crear-form">
+
     <div class="form-section" *ngIf="proyecto">
-      <h2>Proyecto: {{ proyecto.titulo }}</h2>
+      <h2>Proyecto: {{ proyecto?.titulo }}</h2>
+
       <div class="proyecto-info">
-        <p>{{ proyecto.descripcion }}</p>
-        <span> Presupuesto: Q{{ proyecto.presupuestoMinimo }}-{{ proyecto.presupuestoMaximo }}</span>
+        <p>{{ proyecto?.descripcion }}</p>
+        <span>
+          Presupuesto:
+          <strong>Q{{ proyecto?.presupuestoMinimo | number:'1.2-2' }} - Q{{ proyecto?.presupuestoMaximo | number:'1.2-2' }}</strong>
+        </span>
       </div>
     </div>
 
     <div class="form-section">
+
       <div class="form-group">
-        <label>Tu Propuesta</label>
-        <textarea formControlName="contenido" rows="8" placeholder="Explica tu metodología..."></textarea>
+        <label>Tu Propuesta (Metodología)</label>
+        <textarea
+          formControlName="contenido"
+          rows="8"
+          placeholder="Explica detalladamente cómo abordarás el trabajo...">
+        </textarea>
+        <small *ngIf="propuestaForm.get('contenido')?.invalid && propuestaForm.get('contenido')?.touched" style="color: #e53e3e;">
+          La propuesta debe tener al menos 100 caracteres.
+        </small>
       </div>
 
-      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="form-row" style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
         <div class="form-group">
           <label>Monto (GTQ)</label>
-          <input type="number" formControlName="monto">
+          <input type="number" formControlName="monto" placeholder="0.00">
+
+          <small
+            *ngIf="propuestaForm.get('monto')?.hasError('presupuestoExcedido')"
+            style="color: #e53e3e; display: block; margin-top: 5px; font-weight: 500;">
+             El monto no puede superar los Q{{ proyecto?.presupuestoMaximo | number:'1.2-2' }}
+          </small>
+
+          <small *ngIf="propuestaForm.get('monto')?.hasError('min') && propuestaForm.get('monto')?.touched" style="color: #e53e3e;">
+            El monto mínimo es Q100.00
+          </small>
         </div>
+
         <div class="form-group">
           <label>Plazo (días)</label>
-          <input type="number" formControlName="plazo">
+          <input type="number" formControlName="plazo" placeholder="Ej: 5">
+          <small *ngIf="propuestaForm.get('plazo')?.invalid && propuestaForm.get('plazo')?.touched" style="color: #e53e3e;">
+            Indica un plazo válido (mínimo 1 día).
+          </small>
         </div>
+
       </div>
     </div>
 
-    <div class="form-actions" style="text-align: center;">
-      <button type="submit" class="btn-guardar" [disabled]="propuestaForm.invalid || cargando">
-        {{ cargando ? 'Enviando...' : 'Enviar Propuesta' }}
+    <div class="form-actions" style="text-align:center; margin-top: 20px;">
+      <button
+        type="submit"
+        class="btn-guardar"
+        [disabled]="propuestaForm.invalid || cargando || !proyecto">
+
+        <span *ngIf="!cargando">Enviar Propuesta</span>
+        <span *ngIf="cargando"> Enviando...</span>
       </button>
     </div>
+
   </form>
+
 </div>
